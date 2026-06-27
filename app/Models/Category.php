@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,18 +9,15 @@ class Category extends Model
 {
     use HasFactory;
 
-    /**
-     * Kolom yang boleh diisi
-     */
-    protected $fillable = ['name', 'type'];
+    protected $fillable = ['name', 'organization_type', 'type'];
 
-    /**
-     * RELASI: Satu Kategori 'hasMany' (memiliki banyak) Transaksi.
-     * Nama fungsi (transactions) HARUS jamak (plural).
-     */
-    public function transactions()
+    public function transactions(): HasMany
     {
-        // Kita bisa panggil $kategori->transactions
         return $this->hasMany(Transaction::class);
+    }
+
+    public function scopeByOrg($query, string $type)
+    {
+        return $query->where('organization_type', $type);
     }
 }

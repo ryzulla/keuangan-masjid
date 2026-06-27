@@ -9,6 +9,9 @@ use App\Livewire\Transactions\BukuBesar;
 use App\Livewire\Reports\CashFlowReport;
 use App\Livewire\Reports\BalanceSheetReport;
 use App\Livewire\Admin\ManageUsers;
+use App\Livewire\Residents\ManageResidents;
+use App\Livewire\IPL\ManageIPL;
+use App\Livewire\IPL\IPLReport;
 
 Route::get('/', WelcomePage::class)->name('welcome');
 
@@ -17,8 +20,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', Dashboard::class)->name('dashboard');
     Route::view('profile', 'profile')->name('profile.edit');
 
-    Route::middleware('can:manage-transactions')->group(function () {
+    Route::middleware('can:manage-residents')->group(function () {
+        Route::get('residents', ManageResidents::class)->name('residents.index');
+    });
 
+    Route::middleware('can:manage-ipl')->group(function () {
+        Route::get('ipl', ManageIPL::class)->name('ipl.index');
+        Route::get('ipl/report', IPLReport::class)->name('ipl.report');
+    });
+
+    Route::middleware('can:manage-transactions')->group(function () {
         Route::get('transactions', BukuBesar::class)->name('transactions.index');
         Route::get('accounts', ManageAccounts::class)->name('accounts.index');
         Route::get('categories', ManageCategories::class)->name('categories.index');

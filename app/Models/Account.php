@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,24 +9,22 @@ class Account extends Model
 {
     use HasFactory;
 
-    /**
-     * Kolom yang boleh diisi
-     */
-    protected $fillable = ['name', 'balance', 'description'];
+    protected $fillable = ['name', 'organization_type', 'balance', 'description'];
 
-    /**
-     * Konversi tipe data untuk 'balance'
-     */
-    protected $casts = [
-        'balance' => 'decimal:2',
-    ];
+    protected $casts = ['balance' => 'decimal:2'];
 
-    /**
-     * RELASI: Satu Akun 'hasMany' (memiliki banyak) Transaksi.
-     * Nama fungsi (transactions) HARUS jamak (plural).
-     */
-    public function transactions()
+    public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function iplPayments(): HasMany
+    {
+        return $this->hasMany(IplPayment::class);
+    }
+
+    public function scopeByOrg($query, string $type)
+    {
+        return $query->where('organization_type', $type);
     }
 }

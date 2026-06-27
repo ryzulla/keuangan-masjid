@@ -1,68 +1,146 @@
-<div> {{-- Div pembungkus utama komponen Livewire --}}
+<div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- Tampilkan pesan error jika pengambilan data gagal --}}
-            @if (session()->has('error'))
-                <div role="alert" class="alert alert-error shadow-lg mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>{{ session('error') }}</span>
-                </div>
+            @if(session()->has('error'))
+                <div role="alert" class="alert alert-error shadow-lg mb-4"><span>{{ session('error') }}</span></div>
             @endif
 
-            {{-- Grid Statistik (Komponen stats DaisyUI) --}}
-            <div class="stats shadow w-full stats-vertical lg:stats-horizontal mb-6">
-                <div class="stat">
-                    <div class="stat-title">Total Saldo Kas</div>
-                    {{-- Cek apakah $totalBalance numerik sebelum format --}}
-                    <div class="stat-value">
-                        @if(isset($totalBalance) && is_numeric($totalBalance))
-                            Rp {{ number_format($totalBalance, 0, ',', '.') }}
+            {{-- Top Row: Two Finance Sections --}}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
+                {{-- Perumahan Section --}}
+                <div class="card bg-base-100 shadow-xl border-l-4 border-blue-500">
+                    <div class="card-body">
+                        <h3 class="card-title text-blue-600 dark:text-blue-400">🏘️ Perumahan / RT</h3>
+                        <div class="stats stats-vertical shadow-none bg-transparent w-full">
+                            <div class="stat py-2 px-0">
+                                <div class="stat-title text-xs">Total Kas Perumahan</div>
+                                <div class="stat-value text-xl">
+                                    @if(is_numeric($perumahanBalance))
+                                        Rp {{ number_format($perumahanBalance, 0, ',', '.') }}
+                                    @else N/A @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        @if(!empty($iplSummary))
+                        <div class="divider my-1 text-xs">IPL {{ $iplSummary['period'] }}</div>
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div class="bg-base-200 rounded p-2">
+                                <div class="text-xs text-gray-500">Total Tagihan</div>
+                                <div class="text-sm font-bold">Rp {{ number_format($iplSummary['total_tagihan'], 0, ',', '.') }}</div>
+                            </div>
+                            <div class="bg-success/10 rounded p-2">
+                                <div class="text-xs text-gray-500">Terbayar</div>
+                                <div class="text-sm font-bold text-success">Rp {{ number_format($iplSummary['total_terbayar'], 0, ',', '.') }}</div>
+                            </div>
+                            <div class="bg-error/10 rounded p-2">
+                                <div class="text-xs text-gray-500">Tunggakan</div>
+                                <div class="text-sm font-bold text-error">Rp {{ number_format($iplSummary['tunggakan'], 0, ',', '.') }}</div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-2">
+                            <span class="text-xs text-gray-500">{{ $iplSummary['jumlah_lunas'] }}/{{ $iplSummary['jumlah_unit'] }} unit lunas</span>
+                            @if($iplSummary['jumlah_unit'] > 0)
+                                <progress class="progress progress-success w-full mt-1" value="{{ $iplSummary['jumlah_lunas'] }}" max="{{ $iplSummary['jumlah_unit'] }}"></progress>
+                            @endif
+                        </div>
                         @else
-                            {{ $totalBalance ?? 'N/A' }} {{-- Tampilkan 'Error' atau default 'N/A' --}}
+                            <p class="text-sm text-gray-400 mt-2">Belum ada data IPL. <a href="{{ route('ipl.index') }}" wire:navigate class="link link-primary">Buat periode IPL</a></p>
                         @endif
+
+                        @if($activeCampaignsPerumahan->count() > 0)
+                        <div class="divider my-1 text-xs">Program Perumahan Aktif</div>
+                        @foreach($activeCampaignsPerumahan as $campaign)
+                            @php
+                                $target = (float)($campaign->target_amount ?? 0);
+                                $raised = (float)($campaign->transactions_sum_amount ?? 0);
+                                $progress = ($target > 0) ? min(100, ($raised / $target) * 100) : ($raised > 0 ? 100 : 0);
+                            @endphp
+                            <div wire:key="dash-prum-{{ $campaign->id }}" class="text-xs">
+                                <div class="flex justify-between"><span class="font-semibold">{{ $campaign->name }}</span><span>{{ number_format($progress, 0) }}%</span></div>
+                                <progress class="progress progress-info w-full" value="{{ $progress }}" max="100"></progress>
+                            </div>
+                        @endforeach
+                        @endif
+
+                        <div class="card-actions mt-2">
+                            @can('manage-ipl')
+                            <a href="{{ route('ipl.index') }}" wire:navigate class="btn btn-sm btn-outline btn-primary">IPL</a>
+                            @endcan
+                            @can('manage-residents')
+                            <a href="{{ route('residents.index') }}" wire:navigate class="btn btn-sm btn-outline">Penghuni</a>
+                            @endcan
+                        </div>
                     </div>
-                    <div class="stat-desc">Di semua akun</div>
                 </div>
 
-                <div class="stat">
-                    <div class="stat-title">Pemasukan Bulan Ini</div>
-                    <div class="stat-value text-success">
-                         @if(isset($monthlyIncome) && is_numeric($monthlyIncome))
-                            Rp {{ number_format($monthlyIncome, 0, ',', '.') }}
-                        @else
-                            {{ $monthlyIncome ?? 'N/A' }}
-                        @endif
-                    </div>
-                    <div class="stat-desc">Periode: {{ now()->format('F Y') }}</div>
-                </div>
+                {{-- DKM Section --}}
+                <div class="card bg-base-100 shadow-xl border-l-4 border-green-500">
+                    <div class="card-body">
+                        <h3 class="card-title text-green-600 dark:text-green-400">🕌 DKM Masjid</h3>
+                        <div class="stats stats-vertical shadow-none bg-transparent w-full">
+                            <div class="stat py-2 px-0">
+                                <div class="stat-title text-xs">Total Kas DKM</div>
+                                <div class="stat-value text-xl">
+                                    @if(is_numeric($dkmBalance))
+                                        Rp {{ number_format($dkmBalance, 0, ',', '.') }}
+                                    @else N/A @endif
+                                </div>
+                                <div class="stat-desc">{{ now()->format('F Y') }}</div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-center">
+                            <div class="bg-success/10 rounded p-2">
+                                <div class="text-xs text-gray-500">Pemasukan Bulan Ini</div>
+                                <div class="text-sm font-bold text-success">Rp {{ number_format($monthlyIncomeDkm, 0, ',', '.') }}</div>
+                            </div>
+                            <div class="bg-error/10 rounded p-2">
+                                <div class="text-xs text-gray-500">Pengeluaran Bulan Ini</div>
+                                <div class="text-sm font-bold text-error">Rp {{ number_format($monthlyExpenseDkm, 0, ',', '.') }}</div>
+                            </div>
+                        </div>
 
-                <div class="stat">
-                    <div class="stat-title">Pengeluaran Bulan Ini</div>
-                    <div class="stat-value text-error">
-                        @if(isset($monthlyExpense) && is_numeric($monthlyExpense))
-                            Rp {{ number_format($monthlyExpense, 0, ',', '.') }}
+                        @if($activeCampaignsDkm->count() > 0)
+                        <div class="divider my-1 text-xs">Program DKM Aktif</div>
+                        @foreach($activeCampaignsDkm as $campaign)
+                            @php
+                                $target = (float)($campaign->target_amount ?? 0);
+                                $raised = (float)($campaign->transactions_sum_amount ?? 0);
+                                $progress = ($target > 0) ? min(100, ($raised / $target) * 100) : ($raised > 0 ? 100 : 0);
+                            @endphp
+                            <div wire:key="dash-dkm-{{ $campaign->id }}" class="text-xs">
+                                <div class="flex justify-between"><span class="font-semibold">{{ $campaign->name }}</span><span>{{ number_format($progress, 0) }}%</span></div>
+                                <progress class="progress progress-success w-full" value="{{ $progress }}" max="100"></progress>
+                            </div>
+                        @endforeach
                         @else
-                            {{ $monthlyExpense ?? 'N/A' }}
+                            <p class="text-sm text-gray-400 mt-2">Tidak ada program DKM aktif.</p>
                         @endif
+
+                        <div class="card-actions mt-2">
+                            @can('manage-transactions')
+                            <a href="{{ route('transactions.index') }}" wire:navigate class="btn btn-sm btn-outline btn-success">Transaksi</a>
+                            @endcan
+                            @can('view-reports')
+                            <a href="{{ route('reports.cashflow') }}" wire:navigate class="btn btn-sm btn-outline">Laporan</a>
+                            @endcan
+                        </div>
                     </div>
-                    <div class="stat-desc">Periode: {{ now()->format('F Y') }}</div>
                 </div>
             </div>
 
-            {{-- Tabel Transaksi Terakhir (Komponen card dan table DaisyUI) --}}
-            <div class="card bg-base-100 shadow-xl mt-6">
+            {{-- Recent Transactions --}}
+            <div class="card bg-base-100 shadow-xl">
                 <div class="card-body">
-                    <h2 class="card-title">Transaksi Terakhir</h2>
-                    <div class="overflow-x-auto mt-4">
+                    <h2 class="card-title">Transaksi DKM Terbaru</h2>
+                    <div class="overflow-x-auto mt-2">
                         <table class="table table-sm table-zebra w-full">
-                            {{-- Header Tabel --}}
                             <thead>
                                 <tr>
                                     <th>Tanggal</th>
@@ -72,82 +150,27 @@
                                     <th class="text-right">Jumlah</th>
                                 </tr>
                             </thead>
-                            {{-- Body Tabel --}}
                             <tbody>
-                                {{-- Cek jika $recentTransactions ada dan tidak kosong --}}
                                 @forelse($recentTransactions ?? [] as $tx)
                                     <tr class="hover">
-                                        {{-- Tanggal Transaksi --}}
                                         <td>{{ optional($tx->transaction_date)->format('d/m/Y') ?? 'N/A' }}</td>
-                                        {{-- Keterangan --}}
                                         <td>{{ $tx->description ?? '-' }}</td>
-                                        {{-- Nama Kategori (pakai optional() untuk keamanan) --}}
                                         <td><div class="badge badge-ghost badge-sm">{{ optional($tx->category)->name ?? '-' }}</div></td>
-                                        {{-- Nama Akun (pakai optional() untuk keamanan) --}}
                                         <td><div class="badge badge-outline badge-sm">{{ optional($tx->account)->name ?? '-' }}</div></td>
-                                        {{-- Jumlah (Debit/Kredit) --}}
                                         <td class="text-right font-mono {{ ($tx->type ?? '') == 'debit' ? 'text-success' : 'text-error' }}">
                                             {{ ($tx->type ?? '') == 'debit' ? '+' : '-' }}
                                             Rp {{ number_format($tx->amount ?? 0, 0, ',', '.') }}
                                         </td>
                                     </tr>
                                 @empty
-                                    {{-- Pesan jika tidak ada transaksi --}}
-                                    <tr>
-                                        <td colspan="5" class="text-center py-4">Belum ada transaksi terbaru.</td>
-                                    </tr>
+                                    <tr><td colspan="5" class="text-center py-4 text-gray-400">Belum ada transaksi terbaru.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div> {{-- Akhir Card Transaksi --}}
-
-            <!-- ===== BAGIAN BARU: KAMPANYE AKTIF ===== -->
-            <div class="card bg-base-100 shadow-xl mt-6">
-                <div class="card-body">
-                    <h2 class="card-title">Program/Kampanye Aktif</h2>
-                    <div class="mt-4 space-y-4">
-                         {{-- Cek jika $activeCampaigns ada dan bisa di-loop --}}
-                        @forelse($activeCampaigns ?? [] as $campaign)
-                            <div wire:key="dash-campaign-{{ $campaign->id }}">
-                                {{-- Nama Kampanye dan Target --}}
-                                <div class="flex justify-between items-center mb-1">
-                                    <h3 class="font-semibold">{{ $campaign->name }}</h3>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">
-                                        Target: Rp {{ number_format($campaign->target_amount ?? 0, 0, ',', '.') }}
-                                    </span>
-                                </div>
-                                {{-- Perhitungan Progress --}}
-                                @php
-                                    $target = (float)($campaign->target_amount ?? 0);
-                                    // Akses properti virtual dari withSum
-                                    $raised = (float)($campaign->transactions_sum_amount ?? 0);
-                                    // Hitung progress, tangani target 0
-                                    $progress = ($target > 0) ? min(100, ($raised / $target) * 100) : ($raised > 0 ? 100 : 0);
-                                @endphp
-                                {{-- Progress Bar DaisyUI --}}
-
-                                <progress class="progress progress-success w-full" value="{{ $progress }}" max="100"></progress>
-                                {{-- Detail Progress --}}
-                                <div class="flex justify-between text-xs mt-1">
-                                    <span>Terkumpul: Rp {{ number_format($raised, 0, ',', '.') }}</span>
-                                    <span>{{ number_format($progress, 1) }}%</span>
-                                </div>
-                            </div>
-                            {{-- Tambahkan pemisah jika bukan item terakhir --}}
-                            @if(!$loop->last)
-                                <div class="divider my-1"></div>
-                            @endif
-                        @empty
-                            {{-- Pesan jika tidak ada kampanye aktif --}}
-                            <p class="text-center text-gray-500 dark:text-gray-400 py-4">Tidak ada program/kampanye yang sedang aktif.</p>
-                        @endforelse
-                    </div>
-                </div>
             </div>
-            <!-- ===== AKHIR BAGIAN BARU ===== -->
 
-        </div> {{-- Akhir Max Width Container --}}
-    </div> {{-- Akhir Py-12 Padding --}}
-</div> {{-- Akhir Div Pembungkus Utama --}}
+        </div>
+    </div>
+</div>

@@ -4,66 +4,79 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Account;
 use App\Models\Transaction;
-use App\Models\Campaign; // <-- Add use Campaign
+use App\Models\Campaign;
+use App\Models\IplPeriod;
+use App\Models\IplBilling;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 
-#[Layout('layouts.app')] // Specify the layout
+#[Layout('layouts.app')]
 class Dashboard extends Component
 {
-    public $totalBalance = 0;
-    public $monthlyIncome = 0;
-    public $monthlyExpense = 0;
+    public $dkmBalance = 0;
+    public $perumahanBalance = 0;
+    public $monthlyIncomeDkm = 0;
+    public $monthlyExpenseDkm = 0;
     public $recentTransactions;
-    public $activeCampaigns; // <-- New property for campaigns
+    public $activeCampaignsDkm;
+    public $activeCampaignsPerumahan;
+    public $iplSummary = [];
 
     public function mount()
     {
         try {
-            // Calculate total balance
-            $this->totalBalance = Account::sum('balance');
-
-            // Define current month range
             $startOfMonth = Carbon::now()->startOfMonth();
             $endOfMonth = Carbon::now()->endOfMonth();
 
-            // Calculate monthly income/expense
-            $this->monthlyIncome = Transaction::where('type', 'debit')
-                ->whereBetween('transaction_date', [$startOfMonth, $endOfMonth])->sum('amount');
-            $this->monthlyExpense = Transaction::where('type', 'credit')
-                ->whereBetween('transaction_date', [$startOfMonth, $endOfMonth])->sum('amount');
+            $this->dkmBalance = Account::byOrg('dkm')->sum('balance');
+            $this->perumahanBalance = Account::byOrg('perumahan')->sum('balance');
 
-            // Fetch recent transactions
+            $dkmAccountIds = Account::byOrg('dkm')->pluck('id');
+            $this->monthlyIncomeDkm = Transaction::where('type', 'debit')
+                ->whereIn('account_id', $dkmAccountIds)
+                ->whereBetween('transaction_date', [$startOfMonth, $endOfMonth])
+                ->sum('amount');
+            $this->monthlyExpenseDkm = Transaction::where('type', 'credit')
+                ->whereIn('account_id', $dkmAccountIds)
+                ->whereBetween('transaction_date', [$startOfMonth, $endOfMonth])
+                ->sum('amount');
+
             $this->recentTransactions = Transaction::with(['category', 'account'])
-                ->latest('transaction_date')->latest('id')->take(20)->get();
+                ->latest('transaction_date')->latest('id')->take(10)->get();
 
-            // --- FETCH ACTIVE CAMPAIGNS ---
-            $this->activeCampaigns = Campaign::withSum(['transactions' => function ($query) {
-                                            $query->where('transactions.type', 'debit');
-                                        }], 'amount') // Hitung HANYA transaksi 'debit'
-                                        ->where('status', 'active') // Campaign harus aktif
-                                        // ->where('type', 'debit') <-- HAPUS BARIS INI
-                                        ->orderBy('start_date', 'desc')
-                                        ->take(3)
-                                        ->get();
-            // --- END FETCH CAMPAIGNS ---
+            $this->activeCampaignsDkm = Campaign::withSum(['transactions' => fn($q) => $q->where('transactions.type', 'debit')], 'amount')
+                ->where('status', 'active')->where('organization_type', 'dkm')
+                ->orderBy('start_date', 'desc')->take(3)->get();
+
+            $this->activeCampaignsPerumahan = Campaign::withSum(['transactions' => fn($q) => $q->where('transactions.type', 'debit')], 'amount')
+                ->where('status', 'active')->where('organization_type', 'perumahan')
+                ->orderBy('start_date', 'desc')->take(3)->get();
+
+            $latestPeriod = IplPeriod::latest('year')->latest('month')->first();
+            if ($latestPeriod) {
+                $this->iplSummary = [
+                    'period' => $latestPeriod->period_label,
+                    'total_tagihan' => IplBilling::where('ipl_period_id', $latestPeriod->id)->sum(DB::raw('ipl_security_amount + ipl_garbage_amount')),
+                    'total_terbayar' => IplBilling::where('ipl_period_id', $latestPeriod->id)->sum(DB::raw('paid_security + paid_garbage')),
+                    'jumlah_lunas' => IplBilling::where('ipl_period_id', $latestPeriod->id)->where('status', 'paid')->count(),
+                    'jumlah_unit' => IplBilling::where('ipl_period_id', $latestPeriod->id)->count(),
+                ];
+                $this->iplSummary['tunggakan'] = $this->iplSummary['total_tagihan'] - $this->iplSummary['total_terbayar'];
+            }
 
         } catch (\Exception $e) {
-            Log::error('Error fetching dashboard data: ' . $e->getMessage());
-            session()->flash('error', 'Gagal memuat data dashboard. Silakan coba lagi.');
-            // Set defaults on error
-            $this->totalBalance = 'Error';
-            $this->monthlyIncome = 'Error';
-            $this->monthlyExpense = 'Error';
+            Log::error('Dashboard error: ' . $e->getMessage());
+            session()->flash('error', 'Gagal memuat data dashboard.');
             $this->recentTransactions = collect();
-            $this->activeCampaigns = collect(); // Set empty collection on error
+            $this->activeCampaignsDkm = collect();
+            $this->activeCampaignsPerumahan = collect();
         }
     }
 
     public function render()
     {
-        // Public properties are automatically passed
         return view('livewire.dashboard');
     }
 }
