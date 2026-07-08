@@ -9,7 +9,7 @@ use Livewire\Attributes\Layout; // <-- Penting untuk layout
 class ManageAccounts extends Component
 {
     use WithPagination;
-    public $name, $description, $balance = 0;
+    public $name, $description, $balance = 0, $organization_type = 'perumahan';
     public $selected_id;
     public $isModalOpen = false;
 
@@ -17,6 +17,7 @@ class ManageAccounts extends Component
         'name' => 'required|string|min:3',
         'balance' => 'required|numeric|min:0',
         'description' => 'nullable|string',
+        'organization_type' => 'required|in:perumahan,dkm,umum',
     ];
 
     public function render()
@@ -39,6 +40,7 @@ class ManageAccounts extends Component
         $this->name = $account->name;
         $this->description = $account->description;
         $this->balance = $account->balance;
+        $this->organization_type = $account->organization_type ?? 'perumahan';
         $this->isModalOpen = true;
     }
 
@@ -48,6 +50,7 @@ class ManageAccounts extends Component
         $data = [
             'name' => $this->name,
             'description' => $this->description,
+            'organization_type' => $this->organization_type,
         ];
         if(!$this->selected_id) {
             $data['balance'] = $this->balance;
@@ -70,5 +73,5 @@ class ManageAccounts extends Component
     }
 
     public function closeModal() { $this->isModalOpen = false; $this->resetForm(); }
-    private function resetForm() { $this->reset(['name', 'description', 'balance', 'selected_id']); }
+    private function resetForm() { $this->reset(['name', 'description', 'balance', 'selected_id', 'organization_type']); $this->organization_type = 'perumahan'; }
 }

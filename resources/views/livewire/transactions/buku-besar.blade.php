@@ -1,432 +1,577 @@
-<div> {{-- Div pembungkus utama --}}
+<div>
     <x-slot name="header">
-         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-             Transaksi List (Buku Besar)
-         </h2>
+        <h2 class="font-semibold text-base" style="color:#111827;">Transaksi (Buku Besar)</h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
 
-            {{-- Tombol Tambah Transaksi --}}
-            <div class="mb-4 text-right">
-                <button wire:click="create()" class="btn btn-primary btn-sm">+ Tambah Transaksi</button>
+            {{-- Flash Messages --}}
+            @if(session('success') && !$isModalOpen)
+                <div class="rounded-xl p-4 text-sm flex items-center gap-2" style="background:rgba(18,128,92,0.1);border:1px solid rgba(18,128,92,0.3);color:#12805c;">
+                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    <span>{{ session('success') }}</span>
+                    <button class="ml-auto transition-colors" style="color:#12805c;" @click="$el.closest('[style]').remove()">✕</button>
+                </div>
+            @endif
+            @if((session('error') && !$isModalOpen) || session('render_error'))
+                <div class="rounded-xl p-4 text-sm flex items-center gap-2" style="background:rgba(192,69,59,0.1);border:1px solid rgba(192,69,59,0.3);color:#c0453b;">
+                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-5a1 1 0 011-1h.01a1 1 0 010 2H10a1 1 0 01-1-1zm0-4a1 1 0 011-1h.01a1 1 0 010 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+                    <span>{{ session('error') ?? session('render_error') }}</span>
+                </div>
+            @endif
+
+            {{-- Header Banner --}}
+            <div class="rounded-2xl p-6" style="background:linear-gradient(135deg,#ffffff 0%,#ffffff 62%);border:1px solid rgba(16,24,40,0.35);">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold" style="color:#111827;font-family:'IBM Plex Sans',serif;">Buku Besar Transaksi</h1>
+                        <p class="text-sm mt-1" style="color:#111827;">Riwayat seluruh pemasukan dan pengeluaran</p>
+                    </div>
+                    <button wire:click="create()"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors shrink-0"
+                        style="background:#111827;color:#ffffff;"
+                        onmouseover="this.style.background='#1f2a37'" onmouseout="this.style.background='#1f2a37'">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        Tambah Transaksi
+                    </button>
+                </div>
             </div>
 
-            {{-- Notifikasi Sukses --}}
-            @if (session()->has('success') && !$isModalOpen)
-                <div role="alert" class="alert alert-success shadow-lg mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>{{ session('success') }}</span>
-                    <button class="btn btn-sm btn-ghost" @click="$el.closest('.alert').remove()">✕</button>
-                </div>
-            @endif
-            {{-- Notifikasi Error Render atau Operasi Lain (selain modal) --}}
-            @if (session()->has('error') && !$isModalOpen || session()->has('render_error'))
-                 <div role="alert" class="alert alert-error shadow-lg mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>{{ session('error') ?? session('render_error') }}</span>
-                     <button class="btn btn-sm btn-ghost" @click="$el.closest('.alert').remove()">✕</button>
-                </div>
-            @endif
-
-
-            <div class="card bg-base-100 shadow-xl mb-6">
-                <div class="card-body">
-                    <h3 class="card-title text-base mb-4">Filter Transaksi</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                        {{-- Filter Tanggal Mulai --}}
-                        <div class="form-control w-full">
-                            <label class="label"><span class="label-text">Dari Tanggal</span></label>
-                            <input type="date" wire:model.live.debounce.500ms="startDate" class="input input-bordered input-sm">
-                        </div>
-                        {{-- Filter Tanggal Akhir --}}
-                        <div class="form-control w-full">
-                            <label class="label"><span class="label-text">Sampai Tanggal</span></label>
-                            <input type="date" wire:model.live.debounce.500ms="endDate" class="input input-bordered input-sm">
-                        </div>
-                        {{-- Filter Kategori --}}
-                        <div class="form-control w-full">
-                            <label class="label"><span class="label-text">Kategori</span></label>
-                            {{-- Gunakan wire:model.live agar filter campaign bereaksi --}}
-                            <select wire:model.live="selectedCategoryId" class="select select-bordered select-sm">
-                                <option value="">Semua Kategori</option>
-                                {{-- Loop dari $this->filterCategories (properti publik) --}}
-                                @foreach($this->filterCategories as $category)
-                                    <option value="{{ $category->id }}" wire:key="filter-cat-{{ $category->id }}">{{ $category->name }}</option>
+            {{-- Filter Panel --}}
+            <div class="rounded-2xl p-5" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);">
+                <h3 class="font-semibold text-sm mb-4" style="color:#1d2939;">Filter Transaksi</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                    <div>
+                        <label class="block text-xs font-medium mb-1.5" style="color:#475467;">Dari Tanggal</label>
+                        <input type="date" wire:model.live.debounce.500ms="startDate"
+                            class="w-full px-3 py-2 text-sm rounded-xl outline-none"
+                            style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;"
+                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium mb-1.5" style="color:#475467;">Sampai Tanggal</label>
+                        <input type="date" wire:model.live.debounce.500ms="endDate"
+                            class="w-full px-3 py-2 text-sm rounded-xl outline-none"
+                            style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;"
+                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium mb-1.5" style="color:#475467;">Kategori</label>
+                        <select wire:model.live="selectedCategoryId"
+                            class="w-full px-3 py-2 text-sm rounded-xl outline-none"
+                            style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;"
+                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                            <option value="">Semua Kategori</option>
+                            @foreach($this->filterCategories as $category)
+                                <option value="{{ $category->id }}" wire:key="filter-cat-{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @if($showCampaignFilter)
+                        <div>
+                            <label class="block text-xs font-medium mb-1.5" style="color:#475467;">Program/Kampanye</label>
+                            <select wire:model.live="selectedCampaignId"
+                                class="w-full px-3 py-2 text-sm rounded-xl outline-none"
+                                style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;"
+                                onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                                <option value="">Semua Program</option>
+                                @foreach($this->availableCampaigns as $campaign)
+                                    <option value="{{ $campaign->id }}" wire:key="filter-camp-{{ $campaign->id }}">{{ $campaign->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        {{-- Filter Kampanye (KONDISIONAL) --}}
-                        {{-- Gunakan $showCampaignFilter (untuk filter), bukan $showCampaignDropdown (untuk modal) --}}
-                        @if ($showCampaignFilter) {{-- Kondisi tetap sama --}}
-                            <div class="form-control w-full">
-                                <label class="label"><span class="label-text">Program/Kampanye</span></label>
-                                <select wire:model.live="selectedCampaignId" class="select select-bordered select-sm">
-                                    <option value="">Semua Program Terkait</option>
-                                    @foreach($this->availableCampaigns as $campaign)
-                                        <option value="{{ $campaign->id }}" wire:key="filter-camp-{{ $campaign->id }}">{{ $campaign->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        @else
-                           <div class="hidden lg:block lg:min-h-[68px]"></div>
-                        @endif
-                    </div>
-                     {{-- Tombol Ekspor --}}
-                     <div class="card-actions justify-end mt-4">
-                         {{-- Indikator loading untuk ekspor --}}
-                         <span wire:loading wire:target="exportExcel, exportPdf" class="text-sm italic mr-2 self-center">
-                            <span class="loading loading-spinner loading-xs"></span> Mengekspor...
-                         </span>
-
-                         <button wire:click="exportExcel" wire:loading.attr="disabled" wire:loading.class="loading btn-disabled" class="btn btn-sm btn-outline btn-success">
-                             <span wire:loading.remove>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                                Excel
-                             </span>
-                         </button>
-                         <button wire:click="exportPdf" wire:loading.attr="disabled" wire:loading.class="loading btn-disabled" class="btn btn-sm btn-outline btn-error">
-                             <span wire:loading.remove>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                                PDF
-                            </span>
-                         </button>
-                     </div>
+                    @else
+                        <div class="hidden lg:block"></div>
+                    @endif
+                </div>
+                <div class="flex justify-end gap-2 mt-4 pt-4" style="border-top:1px solid #e4e7ec;">
+                    <span wire:loading wire:target="exportExcel,exportPdf" class="text-sm self-center flex items-center gap-1" style="color:#98a2b3;">
+                        <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                        Mengekspor...
+                    </span>
+                    <button wire:click="exportExcel" wire:loading.attr="disabled"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                        style="background:rgba(18,128,92,0.1);color:#12805c;border:1px solid rgba(18,128,92,0.3);"
+                        onmouseover="this.style.background='rgba(18,128,92,0.2)'" onmouseout="this.style.background='rgba(18,128,92,0.1)'">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span wire:loading.remove wire:target="exportExcel">Excel</span>
+                        <span wire:loading wire:target="exportExcel">...</span>
+                    </button>
+                    <button wire:click="exportPdf" wire:loading.attr="disabled"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                        style="background:rgba(192,69,59,0.1);color:#c0453b;border:1px solid rgba(192,69,59,0.3);"
+                        onmouseover="this.style.background='rgba(192,69,59,0.2)'" onmouseout="this.style.background='rgba(192,69,59,0.1)'">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span wire:loading.remove wire:target="exportPdf">PDF</span>
+                        <span wire:loading wire:target="exportPdf">...</span>
+                    </button>
                 </div>
             </div>
 
-            {{-- Pastikan variabel summary ada sebelum diakses --}}
-            @isset($totalDebit, $totalCredit, $startDate, $endDate)
-                <div class="stats shadow w-full stats-vertical lg:stats-horizontal mb-6">
-                    @php
-                        $safeStartDate = $startDate ? \Carbon\Carbon::parse($startDate)->format('d/m/y') : '-';
-                        $safeEndDate = $endDate ? \Carbon\Carbon::parse($endDate)->format('d/m/y') : '-';
-                        $netFlow = $totalDebit - $totalCredit;
-                    @endphp
-                    <div class="stat">
-                        <div class="stat-title">Total Pemasukan (Debit)</div>
-                        <div class="stat-value text-success">Rp {{ number_format($totalDebit, 0, ',', '.') }}</div>
-                        <div class="stat-desc">Periode: {{ $safeStartDate }} - {{ $safeEndDate }}</div>
+            {{-- Summary Stats --}}
+            @isset($totalDebit, $totalCredit)
+                @php
+                    $safeStartDate = $startDate ? \Carbon\Carbon::parse($startDate)->format('d/m/Y') : 'Awal';
+                    $safeEndDate = $endDate ? \Carbon\Carbon::parse($endDate)->format('d/m/Y') : 'Hari ini';
+                    $netFlow = $totalDebit - $totalCredit;
+                @endphp
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="rounded-2xl p-5" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);">
+                        <p class="text-xs font-medium uppercase tracking-wide" style="color:#7c8698;">Total Pemasukan</p>
+                        <p class="text-xl font-bold mt-1" style="color:#12805c;">Rp {{ number_format($totalDebit, 0, ',', '.') }}</p>
+                        <p class="text-xs mt-1" style="color:#98a2b3;">{{ $safeStartDate }} — {{ $safeEndDate }}</p>
                     </div>
-                    <div class="stat">
-                        <div class="stat-title">Total Pengeluaran (Kredit)</div>
-                        <div class="stat-value text-error">Rp {{ number_format($totalCredit, 0, ',', '.') }}</div>
-                        <div class="stat-desc">Periode: {{ $safeStartDate }} - {{ $safeEndDate }}</div>
+                    <div class="rounded-2xl p-5" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);">
+                        <p class="text-xs font-medium uppercase tracking-wide" style="color:#7c8698;">Total Pengeluaran</p>
+                        <p class="text-xl font-bold mt-1" style="color:#c0453b;">Rp {{ number_format($totalCredit, 0, ',', '.') }}</p>
+                        <p class="text-xs mt-1" style="color:#98a2b3;">{{ $safeStartDate }} — {{ $safeEndDate }}</p>
                     </div>
-                    <div class="stat">
-                        <div class="stat-title">Selisih (Net Flow)</div>
-                        <div class="stat-value {{ $netFlow >= 0 ? 'text-info' : 'text-error' }}">
+                    <div class="rounded-2xl p-5" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);">
+                        <p class="text-xs font-medium uppercase tracking-wide" style="color:#7c8698;">Selisih (Net Flow)</p>
+                        <p class="text-xl font-bold mt-1" style="color:{{ $netFlow >= 0 ? '#111827' : '#c0453b' }};">
                             Rp {{ number_format($netFlow, 0, ',', '.') }}
-                        </div>
+                        </p>
+                        <p class="text-xs mt-1" style="color:{{ $netFlow >= 0 ? '#111827' : '#c0453b' }};">{{ $netFlow >= 0 ? 'Surplus' : 'Defisit' }}</p>
                     </div>
                 </div>
             @endisset
 
-
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <div class="overflow-x-auto">
-                        <table class="table table-sm table-zebra w-full">
-                            <thead>
-                                <tr>
-                                    <th class="whitespace-nowrap">Tanggal</th>
-                                    <th>Keterangan</th>
-                                    <th>Kategori</th>
-                                    <th>Akun/Kas</th>
-                                    <th>Program</th> {{-- <-- Kolom Baru --}}
-                                    <th>Donatur</th> {{-- <-- Kolom Baru --}}
-                                    <th>Bukti</th>
-                                    <th>User</th>
-                                    <th class="text-right">Debit (+)</th>
-                                    <th class="text-right">Kredit (-)</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php
-                                    $transactionPaginator = ($transactions instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) ? $transactions : null;
-                                @endphp
-                                @if($transactionPaginator)
-                                    @forelse($transactionPaginator->items() as $tx)
-                                        <tr class="hover" wire:key="tx-{{ $tx->id }}">
-                                            <td class="whitespace-nowrap">{{ optional($tx->transaction_date)->format('d/m/Y') }}</td>
-                                            <td>{{ $tx->description }}</td>
-                                            <td><div class="badge badge-ghost badge-sm">{{ optional($tx->category)->name ?? '-' }}</div></td>
-                                            <td><div class="badge badge-outline badge-sm">{{ optional($tx->account)->name ?? '-' }}</div></td>
-                                            {{-- Kolom Program --}}
-                                            <td><div class="badge badge-info badge-sm badge-outline">{{ optional($tx->campaign)->name ?? '-' }}</div></td>
-                                            {{-- Kolom Donatur --}}
-                                            <td>{{ optional($tx->donation)->donor_name ?? '-' }}</td>
-                                            {{-- Kolom Bukti --}}
-                                            <td>
-                                                @if ($tx->attachment)
-                                                    <a href="{{ Storage::url($tx->attachment) }}" target="_blank" class="link link-info text-xs">Lihat</a>
-                                                @else - @endif
-                                            </td>
-                                            <td>{{ optional($tx->user)->name ?? '-' }}</td>
-                                            {{-- Kolom Debit/Kredit --}}
-                                            @if($tx->type == 'debit')
-                                                <td class="text-right font-mono text-success">Rp {{ number_format($tx->amount, 0, ',', '.') }}</td>
-                                                <td class="text-right font-mono">-</td>
+            {{-- Transactions Table --}}
+            <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);">
+                <div class="overflow-x-auto hidden md:block">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr style="background:#ffffff;border-bottom:1px solid #f5f6f8;">
+                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap" style="color:#98a2b3;">Tanggal</th>
+                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Keterangan</th>
+                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Kategori</th>
+                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Akun/Kas</th>
+                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Program</th>
+                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Donatur</th>
+                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Bukti</th>
+                                <th class="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Debit (+)</th>
+                                <th class="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Kredit (-)</th>
+                                <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $transactionPaginator = ($transactions instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) ? $transactions : null; @endphp
+                            @if($transactionPaginator)
+                                @forelse($transactionPaginator->items() as $tx)
+                                    <tr wire:key="tx-{{ $tx->id }}" style="border-bottom:1px solid #eef0f3;" onmouseover="this.style.backgroundColor='#f5f6f8'" onmouseout="this.style.backgroundColor=''">
+                                        <td class="px-4 py-3 text-xs whitespace-nowrap" style="color:#98a2b3;">{{ optional($tx->transaction_date)->format('d/m/Y') }}</td>
+                                        <td class="px-4 py-3 max-w-xs truncate" style="color:#1d2939;">{{ $tx->description }}</td>
+                                        <td class="px-4 py-3">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs" style="background:#f5f6f8;color:#667085;">{{ optional($tx->category)->name ?? '-' }}</span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs" style="background:#eef0f3;color:#667085;border:1px solid #e4e7ec;">{{ optional($tx->account)->name ?? '-' }}</span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            @if(optional($tx->campaign)->name)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs" style="background:rgba(16,24,40,0.1);color:#111827;border:1px solid rgba(16,24,40,0.2);">{{ $tx->campaign->name }}</span>
                                             @else
-                                                <td class="text-right font-mono">-</td>
-                                                <td class="text-right font-mono text-error">Rp {{ number_format($tx->amount, 0, ',', '.') }}</td>
+                                                <span style="color:#98a2b3;">—</span>
                                             @endif
-                                            {{-- Kolom Aksi --}}
-                                            <td class="space-x-1 whitespace-nowrap">
-                                                <button wire:click="edit({{ $tx->id }})" class="btn btn-warning btn-xs">Edit</button>
-                                                <button wire:click.prevent="confirmDelete({{ $tx->id }})" class="btn btn-error btn-xs">Hapus</button>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr><td colspan="11" class="text-center py-4">Belum ada transaksi pada periode/filter ini.</td></tr> {{-- Sesuaikan colspan --}}
-                                    @endforelse
-                                @else
-                                     <tr><td colspan="11" class="text-center py-4 text-error">Gagal memuat data transaksi. Periksa log.</td></tr> {{-- Sesuaikan colspan --}}
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
-                     {{-- Tampilkan Link Paginasi jika $transactions adalah Paginator --}}
-                    @if ($transactionPaginator)
-                         <div class="mt-4">{{ $transactionPaginator->links() }}</div>
-                    @endif
-                </div>
-            </div>
-
-
-            <div class="modal {{ $isModalOpen ? 'modal-open' : '' }}" id="transaction-modal"> {{-- Beri ID unik --}}
-                <div class="modal-box w-11/12 max-w-2xl">
-                    <h3 class="font-bold text-lg">{{ $selected_id ? 'Edit Transaksi' : 'Tambah Transaksi Baru' }}</h3>
-
-                    {{-- Tampilkan error validasi Laravel di dalam modal --}}
-                    @if ($errors->any())
-                        <div role="alert" class="alert alert-warning mt-4 text-sm">
-                            {{-- ... (Error SVG) ... --}}
-                            <div>
-                                <h3 class="font-bold">Oops! Ada kesalahan input:</h3>
-                                <ul class="list-disc pl-5">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    @endif
-
-                     {{-- Tampilkan error exception custom di dalam modal --}}
-                    @if (session()->has('modal_error'))
-                        <div role="alert" class="alert alert-error shadow-lg mt-4">
-                             {{-- ... (Error SVG) ... --}}
-                            <span>{{ session('modal_error') }}</span>
-                        </div>
-                    @endif
-
-                    <form wire:submit="store" class="space-y-4 mt-4">
-                        {{-- Field Tipe Transaksi --}}
-                        <div class="form-control w-full">
-                            <label class="label"><span class="label-text">Tipe Transaksi</span></label>
-                            <select wire:model.live="type" class="select select-bordered w-full">
-                                <option value="debit">Pemasukan (Uang Masuk)</option>
-                                <option value="credit">Pengeluaran (Uang Keluar)</option>
-                            </select>
-                        </div>
-                        {{-- Field Jumlah --}}
-                        <div class="form-control w-full">
-                            <label class="label"><span class="label-text">Jumlah (Rp)</span></label>
-                            <input type="number" step="any" wire:model="amount" class="input input-bordered w-full" placeholder="Contoh: 50000">
-                        </div>
-                         {{-- Field Keterangan --}}
-                        <div class="form-control w-full">
-                            <label class="label"><span class="label-text">Keterangan</span></label>
-                            <input type="text" wire:model="description" class="input input-bordered w-full" placeholder="Contoh: Infaq Jumat 27 Okt 2025">
-                        </div>
-                         {{-- Field Akun/Kas --}}
-                        <div class="form-control w-full">
-                            <label class="label"><span class="label-text">Akun/Kas</span></label>
-                            <select wire:model="account_id" class="select select-bordered w-full">
-                                <option value="">-- Pilih Akun --</option>
-                                {{-- Akses properti publik via $this --}}
-                                @foreach($this->accounts as $account)
-                                    <option value="{{ $account->id }}" wire:key="modal-account-{{ $account->id }}">
-                                        {{ $account->name }} (Saldo: Rp {{ number_format($account->balance, 0, ',', '.') }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                         {{-- Field Kategori Transaksi --}}
-                        <div class="form-control w-full">
-                            <label class="label"><span class="label-text">Kategori Transaksi</span></label>
-                            {{-- Indikator loading saat kategori berubah --}}
-                            <div wire:loading wire:target="type, category_id" class="text-xs text-gray-500">Memuat kategori...</div>
-                            {{-- Nonaktifkan select saat loading --}}
-                            <select wire:model.live="category_id" class="select select-bordered w-full" wire:loading.attr="disabled" wire:target="type">
-                                <option value="">-- Pilih Kategori --</option>
-                                {{-- Akses properti publik via $this --}}
-                                @foreach($this->categories as $category)
-                                    <option value="{{ $category->id }}" wire:key="modal-category-{{ $category->id }}">
-                                        {{ $category->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                             @error('category_id') <label class="label"><span class="label-text-alt text-error">{{ $message }}</span></label> @enderror
-                        </div>
-
-                         {{-- Field Program/Kampanye (KONDISIONAL di Modal) --}}
-                         {{-- Gunakan $showCampaignDropdown (untuk modal) --}}
-                        @if ($showCampaignDropdown)
-                            <div class="form-control w-full bg-blue-50 dark:bg-gray-700 p-3 rounded-md border border-blue-200 dark:border-gray-600">
-                                <label class="label"><span class="label-text">Untuk Program/Kampanye</span></label>
-                                <select wire:model="campaign_id" class="select select-bordered w-full">
-                                    <option value="">-- Pilih Program --</option> {{-- Buat default wajib jika perlu --}}
-                                    {{-- Gunakan $this->availableCampaigns --}}
-                                    @foreach($this->availableCampaigns as $campaign)
-                                        <option value="{{ $campaign->id }}" wire:key="modal-campaign-{{ $campaign->id }}">
-                                            {{ $campaign->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                {{-- Tampilkan error validasi untuk campaign_id jika ada --}}
-                                @error('campaign_id') <label class="label"><span class="label-text-alt text-error">{{ $message }}</span></label> @enderror
-                            </div>
-                        @endif
-
-                        {{-- === INPUT NAMA DONATUR (KONDISIONAL) === --}}
-                        @if ($type == 'debit')
-                            <div class="form-control w-full">
-                                <label class="label"><span class="label-text">Nama Donatur (Opsional)</span></label>
-                                <input type="text" wire:model="donor_name" class="input input-bordered w-full" placeholder="Nama pemberi donasi">
-                                @error('donor_name') <label class="label"><span class="label-text-alt text-error">{{ $message }}</span></label> @enderror
-                            </div>
-                        @endif
-                        {{-- === AKHIR INPUT NAMA DONATUR === --}}
-
-                         {{-- Field Tanggal Transaksi --}}
-                        <div class="form-control w-full">
-                            <label class="label"><span class="label-text">Tanggal Transaksi</span></label>
-                            <input type="date" wire:model="transaction_date" class="input input-bordered w-full">
-                             @error('transaction_date') <label class="label"><span class="label-text-alt text-error">{{ $message }}</span></label> @enderror
-                        </div>
-
-                        {{-- Input File Attachment --}}
-                        <div class="form-control w-full">
-                            <label class="label"><span class="label-text">Bukti Transaksi (Opsional - PDF, JPG, PNG, WEBP Maks 2MB)</span></label>
-                            <input type="file" wire:model="attachmentFile" id="attachmentFile-{{ $this->getId() }}" class="file-input file-input-bordered file-input-sm w-full max-w-xs"> {{-- Batasi lebar --}}
-                            {{-- Loading Indicator --}}
-                            <div wire:loading wire:target="attachmentFile" class="text-xs text-info mt-1">Mengunggah...</div>
-                            {{-- Error File --}}
-                            @error('attachmentFile') <label class="label"><span class="label-text-alt text-error">{{ $message }}</span></label> @enderror
-
-                            {{-- Preview/Hapus File Lama (Saat Edit) --}}
-                            @if ($existingAttachment && !$attachmentFile) {{-- Hanya tampilkan jika tidak ada file baru dipilih --}}
-                                <div class="mt-2 text-sm">
-                                    Bukti saat ini:
-                                    <a href="{{ Storage::url($existingAttachment) }}" target="_blank" class="link link-primary ml-2 break-all">{{ basename($existingAttachment) }}</a>
-                                    {{-- Tombol Hapus Attachment Lama --}}
-                                    <button type="button" wire:click="removeAttachment" wire:loading.attr="disabled" class="btn btn-xs btn-ghost text-error ml-2" title="Hapus bukti saat ini">
-                                       ✕ Hapus
-                                    </button>
-                                </div>
-                            {{-- Preview File Baru (jika ada & valid) --}}
-                            @elseif ($attachmentFile && !$errors->has('attachmentFile'))
-                                <div class="mt-2 text-sm text-success">
-                                    File baru: {{ $attachmentFile->getClientOriginalName() }} ({{ round($attachmentFile->getSize() / 1024) }} KB)
-                                    {{-- Opsi Batal (Reset Input File) --}}
-                                     <button type="button" wire:click="$set('attachmentFile', null)" class="btn btn-xs btn-ghost text-warning ml-2" title="Batal pilih file">
-                                       ✕ Batal
-                                    </button>
-                                </div>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs" style="color:#98a2b3;">{{ optional($tx->donation)->donor_name ?? '-' }}</td>
+                                        <td class="px-4 py-3">
+                                            @if($tx->attachment)
+                                                <a href="{{ Storage::url($tx->attachment) }}" target="_blank" class="text-xs hover:underline" style="color:#111827;">Lihat</a>
+                                            @else
+                                                <span style="color:#98a2b3;">—</span>
+                                            @endif
+                                        </td>
+                                        @if($tx->type === 'debit')
+                                            <td class="px-4 py-3 text-right font-mono text-sm font-semibold" style="color:#12805c;">Rp {{ number_format($tx->amount, 0, ',', '.') }}</td>
+                                            <td class="px-4 py-3 text-right" style="color:#98a2b3;">—</td>
+                                        @else
+                                            <td class="px-4 py-3 text-right" style="color:#98a2b3;">—</td>
+                                            <td class="px-4 py-3 text-right font-mono text-sm font-semibold" style="color:#c0453b;">Rp {{ number_format($tx->amount, 0, ',', '.') }}</td>
+                                        @endif
+                                        <td class="px-4 py-3">
+                                            <div class="flex items-center justify-center gap-1.5">
+                                                <button wire:click="edit({{ $tx->id }})"
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors"
+                                                    style="background:rgba(16,24,40,0.1);color:#111827;border:1px solid rgba(16,24,40,0.2);"
+                                                    onmouseover="this.style.background='rgba(16,24,40,0.2)'" onmouseout="this.style.background='rgba(16,24,40,0.1)'">
+                                                    Edit
+                                                </button>
+                                                <button wire:click.prevent="confirmDelete({{ $tx->id }})"
+                                                    class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium transition-colors"
+                                                    style="background:rgba(192,69,59,0.1);color:#c0453b;border:1px solid rgba(192,69,59,0.2);"
+                                                    onmouseover="this.style.background='rgba(192,69,59,0.2)'" onmouseout="this.style.background='rgba(192,69,59,0.1)'">
+                                                    Hapus
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="10" class="px-4 py-12 text-center" style="color:#98a2b3;">
+                                            <svg class="w-10 h-10 mx-auto mb-2 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                            <p>Belum ada transaksi pada periode/filter ini.</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            @else
+                                <tr>
+                                    <td colspan="10" class="px-4 py-8 text-center" style="color:#c0453b;">Gagal memuat data transaksi.</td>
+                                </tr>
                             @endif
-                        </div>
-
-
-                        <div class="modal-action">
-                            <button type="button" wire:click="closeModal()" class="btn btn-ghost">Batal</button>
-                            <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
-                                <span wire:loading.remove>Simpan</span>
-                                <span wire:loading class="loading loading-spinner loading-sm"></span>
-                            </button>
-                        </div>
-                    </form>
+                        </tbody>
+                    </table>
                 </div>
-                 {{-- Klik backdrop untuk menutup modal --}}
-                <form wire:click="closeModal" class="modal-backdrop"><button type="button">close</button></form>
+
+                {{-- Mobile Card List --}}
+                <div class="md:hidden divide-y" style="border-color:#eef0f3;">
+                    @if($transactionPaginator)
+                        @forelse($transactionPaginator->items() as $tx)
+                            <div wire:key="tx-card-{{ $tx->id }}" class="px-4 py-3 space-y-2">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <p class="font-medium break-words" style="color:#1d2939;">{{ $tx->description }}</p>
+                                        <p class="text-xs mt-0.5" style="color:#98a2b3;">{{ optional($tx->transaction_date)->format('d/m/Y') }}</p>
+                                    </div>
+                                    @if($tx->type === 'debit')
+                                        <span class="font-mono font-semibold shrink-0" style="color:#12805c;">+Rp {{ number_format($tx->amount, 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="font-mono font-semibold shrink-0" style="color:#c0453b;">-Rp {{ number_format($tx->amount, 0, ',', '.') }}</span>
+                                    @endif
+                                </div>
+                                <div class="flex flex-wrap items-center gap-1.5">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs" style="background:#f5f6f8;color:#667085;">{{ optional($tx->category)->name ?? '-' }}</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs" style="background:#eef0f3;color:#667085;border:1px solid #e4e7ec;">{{ optional($tx->account)->name ?? '-' }}</span>
+                                    @if(optional($tx->campaign)->name)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs" style="background:rgba(16,24,40,0.1);color:#111827;border:1px solid rgba(16,24,40,0.2);">{{ $tx->campaign->name }}</span>
+                                    @endif
+                                    @if(optional($tx->donation)->donor_name)
+                                        <span class="text-xs" style="color:#98a2b3;">{{ $tx->donation->donor_name }}</span>
+                                    @endif
+                                    @if($tx->attachment)
+                                        <a href="{{ Storage::url($tx->attachment) }}" target="_blank" class="text-xs hover:underline" style="color:#111827;">Lihat</a>
+                                    @endif
+                                </div>
+                                <div class="flex items-center gap-1.5 pt-1">
+                                    <button wire:click="edit({{ $tx->id }})"
+                                        class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-medium transition-colors"
+                                        style="background:rgba(16,24,40,0.1);color:#111827;border:1px solid rgba(16,24,40,0.2);">
+                                        Edit
+                                    </button>
+                                    <button wire:click.prevent="confirmDelete({{ $tx->id }})"
+                                        class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-medium transition-colors"
+                                        style="background:rgba(192,69,59,0.1);color:#c0453b;border:1px solid rgba(192,69,59,0.2);">
+                                        Hapus
+                                    </button>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="px-4 py-12 text-center" style="color:#98a2b3;">
+                                <svg class="w-10 h-10 mx-auto mb-2 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                <p>Belum ada transaksi pada periode/filter ini.</p>
+                            </div>
+                        @endforelse
+                    @else
+                        <div class="px-4 py-8 text-center" style="color:#c0453b;">Gagal memuat data transaksi.</div>
+                    @endif
+                </div>
+
+                @if($transactionPaginator && $transactionPaginator->hasPages())
+                    <div class="px-4 py-3" style="border-top:1px solid #eef0f3;">{{ $transactionPaginator->links() }}</div>
+                @endif
             </div>
 
         </div>
     </div>
 
-    {{-- Script untuk SweetAlert --}}
+    {{-- Create/Edit Modal --}}
+    @if($isModalOpen)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" id="transaction-modal" style="background:rgba(0,0,0,0.1);" wire:click.self="closeModal()">
+        <div class="w-full max-w-lg rounded-2xl shadow-2xl flex flex-col" style="background:#ffffff;border:1px solid #e4e7ec;max-height:90vh;">
+
+            <div class="flex items-center justify-between px-6 py-4 shrink-0" style="border-bottom:1px solid #eef0f3;">
+                <h3 class="text-base font-semibold" style="color:#111827;">
+                    {{ $selected_id ? 'Edit Transaksi DKM' : 'Tambah Transaksi DKM' }}
+                </h3>
+                <button wire:click="closeModal()" class="p-1.5 rounded-lg transition-colors" style="color:#7c8698;"
+                    onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#7c8698'">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto flex-1">
+            <form wire:submit="store" class="px-6 py-5 space-y-4">
+
+                @if(session('modal_error'))
+                <div class="rounded-lg px-3 py-2 text-xs" style="background:rgba(192,69,59,0.1);border:1px solid rgba(192,69,59,0.3);color:#c0453b;">
+                    {{ session('modal_error') }}
+                </div>
+                @endif
+                @if($errors->any())
+                <div class="rounded-lg px-3 py-2 text-xs" style="background:rgba(199,125,26,0.08);border:1px solid rgba(199,125,26,0.3);color:#c77d1a;">
+                    <ul class="space-y-0.5 list-disc pl-3">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
+                </div>
+                @endif
+
+                {{-- Jenis Transaksi (toggle) --}}
+                <div>
+                    <label class="text-xs font-medium block mb-2" style="color:#475467;">Jenis Transaksi</label>
+                    <div class="flex rounded-xl overflow-hidden" style="border:1px solid #e4e7ec;">
+                        <button type="button" wire:click="$set('type','debit')"
+                            class="flex-1 py-2 text-sm font-medium transition-all"
+                            style="{{ $type === 'debit' ? 'background:rgba(74,222,128,0.15);color:#12805c;border-right:1px solid rgba(74,222,128,0.2);' : 'background:#ffffff;color:#7c8698;border-right:1px solid #e4e7ec;' }}">
+                            Pemasukan
+                        </button>
+                        <button type="button" wire:click="$set('type','credit')"
+                            class="flex-1 py-2 text-sm font-medium transition-all"
+                            style="{{ $type === 'credit' ? 'background:rgba(248,113,113,0.15);color:#c0453b;' : 'background:#ffffff;color:#7c8698;' }}">
+                            Pengeluaran
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Akun DKM --}}
+                <div>
+                    <label class="text-xs font-medium block mb-1.5" style="color:#475467;">Akun Kas DKM</label>
+                    <select wire:model.live="account_id" class="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);color:#344054;">
+                        <option value="">-- Pilih Akun --</option>
+                        @foreach($this->accounts->where('organization_type', 'dkm') as $account)
+                            <option value="{{ $account->id }}" wire:key="modal-account-{{ $account->id }}">{{ $account->name }}</option>
+                        @endforeach
+                    </select>
+                    @if($this->accounts->where('organization_type','dkm')->isEmpty())
+                        <p class="text-xs mt-1" style="color:#c77d1a;">Belum ada akun DKM. Tambah di menu Master → Akun.</p>
+                    @endif
+                    @error('account_id')<p class="text-xs mt-1" style="color:#c0453b;">{{ $message }}</p>@enderror
+                </div>
+
+                {{-- Kategori --}}
+                <div>
+                    <label class="text-xs font-medium block mb-1.5" style="color:#475467;">Kategori</label>
+                    <select wire:model.live="category_id" class="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);color:#344054;" wire:loading.attr="disabled" wire:target="type">
+                        <option value="">-- Pilih Kategori --</option>
+                        @foreach($this->categories as $category)
+                            <option value="{{ $category->id }}" wire:key="modal-category-{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('category_id')<p class="text-xs mt-1" style="color:#c0453b;">{{ $message }}</p>@enderror
+                </div>
+                @if($type === 'credit' && $modalOrg === 'dkm' && $category_id)
+                    @php
+                        $selectedCatForSyariat = collect($categories)->firstWhere('id', $category_id);
+                        $syariatFundType = $selectedCatForSyariat?->fund_type;
+                    @endphp
+                    @if($syariatFundType === 'zakat')
+                        <div class="rounded-xl px-4 py-3 flex gap-3" style="background:rgba(199,125,26,0.08);border:1px solid rgba(199,125,26,0.4);">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="#c77d1a"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+                            <div>
+                                <p class="text-xs font-semibold mb-0.5" style="color:#c77d1a;">Ketentuan Syariat — Dana Zakat</p>
+                                <p class="text-xs leading-relaxed" style="color:#c77d1a;">Dana Zakat <strong>hanya boleh</strong> didistribusikan kepada 8 Asnaf: <em>Fakir, Miskin, Amil Zakat, Muallaf, Riqab, Gharimin, Fi Sabilillah,</em> dan <em>Ibnu Sabil.</em></p>
+                                <p class="text-xs mt-1" style="color:#c77d1a;">Dalil: QS. At-Taubah: 60</p>
+                            </div>
+                        </div>
+                    @elseif($syariatFundType === 'wakaf')
+                        <div class="rounded-xl px-4 py-3 flex gap-3" style="background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.3);">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="#2563eb"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <div>
+                                <p class="text-xs font-semibold mb-0.5" style="color:#2563eb;">Ketentuan Syariat — Dana Wakaf</p>
+                                <p class="text-xs leading-relaxed" style="color:#2563eb;">Dana Wakaf bersifat <strong>permanen</strong>. Hanya boleh digunakan sesuai peruntukan asal yang telah ditetapkan. Aset wakaf tidak boleh dijual, dihibahkan, atau dipindahtangankan.</p>
+                            </div>
+                        </div>
+                    @elseif($syariatFundType === 'infaq')
+                        <div class="rounded-xl px-4 py-3 flex gap-3" style="background:rgba(18,128,92,0.06);border:1px solid rgba(18,128,92,0.25);">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="#12805c"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <div>
+                                <p class="text-xs font-semibold mb-0.5" style="color:#12805c;">Ketentuan Syariat — Dana Infaq</p>
+                                <p class="text-xs leading-relaxed" style="color:#0e6d4f;">Dana Infaq boleh digunakan untuk keperluan masjid, pendidikan, sosial, kegiatan keagamaan, dan kebutuhan umum umat.</p>
+                            </div>
+                        </div>
+                    @elseif($syariatFundType === 'sedekah')
+                        <div class="rounded-xl px-4 py-3 flex gap-3" style="background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.25);">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="#12805c"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <div>
+                                <p class="text-xs font-semibold mb-0.5" style="color:#12805c;">Ketentuan Syariat — Dana Sedekah</p>
+                                <p class="text-xs leading-relaxed" style="color:#0e6d4f;">Dana Sedekah bersifat fleksibel. Dapat digunakan untuk berbagai kebutuhan sosial, keagamaan, dan kemanusiaan sesuai kemaslahatan.</p>
+                            </div>
+                        </div>
+                    @endif
+                @endif
+                @if($showCampaignDropdown)
+                    <div class="rounded-xl p-3" style="background:rgba(16,24,40,0.06);border:1px solid rgba(16,24,40,0.15);">
+                        <label class="block text-sm font-medium mb-1" style="color:#475467;">Untuk Program/Kampanye</label>
+                        <select wire:model="campaign_id" class="w-full px-3 py-2 text-sm rounded-xl outline-none" style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;" onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                            <option value="">-- Pilih Program --</option>
+                            @foreach($this->availableCampaigns as $campaign)
+                                <option value="{{ $campaign->id }}" wire:key="modal-campaign-{{ $campaign->id }}">{{ $campaign->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('campaign_id')<p class="text-xs mt-1" style="color:#c0453b;">{{ $message }}</p>@enderror
+                    </div>
+                @endif
+                @if($type === 'debit')
+                    {{-- === SEKSI DONATUR (perumahan & masjid) === --}}
+                    <div class="rounded-xl p-4 space-y-3" style="background:rgba(16,24,40,0.04);border:1px solid rgba(16,24,40,0.2);">
+                        <p class="text-xs font-semibold uppercase tracking-wider" style="color:#111827;">Informasi Donatur{{ $modalOrg === 'dkm' ? ' & Dana' : '' }}</p>
+
+                        @if($modalOrg === 'dkm')
+                        {{-- Jenis Dana (khusus masjid/DKM) --}}
+                        <div>
+                            <label class="block text-xs font-medium mb-1.5" style="color:#475467;">Jenis Dana</label>
+                            <select wire:model="donationType" class="w-full px-3 py-2 text-sm rounded-xl outline-none" style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;" onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                                <option value="infaq">Infaq</option>
+                                <option value="sedekah">Sedekah</option>
+                                <option value="zakat">Zakat</option>
+                                <option value="wakaf">Wakaf</option>
+                                <option value="umum">Umum / Lain-lain</option>
+                            </select>
+                        </div>
+                        @endif
+
+                        {{-- Donatur Type Selector --}}
+                        <div>
+                            <label class="block text-xs font-medium mb-1.5" style="color:#475467;">Donatur</label>
+                            <div class="flex gap-1.5 mb-2.5 rounded-xl overflow-hidden" style="border:1px solid #e4e7ec;">
+                                <button type="button" wire:click="$set('donorType','hamba_allah')"
+                                    class="flex-1 py-2 text-xs font-medium transition-all"
+                                    style="{{ $donorType === 'hamba_allah' ? 'background:#111827;color:#ffffff;' : 'background:#ffffff;color:#7c8698;' }}">
+                                    Hamba Allah
+                                </button>
+                                <button type="button" wire:click="$set('donorType','penghuni')"
+                                    class="flex-1 py-2 text-xs font-medium transition-all"
+                                    style="{{ $donorType === 'penghuni' ? 'background:#111827;color:#ffffff;' : 'background:#ffffff;color:#7c8698;border-left:1px solid #e4e7ec;' }}">
+                                    Penghuni
+                                </button>
+                                <button type="button" wire:click="$set('donorType','luar')"
+                                    class="flex-1 py-2 text-xs font-medium transition-all"
+                                    style="{{ $donorType === 'luar' ? 'background:#111827;color:#ffffff;' : 'background:#ffffff;color:#7c8698;border-left:1px solid #e4e7ec;' }}">
+                                    Donatur Lain
+                                </button>
+                            </div>
+                            @if($donorType === 'penghuni')
+                                <select wire:model="donorResidentId" class="w-full px-3 py-2 text-sm rounded-xl outline-none" style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;" onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                                    <option value="">-- Pilih Penghuni --</option>
+                                    @foreach($residents as $r)
+                                        <option value="{{ $r->id }}" wire:key="res-{{ $r->id }}">{{ $r->name }}</option>
+                                    @endforeach
+                                </select>
+                            @elseif($donorType === 'luar')
+                                <input type="text" wire:model="donor_name" placeholder="Nama donatur..." class="w-full px-3 py-2 text-sm rounded-xl outline-none" style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;" onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                            @else
+                                <div class="px-3 py-2 rounded-xl text-xs" style="background:#ffffff;border:1px solid #eef0f3;color:#7c8698;">
+                                    Transaksi akan dicatat atas nama <strong style="color:#667085;">Hamba Allah</strong>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+                {{-- Jumlah + Tanggal --}}
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-medium block mb-1.5" style="color:#475467;">Jumlah (Rp)</label>
+                        <input type="number" wire:model="amount" placeholder="0" min="1"
+                            class="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+                            style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);color:#344054;">
+                        @error('amount')<p class="text-xs mt-1" style="color:#c0453b;">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium block mb-1.5" style="color:#475467;">Tanggal</label>
+                        <input type="date" wire:model="transaction_date"
+                            class="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+                            style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);color:#344054;">
+                        @error('transaction_date')<p class="text-xs mt-1" style="color:#c0453b;">{{ $message }}</p>@enderror
+                    </div>
+                </div>
+
+                {{-- Keterangan --}}
+                <div>
+                    <label class="text-xs font-medium block mb-1.5" style="color:#475467;">Keterangan</label>
+                    <textarea wire:model="description" rows="2" placeholder="Deskripsi transaksi..."
+                        class="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none resize-none"
+                        style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);color:#344054;"></textarea>
+                    @error('description')<p class="text-xs mt-1" style="color:#c0453b;">{{ $message }}</p>@enderror
+                </div>
+
+                {{-- Bukti --}}
+                <div>
+                    <label class="text-xs font-medium block mb-1.5" style="color:#475467;">Bukti Transaksi <span style="color:#98a2b3;">(PDF/JPG/PNG, maks 2MB)</span></label>
+                    <input type="file" wire:model="attachmentFile" class="block w-full text-sm" style="color:#667085;">
+                    <div wire:loading wire:target="attachmentFile" class="text-xs mt-1" style="color:#111827;">Mengunggah...</div>
+                    @error('attachmentFile')<p class="text-xs mt-1" style="color:#c0453b;">{{ $message }}</p>@enderror
+                    @if($existingAttachment && !$attachmentFile)
+                        <div class="mt-2 text-xs flex items-center gap-2" style="color:#667085;">
+                            <a href="{{ Storage::url($existingAttachment) }}" target="_blank" class="hover:underline" style="color:#111827;">{{ basename($existingAttachment) }}</a>
+                            <button type="button" wire:click="removeAttachment" class="hover:underline" style="color:#c0453b;">✕ Hapus</button>
+                        </div>
+                    @elseif($attachmentFile && !$errors->has('attachmentFile'))
+                        <div class="mt-2 text-xs" style="color:#12805c;">{{ $attachmentFile->getClientOriginalName() }}
+                            <button type="button" wire:click="$set('attachmentFile',null)" class="ml-2 hover:underline" style="color:#c77d1a;">✕ Batal</button>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Actions --}}
+                <div class="flex gap-3 pt-2">
+                    <button type="submit"
+                        class="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                        style="background:linear-gradient(135deg,#111827,#111827);color:#ffffff;"
+                        wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="store">{{ $selected_id ? 'Simpan Perubahan' : 'Tambah Transaksi' }}</span>
+                        <span wire:loading wire:target="store">Menyimpan...</span>
+                    </button>
+                    <button type="button" wire:click="closeModal()"
+                        class="px-4 py-2.5 rounded-xl text-sm transition-colors"
+                        style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);color:#667085;">Batal</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    @endif
+
     @push('scripts')
     <script>
-        // Tandai bahwa listener belum terpasang
         if (typeof window.sweetAlertListenersAttached === 'undefined') {
             window.sweetAlertListenersAttached = false;
         }
 
-        // Fungsi untuk memasang listener
         function initSweetAlertListeners() {
-            // Hanya pasang jika belum ada
             if (!window.sweetAlertListenersAttached) {
-                // Listener untuk menampilkan konfirmasi hapus
                 Livewire.on('show-delete-confirmation', (event) => {
-                    let componentId = event.id; // Ambil ID dari event Livewire 3
-                    if (componentId === undefined && event[0] && event[0].id) { // Fallback
-                         componentId = event[0].id;
-                    }
-
+                    let componentId = event.id ?? (event[0]?.id);
                     if (!window.Swal) { console.error('Swal is not defined!'); return; }
                     Swal.fire({
                         title: 'Anda Yakin?',
                         text: "Transaksi ini akan dihapus permanen! Saldo akun akan disesuaikan.",
-                        icon: 'warning', showCancelButton: true, confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33', confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal'
+                        icon: 'warning', showCancelButton: true,
+                        confirmButtonColor: '#111827', cancelButtonColor: '#d0d5dd',
+                        confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal',
+                        background: '#ffffff', color: '#1d2939',
                     }).then((result) => {
-                        if (result.isConfirmed) {
-                            if (componentId !== undefined) {
-                                @this.call('delete', componentId);
-                            } else {
-                                console.error('Event ID is undefined!', event);
-                                Swal.fire('Error', 'ID Transaksi tidak valid.', 'error');
-                            }
+                        if (result.isConfirmed && componentId !== undefined) {
+                            @this.call('delete', componentId);
                         }
                     });
                 });
 
-                // Listener untuk notifikasi sukses hapus
-                Livewire.on('transactionDeleted', (event) => {
-                     Swal.fire({
-                        title: 'Berhasil!', text: 'Transaksi berhasil dihapus.', icon: 'success',
-                        timer: 2000, showConfirmButton: false
-                     });
+                Livewire.on('transactionDeleted', () => {
+                    Swal.fire({ title: 'Berhasil!', text: 'Transaksi berhasil dihapus.', icon: 'success', timer: 2000, showConfirmButton: false, background: '#ffffff', color: '#1d2939' });
                 });
 
-                // Listener untuk notifikasi gagal hapus
-                 Livewire.on('deleteFailed', (event) => {
-                     let message = 'Gagal menghapus transaksi.'; // Default
-                      // Cek format event Livewire 3
-                     if (event.message) { message = event.message;}
-                      // Fallback jika message ada di dalam array
-                     else if (event[0] && event[0].message) { message = event[0].message; }
-                     Swal.fire('Gagal!', message, 'error');
+                Livewire.on('deleteFailed', (event) => {
+                    let message = event.message ?? (event[0]?.message ?? 'Gagal menghapus transaksi.');
+                    Swal.fire('Gagal!', message, 'error', { background: '#ffffff', color: '#1d2939' });
                 });
 
-                 window.sweetAlertListenersAttached = true; // Tandai
+                window.sweetAlertListenersAttached = true;
             }
         }
 
-        // Pasang listener saat Livewire siap dan setelah navigasi
         document.addEventListener('livewire:navigated', () => {
-            window.sweetAlertListenersAttached = false; // Reset flag
+            window.sweetAlertListenersAttached = false;
             initSweetAlertListeners();
         });
-        document.addEventListener('livewire:initialized', () => {
-             initSweetAlertListeners();
-        });
-
+        document.addEventListener('livewire:initialized', initSweetAlertListeners);
     </script>
     @endpush
-
-</div> {{-- Tutup div utama komponen --}}
+</div>

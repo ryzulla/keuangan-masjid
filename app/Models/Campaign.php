@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use App\Models\ResidentPaymentRequest;
 
 class Campaign extends Model
 {
@@ -13,13 +14,14 @@ class Campaign extends Model
 
     protected $fillable = [
         'name', 'organization_type', 'source_account_id',
-        'description', 'target_amount', 'start_date', 'end_date', 'status', 'image',
+        'description', 'content', 'location', 'video_url',
+        'target_amount', 'start_date', 'end_date', 'status', 'image',
     ];
 
     protected $casts = [
         'target_amount' => 'decimal:2',
-        'start_date' => 'date',
-        'end_date' => 'date',
+        'start_date'    => 'date',
+        'end_date'      => 'date',
     ];
 
     public function sourceAccount(): BelongsTo
@@ -30,6 +32,16 @@ class Campaign extends Model
     public function donations(): HasMany
     {
         return $this->hasMany(Donation::class);
+    }
+
+    public function photos(): HasMany
+    {
+        return $this->hasMany(CampaignPhoto::class)->orderBy('sort_order');
+    }
+
+    public function residentPaymentRequests(): HasMany
+    {
+        return $this->hasMany(ResidentPaymentRequest::class);
     }
 
     public function transactions(): HasManyThrough

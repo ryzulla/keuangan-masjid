@@ -23,11 +23,10 @@ class ManageUsers extends Component
     protected function rules()
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($this->selected_id)],
-            'role' => ['required', Rule::in(['admin', 'bendahara', 'ketua_dkm'])],
-            // Password hanya wajib saat membuat user baru
-            'password' => [$this->selected_id ? 'nullable' : 'required', 'string', 'min:8'],
+            'name'     => 'required|string|max:255',
+            'email'    => ['required', 'email', 'max:255', Rule::unique('users')->ignore($this->selected_id)],
+            'role'     => ['required', Rule::in(['super_admin', 'admin', 'bendahara', 'ketua_dkm', 'dkm', 'perumahan', 'pengurus_rt'])],
+            'password' => [$this->selected_id ? 'nullable' : 'required', 'string', 'min:6'],
         ];
     }
 

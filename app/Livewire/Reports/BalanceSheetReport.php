@@ -3,25 +3,22 @@ namespace App\Livewire\Reports;
 
 use Livewire\Component;
 use App\Models\Account;
-use Livewire\Attributes\Layout; // <-- Penting untuk layout
+use Livewire\Attributes\Layout;
 
-#[Layout('layouts.app')] // <-- Menentukan layout utama
+#[Layout('layouts.app')]
 class BalanceSheetReport extends Component
 {
-    public $asetLancar;
-    public $totalAset;
-    public $totalLiabilitas = 0; // Diasumsikan 0 untuk masjid
-    public $totalEkuitas;
-
-    public function mount()
-    {
-        $this->asetLancar = Account::orderBy('name')->get();
-        $this->totalAset = $this->asetLancar->sum('balance');
-        $this->totalEkuitas = $this->totalAset - $this->totalLiabilitas;
-    }
+    public string $activeOrg = 'perumahan';
+    public float $totalLiabilitas = 0;
 
     public function render()
     {
-        return view('livewire.reports.balance-sheet-report');
+        $asetLancar = Account::orderBy('name')
+            ->when($this->activeOrg !== 'semua', fn($q) => $q->where('organization_type', $this->activeOrg))
+            ->get();
+        $totalAset = $asetLancar->sum('balance');
+        $totalEkuitas = $totalAset - $this->totalLiabilitas;
+
+        return view('livewire.reports.balance-sheet-report', compact('asetLancar', 'totalAset', 'totalEkuitas'));
     }
 }

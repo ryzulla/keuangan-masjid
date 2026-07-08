@@ -11,7 +11,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'resident.auth' => \App\Http\Middleware\ResidentAuthenticated::class,
+        ]);
+
+        $middleware->redirectUsersTo(function ($request) {
+            if (auth('resident')->check()) {
+                return route('penghuni.dashboard');
+            }
+            return route('dashboard');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

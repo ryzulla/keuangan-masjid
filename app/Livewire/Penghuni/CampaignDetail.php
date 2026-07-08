@@ -1,0 +1,224 @@
+<?php
+namespace App\Livewire\Penghuni;
+
+use Livewire\Component;
+use Livewire\Attributes\Layout;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Campaign;
+use App\Models\ResidentPaymentRequest;
+use App\Models\User;
+use App\Notifications\ResidentPaymentSubmitted;
+
+#[Layout('layouts.penghuni')]
+class CampaignDetail extends Component
+{
+    use WithFileUploads;
+
+    public Campaign $campaign;
+
+    // Filters for donor list
+    public string $filterDonationForm = '';
+    public string $filterDonorType    = '';
+
+    // Donation form
+    public bool   $isDonateModalOpen = false;
+    public string $donationForm      = 'uang';
+    public string $donorType         = 'penghuni';
+    public string $donationType      = 'infaq';
+    public string $donorName         = '';
+    public string $amount            = '';
+    public string $paymentMethod     = 'transfer';
+    public string $bankName          = '';
+    public string $referenceNum      = '';
+    public        $proofPhoto        = null;
+    public string $itemDescription   = '';
+    public string $itemQuantity      = '';
+    public        $itemPhoto         = null;
+    public string $notes             = '';
+
+    public function mount(Campaign $campaign): void
+    {
+        abort_if($campaign->status !== 'active', 404);
+
+        $this->campaign = $campaign->load([
+            'donations.transaction',
+            'residentPaymentRequests' => fn($q) => $q->where('status', 'confirmed')->orderByDesc('confirmed_at'),
+            'photos',
+        ]);
+    }
+
+    public function openDonate(): void
+    {
+        $resident                = Auth::guard('resident')->user();
+        $this->donationForm      = 'uang';
+        $this->donorType         = 'penghuni';
+        $this->donationType      = 'infaq';
+        $this->donorName         = $resident->name;
+        $this->amount            = '';
+        $this->paymentMethod     = 'transfer';
+        $this->bankName          = '';
+        $this->referenceNum      = '';
+        $this->proofPhoto        = null;
+        $this->itemDescription   = '';
+        $this->itemQuantity      = '';
+        $this->itemPhoto         = null;
+        $this->notes             = '';
+        $this->isDonateModalOpen = true;
+    }
+
+    public function updatedDonorType(string $value): void
+    {
+        $resident = Auth::guard('resident')->user();
+        if ($value === 'penghuni') {
+            $this->donorName = $resident->name;
+        } elseif ($value === 'hamba_allah') {
+            $this->donorName = 'Hamba Allah';
+        } else {
+            $this->donorName = '';
+        }
+    }
+
+    public function submitDonation(): void
+    {
+        $rules = [
+            'donationForm' => 'required|in:uang,barang',
+            'donorType'    => 'required|in:penghuni,hamba_allah,luar',
+            'notes'        => 'nullable|string|max:500',
+        ];
+
+        if ($this->donorType === 'luar') {
+            $rules['donorName'] = 'required|string|max:255';
+        }
+
+        if ($this->donationForm === 'uang') {
+            $rules['amount']        = 'required|numeric|min:1000';
+            $rules['donationType']  = 'required|string|max:50';
+            $rules['paymentMethod'] = 'required|in:cash,transfer,other';
+            $rules['bankName']      = 'nullable|string|max:100';
+            $rules['referenceNum']  = 'nullable|string|max:100';
+            $rules['proofPhoto']    = 'nullable|image|max:3072';
+        } else {
+            $rules['itemDescription'] = 'required|string|max:255';
+            $rules['itemQuantity']    = 'required|string|max:100';
+            $rules['itemPhoto']       = 'nullable|image|max:3072';
+        }
+
+        $this->validate($rules);
+
+        $photoPath = null;
+        if ($this->proofPhoto) {
+            $photoPath = $this->proofPhoto->store('payment-proofs', 'public');
+        }
+        if ($this->itemPhoto) {
+            $path  = 'donation_items/' . date('Y/m');
+            $safe  = preg_replace('/[^A-Za-z0-9.\-_]/', '_', $this->itemPhoto->getClientOriginalName());
+            $photoPath = $this->itemPhoto->storeAs($path, uniqid() . '-' . $safe, 'public');
+        }
+
+        $resident = Auth::guard('resident')->user();
+        $block    = $resident->currentAssignments()->with('houseBlock')->first()?->houseBlock;
+
+        // Resolve donor type for DB
+        if ($this->donorType === 'penghuni') {
+            $finalDonorName = $this->donorName ?: $resident->name;
+            $dbDonorType    = 'warga';
+        } elseif ($this->donorType === 'hamba_allah') {
+            $finalDonorName = 'Hamba Allah';
+            $dbDonorType    = 'luaran';
+        } else {
+            $finalDonorName = $this->donorName;
+            $dbDonorType    = 'luaran';
+        }
+
+        $payload = [
+            'resident_id'      => $resident->id,
+            'type'             => 'donation',
+            'campaign_id'      => $this->campaign->id,
+            'donation_form'    => $this->donationForm,
+            'donation_type'    => $this->donationType,
+            'donor_name'       => $finalDonorName,
+            'donor_type'       => $dbDonorType,
+            'amount'           => $this->donationForm === 'uang' ? (float) $this->amount : 0,
+            'payment_method'   => $this->donationForm === 'uang' ? $this->paymentMethod : null,
+            'bank_name'        => $this->donationForm === 'uang' ? ($this->bankName ?: null) : null,
+            'reference_number' => $this->donationForm === 'uang' ? ($this->referenceNum ?: null) : null,
+            'proof_photo'      => $this->donationForm === 'uang' ? $photoPath : null,
+            'notes'            => $this->notes ?: null,
+            'status'           => 'pending',
+        ];
+
+        if ($this->donationForm === 'barang') {
+            $payload['notes'] = trim(
+                ($this->notes ?: '')
+                . "\n\n— Barang: " . $this->itemDescription
+                . "\n— Jumlah: " . $this->itemQuantity
+                . ($photoPath ? "\n— Foto: tersedia" : '')
+            );
+        }
+
+        ResidentPaymentRequest::create($payload);
+
+        try {
+            $admins = User::whereIn('role', ['super_admin', 'admin', 'perumahan', 'ketua_dkm'])->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new ResidentPaymentSubmitted(
+                    $resident->name, 'donation',
+                    $this->donationForm === 'uang' ? (float) $this->amount : 0,
+                    $block?->block_code,
+                ));
+            }
+        } catch (\Exception) {}
+
+        $this->isDonateModalOpen = false;
+        session()->flash('success', 'Donasi berhasil dikirim! Tim kami akan memproses dan mengkonfirmasi.');
+    }
+
+    public function render()
+    {
+        // Build full donor list for stats (unfiltered)
+        $allRaw = collect();
+        foreach ($this->campaign->donations as $don) {
+            if ($don->transaction) {
+                $allRaw->push([
+                    'name'   => $don->donor_name ?? 'Donatur',
+                    'form'   => $don->donation_form ?? 'uang',
+                    'type'   => $don->donor_type ?? 'luaran',
+                    'amount' => $don->transaction->amount,
+                    'date'   => $don->transaction->transaction_date ?? $don->created_at,
+                    'source' => 'admin',
+                ]);
+            }
+        }
+        foreach ($this->campaign->residentPaymentRequests as $rpr) {
+            $allRaw->push([
+                'name'   => $rpr->donor_name ?? 'Penghuni',
+                'form'   => $rpr->donation_form ?? 'uang',
+                'type'   => $rpr->donor_type ?? 'warga',
+                'amount' => $rpr->amount,
+                'date'   => $rpr->confirmed_at ?? $rpr->created_at,
+                'source' => 'resident',
+            ]);
+        }
+
+        // Stats (unfiltered)
+        $stats = [
+            'count_uang'   => $allRaw->where('form', 'uang')->count(),
+            'count_barang' => $allRaw->where('form', 'barang')->count(),
+            'count_warga'  => $allRaw->where('type', 'warga')->count(),
+            'count_luaran' => $allRaw->where('type', 'luaran')->count(),
+        ];
+
+        // Apply filters
+        $donors = $allRaw;
+        if ($this->filterDonationForm !== '') {
+            $donors = $donors->where('form', $this->filterDonationForm);
+        }
+        if ($this->filterDonorType !== '') {
+            $donors = $donors->where('type', $this->filterDonorType);
+        }
+        $donors = $donors->sortByDesc('date')->values();
+
+        return view('livewire.penghuni.campaign-detail', compact('donors', 'stats'));
+    }
+}

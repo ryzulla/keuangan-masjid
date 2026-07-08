@@ -1,44 +1,52 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="light"> {{-- Anda bisa ganti data-theme --}}
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Keuangan Masjid') }} - Selamat Datang</title>
+        <title>{{ config('app.name', 'Sistem Perumahan') }} - Portal Informasi</title>
 
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         @livewireStyles
     </head>
-    <body class="font-sans antialiased">
-        {{-- Latar belakang utama halaman --}}
-        <div class="min-h-screen bg-gradient-to-br from-green-100 via-blue-50 to-green-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
+    <body class="font-sans antialiased" style="background-color:#f5f6f8;color:#1d2939;">
+        <div class="min-h-screen" style="background-color:#f5f6f8;">
 
-            {{-- Navbar Publik Sederhana --}}
-            <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 shadow-sm sticky top-0 z-50">
+            {{-- Public Navbar --}}
+            <nav class="sticky top-0 z-50" style="background-color:#f5f6f8;border-bottom:1px solid rgba(16,24,40,0.2);">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        {{-- Logo dan Nama Aplikasi --}}
-                        <div class="flex items-center">
-                            <a href="{{ route('welcome') }}">
-                                <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
-                            </a>
-                            <span class="ml-3 font-semibold text-xl text-gray-800 dark:text-gray-200 hidden sm:block">Keuangan Masjid</span>
-                        </div>
-                        {{-- Tombol Login --}}
-                        <div class="flex items-center">
+                    <div class="flex justify-between h-16 items-center">
+                        <a href="{{ route('welcome') }}" class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center"
+                                style="background:rgba(16,24,40,0.15);border:1px solid rgba(16,24,40,0.3);">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#111827" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                            </div>
+                            <span class="font-bold text-lg hidden sm:block" style="color:#111827;font-family:'IBM Plex Sans',serif;">{{ config('app.name', 'Sistem Perumahan') }}</span>
+                        </a>
+                        <div class="flex items-center gap-2">
                             @auth
-                                {{-- (Dashboard button styling) --}}
-                                <a href="{{ url('/dashboard') }}" class="btn btn-sm btn-ghost text-primary hover:bg-primary hover:text-primary-content">... Dashboard</a>
+                                <a href="{{ url('/dashboard') }}"
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
+                                    style="background:#111827;color:#ffffff;"
+                                    onmouseover="this.style.background='#1f2a37'" onmouseout="this.style.background='#1f2a37'">
+                                    Dashboard
+                                </a>
                             @else
-                                {{-- Tombol Login Outline --}}
-                                <a href="{{ route('login') }}" class="btn btn-sm btn-outline btn-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
-                                    Login Pengurus
+                                <a href="{{ route('penghuni.login') }}"
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                                    style="color:#667085;border:1px solid #e4e7ec;"
+                                    onmouseover="this.style.color='#111827';this.style.borderColor='rgba(16,24,40,0.4)'" onmouseout="this.style.color='#667085';this.style.borderColor='#e4e7ec'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                    </svg>
+                                    Masuk
                                 </a>
                             @endauth
                         </div>
@@ -46,17 +54,15 @@
                 </div>
             </nav>
 
-            {{-- Konten Utama (Slot) --}}
-            <main class="pt-8 pb-16">
+            <main>
                 {{ $slot }}
             </main>
 
-             {{-- Footer Sederhana (Opsional) --}}
-             <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                © {{ date('Y') }} {{ config('app.name', 'Keuangan Masjid') }}. All rights reserved.
-             </footer>
+            <footer class="py-5 text-center text-sm" style="border-top:1px solid #eef0f3;color:#98a2b3;">
+                &copy; {{ date('Y') }} {{ config('app.name', 'Sistem Perumahan') }}. Semua hak dilindungi.
+            </footer>
 
-        </div> {{-- Akhir min-h-screen --}}
+        </div>
 
         @livewireScripts
         @stack('scripts')

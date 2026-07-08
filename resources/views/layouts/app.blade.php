@@ -5,34 +5,43 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'KeuMasjid') }}</title>
+        <title>{{ config('app.name', 'Sistem Perumahan') }}</title>
 
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-        @vite(['resources/css/app.css', 'resources/js/app.js']) {{-- <-- Pastikan ini memuat app.js --}}
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        @livewireStyles {{-- <<-- WAJIB DI HEAD --}}
+        @livewireStyles
+        <style>
+            body { background-color:#f5f6f8; }
+            [x-cloak] { display: none !important; }
+        </style>
+        @stack('styles')
+        {{-- CKEditor loaded in head so wire:navigate won't re-execute it on each navigation --}}
+        <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js" data-navigate-once></script>
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-             <livewire:layout.navigation />
+    <body class="font-sans antialiased" style="background-color:#f5f6f8; color:#1d2939;">
+        <div class="min-h-screen" style="background-color:#f5f6f8;">
+            <livewire:layout.navigation />
 
             @if (isset($header))
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <header style="background-color:#f5f6f8; border-bottom:1px solid #e4e7ec;">
+                    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
             @endif
 
-            <main>
+            <main class="pb-20 sm:pb-0">
                 {{ $slot }}
             </main>
         </div>
 
-        @livewireScripts {{-- <<-- WAJIB SEBELUM /BODY --}}
+        @livewireScripts
 
-        @stack('scripts') {{-- <<-- WAJIB SETELAH LivewireScripts --}}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" data-navigate-once></script>
+
+        @stack('scripts')
     </body>
 </html>

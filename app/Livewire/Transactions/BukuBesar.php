@@ -29,6 +29,7 @@ class BukuBesar extends Component
     public $selectedCategoryId = '';
     public $selectedCampaignId = '';
     public bool $showCampaignFilter = false;
+    public string $activeOrg = 'dkm';
 
     // --- Modal Form Properties ---
     public $type = 'debit';
@@ -37,8 +38,11 @@ class BukuBesar extends Component
     public $account_id;
     public $category_id;
     public $transaction_date;
-    public $campaign_id = null; // ID Campaign yang dipilih di modal
-    public $donor_name = null; // <-- Properti Baru: Nama Donatur
+    public $campaign_id = null;
+    public $donor_name = null;
+    public string $donorType = 'penghuni';       // penghuni | hamba_allah | luar (default: penghuni)
+    public string $donationType = 'infaq';       // zakat | infaq | sedekah | wakaf | umum
+    public string $donorResidentId = '';
     public $attachmentFile = null;
     public $existingAttachment = null;
     public bool $showCampaignDropdown = false; // Visibility dropdown campaign di modal
@@ -52,10 +56,13 @@ class BukuBesar extends Component
     public $categories = [];
     public $availableCampaigns = [];
     public $filterCategories = [];
+    public $residents = [];
 
-    // --- Program Category Names ---
-    const PROGRAM_INCOME_CATEGORY_NAMES = ['Donasi Program'];
-    const PROGRAM_EXPENSE_CATEGORY_NAMES = ['Pengeluaran Program'];
+    public string $modalOrg = 'dkm';
+
+    // --- Program Category Names (both orgs) ---
+    const PROGRAM_INCOME_CATEGORY_NAMES  = ['Donasi Program', 'Donasi Perumahan'];
+    const PROGRAM_EXPENSE_CATEGORY_NAMES = ['Pengeluaran Program', 'Pengeluaran Program Perumahan'];
 
     /**
      * Aturan validasi untuk form modal.
@@ -100,14 +107,33 @@ class BukuBesar extends Component
     public function mount()
     {
         $this->startDate = now()->subDays(30)->format('Y-m-d');
-        $this->endDate = now()->format('Y-m-d');
-        $this->accounts = Account::orderBy('name')->get();
-        $this->availableCampaigns = Campaign::where('status', 'active')->orderBy('name')->get();
-        $this->filterCategories = Category::orderBy('name')->get();
+        $this->endDate   = now()->format('Y-m-d');
+        $this->accounts  = Account::orderBy('name')->get();
+        $this->residents = \App\Models\Resident::active()->orderBy('name')->get(['id', 'name']);
         $this->transaction_date = now()->format('Y-m-d');
+        $this->reloadFilterLists();
         $this->loadCategories();
         $this->checkCampaignFilterVisibility();
         $this->checkIfModalCampaignShouldBeVisible();
+    }
+
+    /** Reload filter-panel category + campaign lists based on $activeOrg. */
+    private function reloadFilterLists(): void
+    {
+        $org = $this->activeOrg !== 'semua' ? $this->activeOrg : null;
+        $this->filterCategories   = Category::when($org, fn($q) => $q->where('organization_type', $org))
+            ->orderBy('name')->get();
+        $this->availableCampaigns = Campaign::where('status', 'active')
+            ->when($org, fn($q) => $q->where('organization_type', $org))
+            ->orderBy('name')->get();
+    }
+
+    /** Reload modal campaigns to match current $modalOrg. */
+    private function reloadModalCampaigns(): void
+    {
+        $this->availableCampaigns = Campaign::where('status', 'active')
+            ->where('organization_type', $this->modalOrg)
+            ->orderBy('name')->get();
     }
 
     /**
@@ -140,24 +166,43 @@ class BukuBesar extends Component
         if (!$this->showCampaignFilter) { $this->selectedCampaignId = ''; }
     }
     public function updatedSelectedCampaignId() { $this->resetPage(); }
-
     // --- Logika Modal ---
 
     /**
      * Dipanggil saat tipe transaksi di form modal berubah (wire:model.live="type")
      */
- // --- Modal Hooks ---
-    public function updatedType() {
-        $this->category_id = null; $this->campaign_id = null; $this->donor_name = null; // Reset donor too
+    // --- Modal Hooks ---
+    public function updatedType(): void
+    {
+        $this->category_id = null; $this->campaign_id = null; $this->donor_name = null;
+        $this->donorType = 'penghuni';
+        $this->donorResidentId = '';
+        $this->donationType = 'infaq';
         $this->loadCategories();
         $this->checkIfModalCampaignShouldBeVisible();
         $this->resetErrorBag(['category_id', 'campaign_id', 'donor_name']);
-     }
+    }
 
-    public function updatedCategoryId($value) {
-         $this->checkIfModalCampaignShouldBeVisible();
-         if (!$this->showCampaignDropdown) { $this->campaign_id = null; }
-         $this->resetErrorBag('campaign_id');
+    public function updatedAccountId($value): void
+    {
+        if ($value) {
+            $account = $this->accounts->firstWhere('id', $value);
+            if ($account && $account->organization_type !== $this->modalOrg) {
+                $this->modalOrg    = $account->organization_type;
+                $this->category_id = null;
+                $this->campaign_id = null;
+                $this->loadCategories();
+                $this->reloadModalCampaigns();
+                $this->checkIfModalCampaignShouldBeVisible();
+            }
+        }
+    }
+
+    public function updatedCategoryId($value): void
+    {
+        $this->checkIfModalCampaignShouldBeVisible();
+        if (!$this->showCampaignDropdown) { $this->campaign_id = null; }
+        $this->resetErrorBag('campaign_id');
     }
 
      public function updatedAttachmentFile() {
@@ -201,19 +246,23 @@ class BukuBesar extends Component
     /**
      * Memuat kategori berdasarkan tipe transaksi saat ini
      */
-    public function loadCategories() {
-        $this->categories = collect(); // Reset dulu
-        $categoryType = ($this->type === 'debit' ? 'income' : 'expense');
-        // Muat kategori dan simpan ke properti
-        $this->categories = Category::where('type', $categoryType)->orderBy('name')->get();
+    public function loadCategories(): void
+    {
+        $categoryType     = $this->type === 'debit' ? 'income' : 'expense';
+        $this->categories = Category::where('type', $categoryType)
+            ->where('organization_type', $this->modalOrg)
+            ->orderBy('name')->get();
     }
 
     /**
      * Membuka modal untuk menambah transaksi baru
      */
-    public function create() {
+    public function create(): void
+    {
         $this->resetForm();
+        $this->modalOrg = 'dkm';
         $this->loadCategories();
+        $this->reloadModalCampaigns();
         $this->checkIfModalCampaignShouldBeVisible();
         $this->isModalOpen = true;
     }
@@ -221,12 +270,14 @@ class BukuBesar extends Component
     /**
      * Membuka modal untuk mengedit transaksi
      */
-    public function edit($id) {
+    public function edit($id): void
+    {
         try {
-            // Eager load donation (untuk donor_name)
-            $transaction = Transaction::with('donation')->findOrFail($id);
-            $this->type = $transaction->type;
-            $this->loadCategories(); // Muat kategori sesuai tipe
+            $transaction    = Transaction::with('donation', 'account')->findOrFail($id);
+            $this->type     = $transaction->type;
+            $this->modalOrg = $transaction->account?->organization_type ?? 'dkm';
+            $this->loadCategories();
+            $this->reloadModalCampaigns();
 
             $this->selected_id = $id;
             $this->amount = $transaction->amount;
@@ -236,8 +287,29 @@ class BukuBesar extends Component
             $this->transaction_date = $transaction->transaction_date->format('Y-m-d');
             // Ambil campaign_id LANGSUNG dari transaction
             $this->campaign_id = $transaction->campaign_id;
-            // Ambil donor_name dari donation
-            $this->donor_name = $transaction->donation?->donor_name;
+            // Load donation fields
+            $donation = $transaction->donation;
+            if ($donation) {
+                $this->donationType = $donation->type ?? 'infaq';
+                if ($donation->resident_id) {
+                    $this->donorType = 'penghuni';
+                    $this->donorResidentId = (string)$donation->resident_id;
+                    $this->donor_name = '';
+                } elseif ($donation->donor_name === 'Hamba Allah') {
+                    $this->donorType = 'hamba_allah';
+                    $this->donor_name = '';
+                    $this->donorResidentId = '';
+                } else {
+                    $this->donorType = 'luar';
+                    $this->donor_name = $donation->donor_name ?? '';
+                    $this->donorResidentId = '';
+                }
+            } else {
+                $this->donorType = 'penghuni';
+                $this->donorResidentId = '';
+                $this->donationType = 'infaq';
+                $this->donor_name = '';
+            }
             $this->existingAttachment = $transaction->attachment;
             $this->attachmentFile = null;
 
@@ -308,44 +380,44 @@ class BukuBesar extends Component
                   session()->flash('success', 'Transaksi berhasil ditambahkan.');
              }
 
-             // --- PERBAIKAN LOGIKA DONATION ---
-             // Cek apakah ini transaksi PEMASUKAN (Debit)
+             // --- DONATION LOGIC (asal donatur berlaku untuk perumahan & masjid) ---
              if ($transaction && $this->type == 'debit') {
-                 // Ambil nama donatur dari data validasi (jika ada)
-                 $donorName = $validatedData['donor_name'] ?? null;
+                 // Tentukan asal donatur: penghuni | hamba_allah | luar
+                 $residentId = null;
+                 $dbDonorType = 'luaran';
+                 $finalDonorName = null;
 
-                 // Kondisi untuk membuat/update record donasi:
-                 // - Jika nama donatur diisi ATAU
-                 // - Jika ini adalah kategori program income DAN campaign dipilih (untuk menyimpan campaign_id di donation jika perlu)
-                 //   (Meskipun campaign_id sudah di transaction, menyimpan di donation bisa berguna jika desain berubah)
+                 if ($this->donorType === 'penghuni') {
+                     $resident = $this->residents->firstWhere('id', (int)$this->donorResidentId);
+                     $finalDonorName = $resident ? $resident->name : 'Penghuni';
+                     $dbDonorType = 'warga';
+                     $residentId = $this->donorResidentId ?: null;
+                 } elseif ($this->donorType === 'hamba_allah') {
+                     $finalDonorName = 'Hamba Allah';
+                 } else {
+                     $finalDonorName = $this->donor_name ?: null;
+                 }
+
                  $isProgramIncome = $this->isProgramIncomeCategory($validatedData['category_id']);
                  $campaignSelected = $this->showCampaignDropdown && !empty($validatedData['campaign_id']);
 
-                 if (!empty($donorName) || ($isProgramIncome && $campaignSelected)) {
-                     // Data untuk tabel donations
-                     $donationData = [
-                        'donor_name' => $donorName,
-                        'campaign_id' => $campaignSelected ? $validatedData['campaign_id'] : null, // Simpan campaign jika relevan
-                        'type' => 'infaq', // Sesuaikan
-                     ];
+                 // Jenis Dana hanya relevan untuk masjid (DKM); perumahan dicatat "umum"
+                 $donationKind = $this->modalOrg === 'dkm' ? $this->donationType : 'umum';
 
-                     // Gunakan updateOrCreate untuk handle update/create
-                     // Parameter pertama: Kunci unik (transaction_id)
-                     // Parameter kedua: Data yang akan diisi/update
-                     $transaction->donation()->updateOrCreate(
-                         ['transaction_id' => $transaction->id], // Kunci pencarian
-                         $donationData // Data untuk diisi/update
-                     );
-                 } else {
-                     // Jika tidak ada nama donatur DAN bukan donasi program, hapus record donasi lama jika ada (saat update)
-                     optional($transaction->donation)->delete();
-                 }
-
-             } else { // Jika ini PENGELUARAN (Credit)
-                 // Pastikan tidak ada record donasi yang terkait (hapus jika ada saat update)
+                 $transaction->donation()->updateOrCreate(
+                     ['transaction_id' => $transaction->id],
+                     [
+                         'donor_name'  => $finalDonorName,
+                         'donor_type'  => $dbDonorType,
+                         'resident_id' => $residentId,
+                         'campaign_id' => ($isProgramIncome && $campaignSelected) ? ($validatedData['campaign_id'] ?? null) : null,
+                         'type'        => $donationKind,
+                     ]
+                 );
+             } else {
                  optional($transaction->donation)->delete();
              }
-             // --- AKHIR PERBAIKAN ---
+             // --- END DONATION LOGIC ---
 
              DB::commit();
              $this->closeModal();
@@ -422,9 +494,12 @@ class BukuBesar extends Component
     private function resetForm() {
         $this->reset([
             'selected_id', 'amount', 'description', 'account_id', 'category_id',
-            'campaign_id', 'attachmentFile', 'existingAttachment', 'donor_name' // <-- Tambah donor_name
+            'campaign_id', 'attachmentFile', 'existingAttachment', 'donor_name',
+            'donorResidentId',
         ]);
         $this->type = 'debit';
+        $this->donorType = 'penghuni';
+        $this->donationType = 'infaq';
         $this->transaction_date = now()->format('Y-m-d');
         $this->showCampaignDropdown = false;
         $this->loadCategories();
@@ -452,6 +527,12 @@ class BukuBesar extends Component
         if ($this->showCampaignFilter && !empty($this->selectedCampaignId)) {
             $query->where('campaign_id', $this->selectedCampaignId);
         }
+
+        if ($this->activeOrg !== 'semua') {
+            $orgAccountIds = Account::where('organization_type', $this->activeOrg)->pluck('id');
+            $query->whereIn('account_id', $orgAccountIds);
+        }
+
         return $query->latest('transaction_date')->latest('id');
     }
 

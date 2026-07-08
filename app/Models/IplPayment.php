@@ -10,14 +10,17 @@ class IplPayment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ipl_billing_id', 'payment_date', 'amount_security', 'amount_garbage',
+        'ipl_billing_id', 'payment_date', 'amount_security', 'amount_garbage', 'amount_kas_rt',
         'payment_method', 'account_id', 'reference_number', 'received_by', 'notes', 'user_id',
+        'extra_charges_paid',
     ];
 
     protected $casts = [
-        'payment_date' => 'date',
-        'amount_security' => 'decimal:2',
-        'amount_garbage' => 'decimal:2',
+        'payment_date'       => 'date',
+        'amount_security'    => 'decimal:2',
+        'amount_garbage'     => 'decimal:2',
+        'amount_kas_rt'      => 'decimal:2',
+        'extra_charges_paid' => 'array',
     ];
 
     protected static function booted(): void

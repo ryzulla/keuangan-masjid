@@ -15,6 +15,7 @@ class CashFlowReport extends Component
     public $month;
     public $year;
     public $availableYears = [];
+    public string $activeOrg = 'perumahan';
 
     public function mount()
     {
@@ -27,30 +28,38 @@ class CashFlowReport extends Component
     public function reportData()
     {
         try {
-            // Pastikan format bulan benar (tambahkan 0 jika perlu)
             $monthPadded = str_pad($this->month, 2, '0', STR_PAD_LEFT);
             $startDate = "{$this->year}-{$monthPadded}-01";
             $endDate = date('Y-m-t', strtotime($startDate));
 
+            $orgAccountIds = $this->activeOrg !== 'semua'
+                ? Account::where('organization_type', $this->activeOrg)->pluck('id')
+                : null;
+
             // 1. Saldo Awal
-            // Query ini tidak join, jadi 'type' tidak ambigu
             $totalDebitBefore = Transaction::where('transaction_date', '<', $startDate)
-                                ->where('type', 'debit')->sum('amount');
+                ->where('type', 'debit')
+                ->when($orgAccountIds, fn($q) => $q->whereIn('account_id', $orgAccountIds))
+                ->sum('amount');
             $totalCreditBefore = Transaction::where('transaction_date', '<', $startDate)
-                                 ->where('type', 'credit')->sum('amount');
+                ->where('type', 'credit')
+                ->when($orgAccountIds, fn($q) => $q->whereIn('account_id', $orgAccountIds))
+                ->sum('amount');
             $startingBalance = (float)($totalDebitBefore ?? 0) - (float)($totalCreditBefore ?? 0);
 
-            // 2. Pemasukan - PERBAIKAN DI SINI
-            $incomeSummary = Transaction::where('transactions.type', 'debit') // <-- Gunakan transactions.type
+            // 2. Pemasukan
+            $incomeSummary = Transaction::where('transactions.type', 'debit')
                 ->whereBetween('transaction_date', [$startDate, $endDate])
                 ->join('categories', 'transactions.category_id', '=', 'categories.id')
+                ->when($orgAccountIds, fn($q) => $q->whereIn('transactions.account_id', $orgAccountIds))
                 ->select('categories.name', DB::raw('SUM(transactions.amount) as total'))
                 ->groupBy('categories.name')->orderBy('total', 'desc')->get();
 
-            // 3. Pengeluaran - PERBAIKAN DI SINI
-            $expenseSummary = Transaction::where('transactions.type', 'credit') // <-- Gunakan transactions.type
+            // 3. Pengeluaran
+            $expenseSummary = Transaction::where('transactions.type', 'credit')
                 ->whereBetween('transaction_date', [$startDate, $endDate])
                 ->join('categories', 'transactions.category_id', '=', 'categories.id')
+                ->when($orgAccountIds, fn($q) => $q->whereIn('transactions.account_id', $orgAccountIds))
                 ->select('categories.name', DB::raw('SUM(transactions.amount) as total'))
                 ->groupBy('categories.name')->orderBy('total', 'desc')->get();
 
@@ -59,23 +68,21 @@ class CashFlowReport extends Component
             $totalExpense = $expenseSummary->sum('total');
 
             // 5. Saldo Akhir
-            $endingBalance = $startingBalance + (float)($totalIncome ?? 0) - (float)($totalExpense ?? 0);
+            $endingBalance = $startingBalance + (float)$totalIncome - (float)$totalExpense;
 
-            // 6. Validasi
-            $actualBalance = Account::sum('balance');
+            // 6. Validasi vs saldo rekening riil
+            $actualBalance = Account::when($orgAccountIds, fn($q) => $q->whereIn('id', $orgAccountIds))->sum('balance');
             $discrepancy = $endingBalance - (float)($actualBalance ?? 0);
 
-            $data = compact('startingBalance', 'incomeSummary', 'expenseSummary', 'totalIncome', 'totalExpense', 'endingBalance', 'discrepancy', 'startDate', 'endDate');
-            return $data;
+            return compact('startingBalance', 'incomeSummary', 'expenseSummary', 'totalIncome', 'totalExpense', 'endingBalance', 'discrepancy', 'actualBalance', 'startDate', 'endDate');
 
         } catch (\Exception $e) {
             Log::error('Error calculating reportData in CashFlowReport: ' . $e->getMessage());
             session()->flash('report_error', 'Gagal menghitung data laporan: ' . $e->getMessage());
-            // Kembalikan array default jika terjadi error
-             return [
+            return [
                 'startingBalance' => 0, 'incomeSummary' => collect(), 'expenseSummary' => collect(),
-                'totalIncome' => 0, 'totalExpense' => 0, 'endingBalance' => 0, 'discrepancy' => 0,
-                'startDate' => now()->startOfMonth()->toDateString(), 'endDate' => now()->endOfMonth()->toDateString()
+                'totalIncome' => 0, 'totalExpense' => 0, 'endingBalance' => 0, 'discrepancy' => 0, 'actualBalance' => 0,
+                'startDate' => now()->startOfMonth()->toDateString(), 'endDate' => now()->endOfMonth()->toDateString(),
             ];
         }
     }

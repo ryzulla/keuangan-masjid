@@ -12,6 +12,12 @@ class DatabaseSeeder extends Seeder
             AccountSeeder::class,
             CategorySeeder::class,
             HouseBlockSeeder::class,
+            ResidentSeeder::class,
+            FamilyMemberSeeder::class,
+            IplPeriodSeeder::class,
+            IplTariffTypeSeeder::class,
+            TransactionSeeder::class,
+            CampaignSeeder::class,
         ]);
     }
 }

@@ -13,15 +13,18 @@ class ManageCategories extends Component
 
     // Properti Form
     public $name;
-    public $type = 'income'; // 'income' atau 'expense'
+    public $type = 'income';
+    public $organization_type = 'perumahan';
 
-    // Properti State
+    public string $fund_type = '';
     public $selected_id;
     public $isModalOpen = false;
 
     protected $rules = [
         'name' => 'required|string|min:3|max:255',
         'type' => 'required|in:income,expense',
+        'organization_type' => 'required|in:perumahan,dkm,umum',
+        'fund_type' => 'nullable|in:zakat,infaq,sedekah,wakaf,umum',
     ];
 
     public function render()
@@ -43,6 +46,8 @@ class ManageCategories extends Component
         $this->selected_id = $id;
         $this->name = $category->name;
         $this->type = $category->type;
+        $this->organization_type = $category->organization_type ?? 'perumahan';
+        $this->fund_type = $category->fund_type ?? '';
         $this->isModalOpen = true;
     }
 
@@ -53,6 +58,8 @@ class ManageCategories extends Component
         Category::updateOrCreate(['id' => $this->selected_id], [
             'name' => $this->name,
             'type' => $this->type,
+            'organization_type' => $this->organization_type,
+            'fund_type' => $this->fund_type ?: null,
         ]);
 
         session()->flash('success',
@@ -83,7 +90,9 @@ class ManageCategories extends Component
 
     private function resetForm()
     {
-        $this->reset(['name', 'type', 'selected_id']);
+        $this->reset(['name', 'type', 'organization_type', 'fund_type', 'selected_id']);
         $this->type = 'income';
+        $this->organization_type = 'perumahan';
+        $this->fund_type = '';
     }
 }

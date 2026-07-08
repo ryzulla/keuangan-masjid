@@ -2,7 +2,9 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Models\RolePermission;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -11,10 +13,36 @@ class AuthServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Gate::define('manage-admin', fn(User $user) => $user->role === 'admin');
-        Gate::define('manage-transactions', fn(User $user) => in_array($user->role, ['admin', 'bendahara', 'pengurus_rt']));
-        Gate::define('view-reports', fn(User $user) => in_array($user->role, ['admin', 'bendahara', 'ketua_dkm', 'pengurus_rt']));
-        Gate::define('manage-residents', fn(User $user) => in_array($user->role, ['admin', 'pengurus_rt']));
-        Gate::define('manage-ipl', fn(User $user) => in_array($user->role, ['admin', 'bendahara', 'pengurus_rt']));
+        $gates = [
+            'manage-admin',
+            'manage-dkm',
+            'manage-perumahan',
+            'manage-programs',
+            'manage-transactions',
+            'view-reports',
+            'manage-residents',
+            'manage-ipl',
+        ];
+
+        foreach ($gates as $gate) {
+            Gate::define($gate, function (User $user) use ($gate) {
+                if ($user->role === 'super_admin') return true;
+
+                try {
+                    $allowed = Cache::remember("gate_roles_{$gate}", 3600, function () use ($gate) {
+                        return RolePermission::where('gate', $gate)->pluck('role')->toArray();
+                    });
+                    return in_array($user->role, $allowed);
+                } catch (\Exception) {
+                    // Fallback jika tabel belum ada (misal saat migrate pertama)
+                    return false;
+                }
+            });
+        }
+
+        // Akses konfirmasi pembayaran/donasi: pengurus Perumahan (IPL) maupun DKM.
+        Gate::define('approve-payments', function (User $user) {
+            return $user->can('manage-ipl') || $user->can('manage-dkm');
+        });
     }
 }

@@ -1,363 +1,284 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Data Penghuni Perumahan
-        </h2>
+        <h2 class="font-semibold text-base" style="color:#111827;">Data Penghuni Perumahan</h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            @if (session()->has('success') && !$isModalOpen)
-                <div role="alert" class="alert alert-success shadow-lg mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>{{ session('success') }}</span>
-                </div>
-            @endif
-            @if (session()->has('error'))
-                <div role="alert" class="alert alert-error shadow-lg mb-4">
-                    <span>{{ session('error') }}</span>
-                </div>
-            @endif
+        @if(session('success'))
+            <div class="mb-4 rounded-xl p-4 text-sm flex items-center gap-2" style="background:rgba(18,128,92,0.1);border:1px solid rgba(18,128,92,0.3);color:#12805c;">
+                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="mb-4 rounded-xl p-4 text-sm flex items-center gap-2" style="background:rgba(192,69,59,0.1);border:1px solid rgba(192,69,59,0.3);color:#c0453b;">
+                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                {{ session('error') }}
+            </div>
+        @endif
 
-            {{-- Filters & Search --}}
-            <div class="card bg-base-100 shadow mb-4">
-                <div class="card-body py-4">
-                    <div class="flex flex-wrap gap-3 items-end justify-between">
-                        <div class="flex flex-wrap gap-2 flex-1">
-                            <div class="form-control">
-                                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari nama penghuni..." class="input input-bordered input-sm w-56" />
-                            </div>
-                            <div class="form-control">
-                                <select wire:model.live="filterBlock" class="select select-bordered select-sm">
-                                    <option value="">Semua Blok</option>
-                                    @foreach($houseBlocks as $block)
-                                        <option value="{{ $block->id }}">{{ $block->block_code }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-control">
-                                <select wire:model.live="filterOwnership" class="select select-bordered select-sm">
-                                    <option value="">Semua Kepemilikan</option>
-                                    <option value="pemilik">Pemilik</option>
-                                    <option value="kontrak">Kontrak</option>
-                                    <option value="kos">Kos</option>
-                                </select>
-                            </div>
-                            <div class="form-control">
-                                <select wire:model.live="filterOccupancy" class="select select-bordered select-sm">
-                                    <option value="">Semua Status Hunian</option>
-                                    <option value="dihuni">Dihuni</option>
-                                    <option value="kosong">Kosong</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button wire:click="create()" class="btn btn-primary btn-sm">+ Tambah Penghuni</button>
-                    </div>
+        {{-- Header --}}
+        <div class="rounded-2xl p-6 mb-5" style="background:linear-gradient(135deg,#ffffff 0%,#ffffff 62%);border:1px solid rgba(16,24,40,0.35);">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                    <h3 class="font-bold text-lg" style="color:#111827;font-family:'IBM Plex Sans',serif;">Data Penghuni</h3>
+                    <p class="text-sm mt-1" style="color:#111827;">Kelola data penghuni dan kepemilikan rumah blok A-1 s/d P-9</p>
                 </div>
+                <a href="{{ route('residents.create') }}" wire:navigate
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors shrink-0"
+                    style="background:#111827;color:#ffffff;"
+                    onmouseover="this.style.background='#1f2a37'" onmouseout="this.style.background='#1f2a37'">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Tambah Penghuni
+                </a>
+            </div>
+        </div>
+
+        {{-- Filters --}}
+        <div class="rounded-2xl p-4 mb-5" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="relative">
+                    <svg class="absolute left-3 top-2.5 w-4 h-4" style="color:#98a2b3;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari nama penghuni..."
+                        style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;border-radius:0.75rem;padding:0.5rem 0.75rem 0.5rem 2.25rem;width:100%;font-size:0.875rem;outline:none;"
+                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                </div>
+                <select wire:model.live="filterBlock"
+                    style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;border-radius:0.75rem;padding:0.5rem 0.75rem;width:100%;font-size:0.875rem;outline:none;"
+                    onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                    <option value="">Semua Blok</option>
+                    @foreach($houseBlocks as $blk)
+                        <option value="{{ $blk->id }}">{{ $blk->block_code }}</option>
+                    @endforeach
+                </select>
+                <select wire:model.live="filterOwnership"
+                    style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;border-radius:0.75rem;padding:0.5rem 0.75rem;width:100%;font-size:0.875rem;outline:none;"
+                    onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                    <option value="">Semua Kepemilikan</option>
+                    <option value="pemilik">Pemilik</option>
+                    <option value="kontrak">Kontrak / Sewa</option>
+                    <option value="kos">Kos</option>
+                </select>
+            </div>
+        </div>
+
+        {{-- Table --}}
+        <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);">
+            <div class="overflow-x-auto hidden md:block">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr style="background:#ffffff;border-bottom:1px solid #f5f6f8;">
+                            <th class="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Nama Penghuni</th>
+                            <th class="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Blok & Status</th>
+                            <th class="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider hidden sm:table-cell" style="color:#98a2b3;">Kontak</th>
+                            <th class="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider hidden md:table-cell" style="color:#98a2b3;">Aktif</th>
+                            <th class="text-center px-5 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($residents as $resident)
+                        <tr style="border-bottom:1px solid #eef0f3;" onmouseover="this.style.backgroundColor='#f5f6f8'" onmouseout="this.style.backgroundColor=''">
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-2">
+                                    @if($resident->photo)
+                                        <img src="{{ Storage::disk('public')->url($resident->photo) }}"
+                                            alt="{{ $resident->name }}"
+                                            class="w-9 h-9 rounded-full object-cover shrink-0"
+                                            style="border:1px solid rgba(16,24,40,0.3);">
+                                    @else
+                                        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
+                                            style="background:#f2f4f7;color:#111827;">
+                                            {{ strtoupper(substr($resident->name, 0, 1)) }}
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <div class="font-semibold" style="color:#1d2939;">{{ $resident->name }}</div>
+                                        @if($resident->email)
+                                            <div class="text-xs" style="color:#98a2b3;">{{ $resident->email }}</div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-5 py-3">
+                                <div class="flex flex-wrap gap-1">
+                                    @forelse($resident->currentAssignments as $a)
+                                        @php
+                                            $ownerStyle = match($a->ownership_type) {
+                                                'pemilik' => 'background:rgba(16,24,40,0.1);color:#111827;border:1px solid rgba(16,24,40,0.2);',
+                                                'kontrak' => 'background:rgba(199,125,26,0.1);color:#c77d1a;border:1px solid rgba(199,125,26,0.2);',
+                                                default   => 'background:rgba(139,92,246,0.1);color:#7c3aed;border:1px solid rgba(139,92,246,0.2);',
+                                            };
+                                            $ownerLabel = match($a->ownership_type) {
+                                                'pemilik' => 'Pemilik',
+                                                'kontrak' => 'Kontrak',
+                                                default   => 'Kos',
+                                            };
+                                        @endphp
+                                        <div class="flex items-center gap-1">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium" style="{{ $ownerStyle }}">
+                                                {{ $a->houseBlock?->block_code ?? '?' }}
+                                            </span>
+                                            <span class="text-xs" style="color:#98a2b3;">{{ $ownerLabel }}</span>
+                                        </div>
+                                    @empty
+                                        <span class="text-xs italic" style="color:#98a2b3;">Belum ditetapkan</span>
+                                    @endforelse
+                                </div>
+                            </td>
+                            <td class="px-5 py-3 hidden sm:table-cell text-xs" style="color:#7c8698;">
+                                @if($resident->phone)
+                                    <div>📞 {{ $resident->phone }}</div>
+                                @endif
+                                @if($resident->whatsapp && $resident->whatsapp !== $resident->phone)
+                                    <div>💬 {{ $resident->whatsapp }}</div>
+                                @endif
+                                @if(!$resident->phone && !$resident->whatsapp)
+                                    —
+                                @endif
+                            </td>
+                            <td class="px-5 py-3 hidden md:table-cell">
+                                @if($resident->is_active)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" style="background:rgba(18,128,92,0.1);color:#12805c;border:1px solid rgba(18,128,92,0.2);">Aktif</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" style="background:#f5f6f8;color:#7c8698;border:1px solid #e4e7ec;">Nonaktif</span>
+                                @endif
+                            </td>
+                            <td class="px-5 py-3 text-center">
+                                <div class="flex items-center justify-center gap-1">
+                                    <a href="{{ route('residents.show', $resident) }}" wire:navigate title="Detail"
+                                        class="p-1.5 rounded-lg transition-colors inline-flex" style="color:#475467;"
+                                        onmouseover="this.style.color='#111827';this.style.background='rgba(16,24,40,0.1)'" onmouseout="this.style.color='#475467';this.style.background=''">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    </a>
+                                    <a href="{{ route('residents.edit', $resident) }}" wire:navigate title="Edit"
+                                        class="p-1.5 rounded-lg transition-colors inline-flex" style="color:#111827;"
+                                        onmouseover="this.style.background='rgba(16,24,40,0.1)'" onmouseout="this.style.background=''">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                    </a>
+                                    <button x-data x-on:click="if(confirm('Hapus penghuni {{ addslashes($resident->name) }}? Tindakan ini tidak dapat dibatalkan.')) $wire.delete({{ $resident->id }})"
+                                        title="Hapus" wire:loading.attr="disabled"
+                                        class="p-1.5 rounded-lg transition-colors" style="color:#c0453b;"
+                                        onmouseover="this.style.background='rgba(192,69,59,0.1)'" onmouseout="this.style.background=''">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="px-5 py-14 text-center">
+                                <svg class="w-12 h-12 mx-auto mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="#111827"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <p class="font-medium text-sm" style="color:#98a2b3;">Belum ada data penghuni</p>
+                                <a href="{{ route('residents.create') }}" wire:navigate class="mt-2 inline-block text-xs hover:underline" style="color:#111827;">Tambah penghuni pertama &rarr;</a>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
 
-            {{-- Table --}}
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <div class="overflow-x-auto">
-                        <table class="table table-sm table-zebra w-full">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Blok</th>
-                                    <th>Nama Penghuni</th>
-                                    <th>Telepon</th>
-                                    <th>WhatsApp</th>
-                                    <th>Kepemilikan</th>
-                                    <th>Status Hunian</th>
-                                    <th>Aktif</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($residents as $i => $resident)
-                                    <tr class="hover" wire:key="resident-{{ $resident->id }}">
-                                        <td>{{ $residents->firstItem() + $i }}</td>
-                                        <td>
-                                            @if($resident->houseBlock)
-                                                <span class="badge badge-outline badge-sm font-mono">{{ $resident->houseBlock->block_code }}</span>
-                                            @else
-                                                <span class="text-gray-400 text-xs">—</span>
-                                            @endif
-                                        </td>
-                                        <td class="font-medium">{{ $resident->name }}</td>
-                                        <td class="text-sm">{{ $resident->phone ?: '—' }}</td>
-                                        <td class="text-sm">{{ $resident->whatsapp ?: '—' }}</td>
-                                        <td>
-                                            <span @class([
-                                                'badge badge-sm',
-                                                'badge-success' => $resident->ownership_status === 'pemilik',
-                                                'badge-warning' => $resident->ownership_status === 'kontrak',
-                                                'badge-info' => $resident->ownership_status === 'kos',
-                                            ])>
-                                                {{ ucfirst($resident->ownership_status) }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span @class([
-                                                'badge badge-sm badge-outline',
-                                                'badge-success' => $resident->occupancy_status === 'dihuni',
-                                                'badge-ghost' => $resident->occupancy_status === 'kosong',
-                                            ])>
-                                                {{ $resident->occupancy_status === 'dihuni' ? 'Dihuni' : 'Kosong' }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            @if($resident->is_active)
-                                                <span class="badge badge-success badge-xs">Aktif</span>
-                                            @else
-                                                <span class="badge badge-ghost badge-xs">Nonaktif</span>
-                                            @endif
-                                        </td>
-                                        <td class="whitespace-nowrap space-x-1">
-                                            <button wire:click="showDetail({{ $resident->id }})" class="btn btn-info btn-xs">Detail</button>
-                                            <button wire:click="edit({{ $resident->id }})" class="btn btn-warning btn-xs">Edit</button>
-                                            <button wire:click="confirmDelete({{ $resident->id }})" class="btn btn-error btn-xs">Hapus</button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr><td colspan="9" class="text-center py-8 text-gray-400">Belum ada data penghuni.</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="mt-4">{{ $residents->links() }}</div>
-                </div>
-            </div>
-
-            {{-- Add/Edit Modal --}}
-            <div class="modal {{ $isModalOpen ? 'modal-open' : '' }}" x-data x-on:keydown.escape.window="$wire.closeModal()">
-                <div class="modal-box w-11/12 max-w-2xl" @click.stop>
-                    <h3 class="font-bold text-lg">{{ $selected_id ? 'Edit Data Penghuni' : 'Tambah Penghuni Baru' }}</h3>
-
-                    @if($errors->any() || session()->has('modal_error'))
-                        <div role="alert" class="alert alert-warning mt-3">
-                            @if(session()->has('modal_error'))
-                                <span>{{ session('modal_error') }}</span>
+            {{-- Mobile stacked cards --}}
+            <div class="md:hidden divide-y" style="border-color:#eef0f3;">
+                @forelse($residents as $resident)
+                <div wire:key="res-card-{{ $resident->id }}" class="p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
+                            @if($resident->photo)
+                                <img src="{{ Storage::disk('public')->url($resident->photo) }}"
+                                    alt="{{ $resident->name }}"
+                                    class="w-9 h-9 rounded-full object-cover shrink-0"
+                                    style="border:1px solid rgba(16,24,40,0.3);">
                             @else
-                                <ul class="list-disc pl-5 text-sm">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
+                                <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
+                                    style="background:#f2f4f7;color:#111827;">
+                                    {{ strtoupper(substr($resident->name, 0, 1)) }}
+                                </div>
+                            @endif
+                            <div class="min-w-0">
+                                <div class="font-semibold truncate" style="color:#1d2939;">{{ $resident->name }}</div>
+                                @if($resident->email)
+                                    <div class="text-xs truncate" style="color:#98a2b3;">{{ $resident->email }}</div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="shrink-0">
+                            @if($resident->is_active)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" style="background:rgba(18,128,92,0.1);color:#12805c;border:1px solid rgba(18,128,92,0.2);">Aktif</span>
+                            @else
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" style="background:#f5f6f8;color:#7c8698;border:1px solid #e4e7ec;">Nonaktif</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1">
+                        @forelse($resident->currentAssignments as $a)
+                            @php
+                                $ownerStyle = match($a->ownership_type) {
+                                    'pemilik' => 'background:rgba(16,24,40,0.1);color:#111827;border:1px solid rgba(16,24,40,0.2);',
+                                    'kontrak' => 'background:rgba(199,125,26,0.1);color:#c77d1a;border:1px solid rgba(199,125,26,0.2);',
+                                    default   => 'background:rgba(139,92,246,0.1);color:#7c3aed;border:1px solid rgba(139,92,246,0.2);',
+                                };
+                                $ownerLabel = match($a->ownership_type) {
+                                    'pemilik' => 'Pemilik',
+                                    'kontrak' => 'Kontrak',
+                                    default   => 'Kos',
+                                };
+                            @endphp
+                            <div class="flex items-center gap-1">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium" style="{{ $ownerStyle }}">
+                                    {{ $a->houseBlock?->block_code ?? '?' }}
+                                </span>
+                                <span class="text-xs" style="color:#98a2b3;">{{ $ownerLabel }}</span>
+                            </div>
+                        @empty
+                            <span class="text-xs italic" style="color:#98a2b3;">Belum ditetapkan</span>
+                        @endforelse
+                    </div>
+
+                    @if($resident->phone || $resident->whatsapp)
+                        <div class="text-xs space-y-0.5" style="color:#7c8698;">
+                            @if($resident->phone)
+                                <div>📞 {{ $resident->phone }}</div>
+                            @endif
+                            @if($resident->whatsapp && $resident->whatsapp !== $resident->phone)
+                                <div>💬 {{ $resident->whatsapp }}</div>
                             @endif
                         </div>
                     @endif
 
-                    <form wire:submit="store" class="space-y-4 mt-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="form-control md:col-span-2">
-                                <label class="label"><span class="label-text">Nama Penghuni <span class="text-error">*</span></span></label>
-                                <input type="text" wire:model="name" class="input input-bordered w-full" placeholder="Nama lengkap">
-                                @error('name')<span class="text-error text-xs">{{ $message }}</span>@enderror
-                            </div>
-
-                            <div class="form-control">
-                                <label class="label"><span class="label-text">Blok Rumah</span></label>
-                                <select wire:model="house_block_id" class="select select-bordered w-full">
-                                    <option value="">-- Pilih Blok --</option>
-                                    @foreach($houseBlocks as $block)
-                                        <option value="{{ $block->id }}">{{ $block->block_code }}</option>
-                                    @endforeach
-                                </select>
-                                @error('house_block_id')<span class="text-error text-xs">{{ $message }}</span>@enderror
-                            </div>
-
-                            @can('manage-admin')
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text">NIK <span class="badge badge-xs badge-warning">Rahasia</span></span>
-                                </label>
-                                <input type="text" wire:model="nik" class="input input-bordered w-full font-mono" placeholder="16 digit NIK" maxlength="16">
-                                @error('nik')<span class="text-error text-xs">{{ $message }}</span>@enderror
-                            </div>
-                            @endcan
-
-                            <div class="form-control">
-                                <label class="label"><span class="label-text">Telepon</span></label>
-                                <input type="text" wire:model="phone" class="input input-bordered w-full" placeholder="08xxxxxxxxxx">
-                                @error('phone')<span class="text-error text-xs">{{ $message }}</span>@enderror
-                            </div>
-
-                            <div class="form-control">
-                                <label class="label"><span class="label-text">WhatsApp</span></label>
-                                <input type="text" wire:model="whatsapp" class="input input-bordered w-full" placeholder="08xxxxxxxxxx">
-                                @error('whatsapp')<span class="text-error text-xs">{{ $message }}</span>@enderror
-                            </div>
-
-                            <div class="form-control md:col-span-2">
-                                <label class="label"><span class="label-text">Email</span></label>
-                                <input type="email" wire:model="email" class="input input-bordered w-full" placeholder="email@contoh.com">
-                                @error('email')<span class="text-error text-xs">{{ $message }}</span>@enderror
-                            </div>
-
-                            <div class="form-control">
-                                <label class="label"><span class="label-text">Status Kepemilikan <span class="text-error">*</span></span></label>
-                                <select wire:model="ownership_status" class="select select-bordered w-full">
-                                    <option value="pemilik">Pemilik</option>
-                                    <option value="kontrak">Kontrak</option>
-                                    <option value="kos">Kos</option>
-                                </select>
-                                @error('ownership_status')<span class="text-error text-xs">{{ $message }}</span>@enderror
-                            </div>
-
-                            <div class="form-control">
-                                <label class="label"><span class="label-text">Status Hunian <span class="text-error">*</span></span></label>
-                                <select wire:model="occupancy_status" class="select select-bordered w-full">
-                                    <option value="dihuni">Dihuni</option>
-                                    <option value="kosong">Kosong</option>
-                                </select>
-                                @error('occupancy_status')<span class="text-error text-xs">{{ $message }}</span>@enderror
-                            </div>
-
-                            <div class="form-control">
-                                <label class="label"><span class="label-text">Tanggal Masuk</span></label>
-                                <input type="date" wire:model="resident_since" class="input input-bordered w-full">
-                                @error('resident_since')<span class="text-error text-xs">{{ $message }}</span>@enderror
-                            </div>
-
-                            <div class="form-control">
-                                <label class="label cursor-pointer">
-                                    <span class="label-text">Status Aktif</span>
-                                    <input type="checkbox" wire:model="is_active" class="toggle toggle-success">
-                                </label>
-                            </div>
-
-                            <div class="form-control md:col-span-2">
-                                <label class="label"><span class="label-text">Catatan</span></label>
-                                <textarea wire:model="notes" class="textarea textarea-bordered w-full" rows="2" placeholder="Catatan tambahan..."></textarea>
-                            </div>
-                        </div>
-
-                        <div class="modal-action">
-                            <button type="button" wire:click="closeModal()" class="btn btn-ghost">Batal</button>
-                            <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
-                                <span wire:loading.remove>Simpan</span>
-                                <span wire:loading class="loading loading-spinner loading-sm"></span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                <form wire:click="closeModal" class="modal-backdrop"><button type="button">close</button></form>
-            </div>
-
-            {{-- Detail Modal --}}
-            <div class="modal {{ $isDetailOpen ? 'modal-open' : '' }}" x-data x-on:keydown.escape.window="$wire.closeDetail()">
-                <div class="modal-box w-11/12 max-w-2xl" @click.stop>
-                    @if($detailResident)
-                        <h3 class="font-bold text-lg">Detail Penghuni: {{ $detailResident->name }}</h3>
-                        <div class="grid grid-cols-2 gap-4 mt-4 text-sm">
-                            <div>
-                                <span class="font-semibold text-gray-500">Blok:</span>
-                                <p class="font-mono text-lg">{{ $detailResident->houseBlock?->block_code ?? '—' }}</p>
-                            </div>
-                            <div>
-                                <span class="font-semibold text-gray-500">Status:</span>
-                                <p>
-                                    <span class="badge badge-sm {{ $detailResident->is_active ? 'badge-success' : 'badge-ghost' }}">
-                                        {{ $detailResident->is_active ? 'Aktif' : 'Nonaktif' }}
-                                    </span>
-                                </p>
-                            </div>
-                            <div>
-                                <span class="font-semibold text-gray-500">Telepon:</span>
-                                <p>{{ $detailResident->phone ?: '—' }}</p>
-                            </div>
-                            <div>
-                                <span class="font-semibold text-gray-500">WhatsApp:</span>
-                                <p>{{ $detailResident->whatsapp ?: '—' }}</p>
-                            </div>
-                            <div>
-                                <span class="font-semibold text-gray-500">Email:</span>
-                                <p>{{ $detailResident->email ?: '—' }}</p>
-                            </div>
-                            <div>
-                                <span class="font-semibold text-gray-500">Kepemilikan:</span>
-                                <p>{{ ucfirst($detailResident->ownership_status) }}</p>
-                            </div>
-                            <div>
-                                <span class="font-semibold text-gray-500">Status Hunian:</span>
-                                <p>{{ $detailResident->occupancy_status === 'dihuni' ? 'Dihuni' : 'Kosong' }}</p>
-                            </div>
-                            <div>
-                                <span class="font-semibold text-gray-500">Tanggal Masuk:</span>
-                                <p>{{ $detailResident->resident_since?->format('d/m/Y') ?? '—' }}</p>
-                            </div>
-                            @can('manage-admin')
-                            <div class="col-span-2">
-                                <span class="font-semibold text-gray-500">NIK <span class="badge badge-xs badge-warning">Rahasia</span>:</span>
-                                <p class="font-mono">{{ $detailResident->nik ?: '—' }}</p>
-                            </div>
-                            @endcan
-                            @if($detailResident->notes)
-                            <div class="col-span-2">
-                                <span class="font-semibold text-gray-500">Catatan:</span>
-                                <p class="mt-1">{{ $detailResident->notes }}</p>
-                            </div>
-                            @endif
-                        </div>
-
-                        {{-- IPL Summary --}}
-                        @if($detailResident->iplBillings->count() > 0)
-                            <div class="divider">Riwayat IPL</div>
-                            <div class="overflow-x-auto">
-                                <table class="table table-xs">
-                                    <thead><tr><th>Periode</th><th>Tagihan</th><th>Terbayar</th><th>Status</th></tr></thead>
-                                    <tbody>
-                                        @foreach($detailResident->iplBillings->take(6) as $billing)
-                                            <tr>
-                                                <td>{{ $billing->period?->period_label ?? '—' }}</td>
-                                                <td>Rp {{ number_format($billing->total_amount, 0, ',', '.') }}</td>
-                                                <td>Rp {{ number_format($billing->total_paid, 0, ',', '.') }}</td>
-                                                <td>
-                                                    <span @class(['badge badge-xs', 'badge-success'=>$billing->status==='paid', 'badge-warning'=>$billing->status==='partial', 'badge-error'=>$billing->status==='unpaid'])>
-                                                        {{ $billing->status === 'paid' ? 'Lunas' : ($billing->status === 'partial' ? 'Sebagian' : 'Belum Bayar') }}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @endif
-                    @endif
-                    <div class="modal-action">
-                        <button wire:click="closeDetail()" class="btn btn-ghost">Tutup</button>
+                    <div class="flex items-center gap-2 pt-1">
+                        <a href="{{ route('residents.show', $resident) }}" wire:navigate title="Detail"
+                            class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors" style="color:#475467;background:rgba(255,255,255,0.03);border:1px solid #e4e7ec;"
+                            onmouseover="this.style.color='#111827';this.style.background='rgba(16,24,40,0.1)'" onmouseout="this.style.color='#475467';this.style.background='rgba(255,255,255,0.03)'">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            Detail
+                        </a>
+                        <a href="{{ route('residents.edit', $resident) }}" wire:navigate title="Edit"
+                            class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors" style="color:#111827;background:rgba(16,24,40,0.05);border:1px solid rgba(16,24,40,0.2);"
+                            onmouseover="this.style.background='rgba(16,24,40,0.15)'" onmouseout="this.style.background='rgba(16,24,40,0.05)'">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            Edit
+                        </a>
+                        <button x-data x-on:click="if(confirm('Hapus penghuni {{ addslashes($resident->name) }}? Tindakan ini tidak dapat dibatalkan.')) $wire.delete({{ $resident->id }})"
+                            title="Hapus" wire:loading.attr="disabled"
+                            class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors" style="color:#c0453b;background:rgba(192,69,59,0.05);border:1px solid rgba(192,69,59,0.2);"
+                            onmouseover="this.style.background='rgba(192,69,59,0.15)'" onmouseout="this.style.background='rgba(192,69,59,0.05)'">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            Hapus
+                        </button>
                     </div>
                 </div>
-                <form wire:click="closeDetail" class="modal-backdrop"><button type="button">close</button></form>
+                @empty
+                <div class="px-5 py-14 text-center">
+                    <svg class="w-12 h-12 mx-auto mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="#111827"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <p class="font-medium text-sm" style="color:#98a2b3;">Belum ada data penghuni</p>
+                    <a href="{{ route('residents.create') }}" wire:navigate class="mt-2 inline-block text-xs hover:underline" style="color:#111827;">Tambah penghuni pertama &rarr;</a>
+                </div>
+                @endforelse
             </div>
 
+            <div class="px-5 py-3" style="border-top:1px solid #eef0f3;">{{ $residents->links() }}</div>
         </div>
     </div>
-
-    @push('scripts')
-    <script>
-    (function() {
-        let listenersAttached = false;
-        function initResidentListeners() {
-            if (!listenersAttached && window.Livewire && window.Swal) {
-                Livewire.on('show-resident-delete-confirmation', (event) => {
-                    let id = event.id ?? (event[0]?.id);
-                    Swal.fire({
-                        title: 'Hapus Penghuni?', text: 'Data ini akan dihapus permanen!',
-                        icon: 'warning', showCancelButton: true,
-                        confirmButtonColor: '#d33', cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed && id !== undefined) @this.call('delete', id);
-                    });
-                });
-                Livewire.on('residentDeleted', () => Swal.fire({ title: 'Terhapus!', icon: 'success', timer: 2000, showConfirmButton: false }));
-                Livewire.on('deleteFailed', (e) => Swal.fire('Gagal!', e.message ?? (e[0]?.message ?? 'Gagal menghapus.'), 'error'));
-                listenersAttached = true;
-            }
-        }
-        document.addEventListener('livewire:navigated', () => { listenersAttached = false; initResidentListeners(); });
-        document.addEventListener('livewire:initialized', initResidentListeners);
-    })();
-    </script>
-    @endpush
 </div>
