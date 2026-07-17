@@ -8,51 +8,51 @@
 
     {{-- ══ Left: site-plan panel (denah) ══ --}}
     <div class="relative hidden lg:flex flex-col justify-between p-12"
-        style="background:#f9fafb;border-right:1px solid #e4e7ec;">
+        style="background:#f9fafb;border-right:1px solid #e4e4e4;">
 
         {{-- brand --}}
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                style="background:#111827;">
+                style="background:#1563df;">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 11l9-7 9 7M5 9.5V20a1 1 0 001 1h12a1 1 0 001-1V9.5"/>
                 </svg>
             </div>
-            <div style="font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:1.2rem;line-height:1;letter-spacing:-.01em;color:#111827;">
+            <div style="font-family:'Manrope',sans-serif;font-weight:600;font-size:1.2rem;line-height:1;letter-spacing:-.01em;color:#161e2d;">
                 Portal Penghuni
-                <span style="display:block;font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:#98a2b3;margin-top:.35rem;">
+                <span style="display:block;font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:#a3abb0;margin-top:.35rem;">
                     Perumahan · Sistem Manajemen Warga
                 </span>
             </div>
         </div>
 
         {{-- lead --}}
-        <p style="max-width:32ch;font-size:1.05rem;line-height:1.55;color:#475467;">
-            Satu portal untuk <b style="color:#111827;font-weight:600;">IPL</b>, program warga, dan data keluarga —
+        <p style="max-width:32ch;font-size:1.05rem;line-height:1.55;color:#5c6368;">
+            Satu portal untuk <b style="color:#161e2d;font-weight:600;">IPL</b>, program warga, dan data keluarga —
             dialamatkan ke rumah Anda.
         </p>
 
         {{-- denah grid --}}
         <div>
             <div class="flex justify-between mb-2.5"
-                style="font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:#98a2b3;">
+                style="font-family:'IBM Plex Mono',monospace;font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:#a3abb0;">
                 <span>Denah Perumahan</span><span>Blok A – P</span>
             </div>
             <div class="grid gap-1.5" style="grid-template-columns:repeat(8,1fr);max-width:360px;" aria-hidden="true">
                 @for ($i = 0; $i < 40; $i++)
                     @if ($i === $you)
-                        <div style="aspect-ratio:1;border-radius:4px;background:#111827;"></div>
+                        <div style="aspect-ratio:1;border-radius:4px;background:#1563df;"></div>
                     @elseif (in_array($i, $filled))
-                        <div style="aspect-ratio:1;border-radius:4px;border:1px solid #e4e7ec;background:#eef0f3;"></div>
+                        <div style="aspect-ratio:1;border-radius:4px;border:1px solid #e4e4e4;background:#f7f7f7;"></div>
                     @else
-                        <div style="aspect-ratio:1;border-radius:4px;border:1px solid #e4e7ec;"></div>
+                        <div style="aspect-ratio:1;border-radius:4px;border:1px solid #e4e4e4;"></div>
                     @endif
                 @endfor
             </div>
             <div class="flex items-center gap-2 mt-3"
-                style="font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.04em;color:#667085;">
-                <span style="width:9px;height:9px;border-radius:2px;background:#111827;"></span>
-                Rumah Anda · <b style="color:#111827;font-weight:600;">Blok&nbsp;C-4</b>
+                style="font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.04em;color:#5c6368;">
+                <span style="width:9px;height:9px;border-radius:2px;background:#1563df;"></span>
+                Rumah Anda · <b style="color:#161e2d;font-weight:600;">Blok&nbsp;C-4</b>
             </div>
         </div>
     </div>
@@ -63,20 +63,20 @@
 
             {{-- mobile brand --}}
             <div class="lg:hidden flex flex-col items-center text-center mb-8">
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4" style="background:#111827;">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4" style="background:#1563df;">
                     <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 11l9-7 9 7M5 9.5V20a1 1 0 001 1h12a1 1 0 001-1V9.5"/>
                     </svg>
                 </div>
-                <h1 style="font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:1.4rem;color:#111827;">Portal Penghuni</h1>
-                <p class="text-sm mt-1.5" style="color:#98a2b3;">Perumahan — Sistem Manajemen Warga</p>
+                <h1 style="font-family:'Manrope',sans-serif;font-weight:600;font-size:1.4rem;color:#161e2d;">Portal Penghuni</h1>
+                <p class="text-sm mt-1.5" style="color:#a3abb0;">Perumahan — Sistem Manajemen Warga</p>
             </div>
 
-            <div class="mb-1.5" style="font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#98a2b3;">
+            <div class="mb-1.5" style="font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#a3abb0;">
                 Masuk ke akun
             </div>
-            <h2 style="font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:1.75rem;line-height:1.1;letter-spacing:-.01em;color:#111827;">Selamat datang</h2>
-            <p class="text-sm mt-2 mb-7" style="color:#667085;">Gunakan email yang didaftarkan oleh pengurus perumahan.</p>
+            <h2 style="font-family:'Manrope',sans-serif;font-weight:600;font-size:1.75rem;line-height:1.1;letter-spacing:-.01em;color:#161e2d;">Selamat datang</h2>
+            <p class="text-sm mt-2 mb-7" style="color:#5c6368;">Gunakan email yang didaftarkan oleh pengurus perumahan.</p>
 
             @if (session('status'))
                 <div class="mb-5 rounded-xl px-4 py-3 text-xs"
@@ -89,11 +89,11 @@
 
                 {{-- Email --}}
                 <div>
-                    <label class="block mb-1.5" style="font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:#98a2b3;">Email</label>
+                    <label class="block mb-1.5" style="font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:#a3abb0;">Email</label>
                     <input wire:model="email" type="email" placeholder="nama@email.com" autocomplete="email"
-                        style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;border-radius:0.6rem;padding:0.7rem 0.9rem;width:100%;font-size:0.9rem;outline:none;transition:border-color .15s,box-shadow .15s;"
-                        onfocus="this.style.borderColor='#111827';this.style.boxShadow='0 0 0 3px rgba(16,24,40,.10)'"
-                        onblur="this.style.borderColor='#e4e7ec';this.style.boxShadow='none'">
+                        style="background:#ffffff;border:1px solid #e4e4e4;color:#161e2d;border-radius:0.6rem;padding:0.7rem 0.9rem;width:100%;font-size:0.9rem;outline:none;transition:border-color .15s,box-shadow .15s;"
+                        onfocus="this.style.borderColor='#1563df';this.style.boxShadow='0 0 0 3px rgba(21,99,223,.10)'"
+                        onblur="this.style.borderColor='#e4e4e4';this.style.boxShadow='none'">
                     @error('email')
                         <p class="text-xs mt-1.5" style="color:#c0453b;">{{ $message }}</p>
                     @enderror
@@ -102,14 +102,14 @@
                 {{-- Password --}}
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label style="font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:#98a2b3;">Kata sandi</label>
-                        <a href="{{ route('penghuni.password.request') }}" wire:navigate class="text-xs" style="color:#344054;text-decoration:underline;text-decoration-color:transparent;transition:text-decoration-color .15s;"
-                            onmouseover="this.style.textDecorationColor='#344054'" onmouseout="this.style.textDecorationColor='transparent'">Lupa kata sandi?</a>
+                        <label style="font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:#a3abb0;">Kata sandi</label>
+                        <a href="{{ route('penghuni.password.request') }}" wire:navigate class="text-xs" style="color:#161e2d;text-decoration:underline;text-decoration-color:transparent;transition:text-decoration-color .15s;"
+                            onmouseover="this.style.textDecorationColor='#161e2d'" onmouseout="this.style.textDecorationColor='transparent'">Lupa kata sandi?</a>
                     </div>
                     <input wire:model="password" type="password" placeholder="••••••••" autocomplete="current-password"
-                        style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;border-radius:0.6rem;padding:0.7rem 0.9rem;width:100%;font-size:0.9rem;outline:none;transition:border-color .15s,box-shadow .15s;"
-                        onfocus="this.style.borderColor='#111827';this.style.boxShadow='0 0 0 3px rgba(16,24,40,.10)'"
-                        onblur="this.style.borderColor='#e4e7ec';this.style.boxShadow='none'">
+                        style="background:#ffffff;border:1px solid #e4e4e4;color:#161e2d;border-radius:0.6rem;padding:0.7rem 0.9rem;width:100%;font-size:0.9rem;outline:none;transition:border-color .15s,box-shadow .15s;"
+                        onfocus="this.style.borderColor='#1563df';this.style.boxShadow='0 0 0 3px rgba(21,99,223,.10)'"
+                        onblur="this.style.borderColor='#e4e4e4';this.style.boxShadow='none'">
                     @error('password')
                         <p class="text-xs mt-1.5" style="color:#c0453b;">{{ $message }}</p>
                     @enderror
@@ -117,15 +117,15 @@
 
                 {{-- Remember --}}
                 <div class="flex items-center gap-2">
-                    <input wire:model="remember" type="checkbox" id="remember" style="accent-color:#111827;" class="rounded w-4 h-4">
-                    <label for="remember" class="text-xs cursor-pointer select-none" style="color:#667085;">Ingat saya di perangkat ini</label>
+                    <input wire:model="remember" type="checkbox" id="remember" style="accent-color:#161e2d;" class="rounded w-4 h-4">
+                    <label for="remember" class="text-xs cursor-pointer select-none" style="color:#5c6368;">Ingat saya di perangkat ini</label>
                 </div>
 
                 {{-- Submit --}}
                 <button type="submit"
                     class="w-full transition-colors"
-                    style="background:#111827;color:#ffffff;border:none;border-radius:0.6rem;padding:0.85rem;font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.55rem;"
-                    onmouseover="this.style.background='#1f2a37'" onmouseout="this.style.background='#111827'"
+                    style="background:#1563df;color:#ffffff;border:none;border-radius:0.6rem;padding:0.85rem;font-family:'Manrope',sans-serif;font-weight:600;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.55rem;"
+                    onmouseover="this.style.background='#0e49a6'" onmouseout="this.style.background='#1563df'"
                     wire:loading.attr="disabled">
                     <span wire:loading.remove class="inline-flex items-center gap-2">
                         Masuk
@@ -142,13 +142,13 @@
             </form>
 
             {{-- footer --}}
-            <div class="mt-7 pt-5" style="border-top:1px solid #e4e7ec;">
-                <p class="text-xs" style="color:#667085;">
-                    Belum punya akses? Hubungi <b style="color:#1d2939;font-weight:600;">pengurus RT / DKM</b> untuk didaftarkan.
+            <div class="mt-7 pt-5" style="border-top:1px solid #e4e4e4;">
+                <p class="text-xs" style="color:#5c6368;">
+                    Belum punya akses? Hubungi <b style="color:#161e2d;font-weight:600;">pengurus RT / DKM</b> untuk didaftarkan.
                 </p>
-                <p class="text-xs mt-3" style="color:#98a2b3;">
+                <p class="text-xs mt-3" style="color:#a3abb0;">
                     Login sebagai Admin / Pengurus?
-                    <a href="{{ route('login') }}" wire:navigate style="color:#344054;text-decoration:underline;">Klik di sini</a>
+                    <a href="{{ route('login') }}" wire:navigate style="color:#161e2d;text-decoration:underline;">Klik di sini</a>
                 </p>
             </div>
 

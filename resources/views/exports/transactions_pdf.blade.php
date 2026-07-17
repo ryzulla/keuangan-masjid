@@ -6,15 +6,15 @@
     <style>
         body { font-family: 'Helvetica', sans-serif; font-size: 10px; margin: 0; padding: 0;}
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #344054; padding: 5px; text-align: left; vertical-align: top; }
-        th { background-color: #1d2939; font-weight: bold; }
+        th, td { border: 1px solid #161e2d; padding: 5px; text-align: left; vertical-align: top; }
+        th { background-color: #161e2d; font-weight: bold; }
         .text-right { text-align: right; }
         .currency { font-family: monospace; white-space: nowrap; }
         .header-info { margin-bottom: 20px; text-align: center; }
         h2, h3 { margin: 0; }
         p { margin: 2px 0; }
         .page-break { page-break-after: always; } /* Jika perlu */
-        tfoot th { background-color: #1d2939; }
+        tfoot th { background-color: #161e2d; }
     </style>
 </head>
 <body>

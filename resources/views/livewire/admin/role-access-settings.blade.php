@@ -1,6 +1,6 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-base" style="color:#111827;">Pengaturan Akses Role</h2>
+        <h2 class="font-semibold text-base" style="color:#161e2d;">Pengaturan Akses Role</h2>
     </x-slot>
 
     <div class="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,24 +19,24 @@
         @endif
 
         {{-- Header Banner --}}
-        <div class="rounded-2xl p-6 mb-6" style="background:linear-gradient(135deg,#ffffff 0%,#ffffff 62%);border:1px solid rgba(16,24,40,0.35);">
+        <div class="rounded-2xl p-6 mb-6" style="background:linear-gradient(135deg,#ffffff 0%,#ffffff 62%);border:1px solid rgba(21,99,223,0.35);">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h3 class="font-bold text-lg" style="color:#111827;font-family:'IBM Plex Sans',serif;">Pengaturan Akses Role</h3>
-                    <p class="text-sm mt-1" style="color:#111827;">Atur menu & fitur yang dapat diakses oleh setiap role pengguna</p>
+                    <h3 class="font-bold text-lg" style="color:#161e2d;font-family:'Manrope',serif;">Pengaturan Akses Role</h3>
+                    <p class="text-sm mt-1" style="color:#161e2d;">Atur menu & fitur yang dapat diakses oleh setiap role pengguna</p>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     <button wire:click="resetToDefault" wire:confirm="Reset semua pengaturan ke default?"
                         class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm transition-colors"
-                        style="background:#eef0f3;color:#475467;border:1px solid #d0d5dd;"
-                        onmouseover="this.style.background='#f5f6f8'" onmouseout="this.style.background='#eef0f3'">
+                        style="background:#f7f7f7;color:#5c6368;border:1px solid #d9d9d9;"
+                        onmouseover="this.style.background='#f7f7f7'" onmouseout="this.style.background='#f7f7f7'">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                         Reset Default
                     </button>
                     <button wire:click="save"
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
-                        style="background:#111827;color:#ffffff;"
-                        onmouseover="this.style.background='#1f2a37'" onmouseout="this.style.background='#1f2a37'"
+                        style="background:#1563df;color:#ffffff;"
+                        onmouseover="this.style.background='#0e49a6'" onmouseout="this.style.background='#0e49a6'"
                         wire:loading.attr="disabled">
                         <span wire:loading.remove wire:target="save">
                             <svg class="w-4 h-4 inline -mt-0.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -56,34 +56,34 @@
             <svg class="w-5 h-5 shrink-0 mt-0.5" style="color:#c0453b;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
             <div>
                 <p class="text-sm font-semibold" style="color:#c0453b;">Super Admin — Akses Penuh (tidak bisa diubah)</p>
-                <p class="text-xs mt-0.5" style="color:#7c8698;">Role Super Admin selalu memiliki akses ke semua menu dan fitur secara otomatis.</p>
+                <p class="text-xs mt-0.5" style="color:#a3abb0;">Role Super Admin selalu memiliki akses ke semua menu dan fitur secara otomatis.</p>
             </div>
         </div>
 
         {{-- Role Summary Cards --}}
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
             @foreach($roles as $role)
-            <div class="rounded-xl p-3 text-center" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);">
-                <div class="text-2xl font-bold mb-0.5" style="color:#111827;">{{ $summary[$role] }}</div>
-                <div class="text-xs" style="color:#7c8698;">{{ $roleLabels[$role] }}</div>
-                <div class="text-xs mt-1" style="color:#98a2b3;">dari {{ count($gates) }} fitur</div>
+            <div class="rounded-xl p-3 text-center" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
+                <div class="text-2xl font-bold mb-0.5" style="color:#161e2d;">{{ $summary[$role] }}</div>
+                <div class="text-xs" style="color:#a3abb0;">{{ $roleLabels[$role] }}</div>
+                <div class="text-xs mt-1" style="color:#a3abb0;">dari {{ count($gates) }} fitur</div>
             </div>
             @endforeach
         </div>
 
         {{-- Permission Matrix --}}
-        <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);">
+        <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm" style="min-width:820px;">
                     <thead>
-                        <tr style="background:#ffffff;border-bottom:1px solid #f5f6f8;">
-                            <th class="text-left px-5 py-4 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;min-width:220px;">
+                        <tr style="background:#ffffff;border-bottom:1px solid #f7f7f7;">
+                            <th class="text-left px-5 py-4 text-xs font-semibold uppercase tracking-wider" style="color:#a3abb0;min-width:220px;">
                                 Menu / Fitur
                             </th>
                             @foreach($roles as $role)
                             <th class="text-center px-3 py-4" style="min-width:100px;">
-                                <div class="text-xs font-semibold uppercase tracking-wider" style="color:#111827;">{{ $roleLabels[$role] }}</div>
-                                <div class="text-xs mt-0.5" style="color:#98a2b3;">{{ $summary[$role] }}/{{ count($gates) }}</div>
+                                <div class="text-xs font-semibold uppercase tracking-wider" style="color:#161e2d;">{{ $roleLabels[$role] }}</div>
+                                <div class="text-xs mt-0.5" style="color:#a3abb0;">{{ $summary[$role] }}/{{ count($gates) }}</div>
                             </th>
                             @endforeach
                         </tr>
@@ -94,7 +94,7 @@
                             $groupColors = [
                                 'Administrasi' => '#4f46e5',
                                 'DKM Masjid'   => '#0d9488',
-                                'Perumahan'    => '#111827',
+                                'Perumahan'    => '#1563df',
                             ];
                         @endphp
 
@@ -104,14 +104,14 @@
                                 <tr style="background:#ffffff;">
                                     <td colspan="{{ count($roles) + 1 }}" class="px-5 py-2">
                                         <span class="text-xs font-bold uppercase tracking-widest"
-                                            style="color:{{ $groupColors[$gateInfo['group']] ?? '#667085' }};">
+                                            style="color:{{ $groupColors[$gateInfo['group']] ?? '#5c6368' }};">
                                             {{ $gateInfo['group'] }}
                                         </span>
                                     </td>
                                 </tr>
                             @endif
 
-                            <tr style="border-bottom:1px solid #ffffff;" onmouseover="this.style.backgroundColor='#eef0f3'" onmouseout="this.style.backgroundColor=''">
+                            <tr style="border-bottom:1px solid #ffffff;" onmouseover="this.style.backgroundColor='#f7f7f7'" onmouseout="this.style.backgroundColor=''">
                                 <td class="px-5 py-3.5">
                                     <div class="flex items-center gap-2.5">
                                         @php
@@ -126,15 +126,15 @@
                                                 'cash'    => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>',
                                                 default   => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/>',
                                             };
-                                            $iconColor = $groupColors[$gateInfo['group']] ?? '#667085';
+                                            $iconColor = $groupColors[$gateInfo['group']] ?? '#5c6368';
                                         @endphp
                                         <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
                                             style="background:rgba({{ hexdec(substr($iconColor,1,2)) }},{{ hexdec(substr($iconColor,3,2)) }},{{ hexdec(substr($iconColor,5,2)) }},0.1);">
                                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="{{ $iconColor }}">{!! $iconSvg !!}</svg>
                                         </div>
                                         <div>
-                                            <div class="font-medium text-sm" style="color:#1d2939;">{{ $gateInfo['label'] }}</div>
-                                            <div class="text-xs" style="color:#98a2b3;">{{ $gateKey }}</div>
+                                            <div class="font-medium text-sm" style="color:#161e2d;">{{ $gateInfo['label'] }}</div>
+                                            <div class="text-xs" style="color:#a3abb0;">{{ $gateKey }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -147,16 +147,16 @@
                                             @if($gateKey === 'manage-admin' && $role !== 'admin') disabled @endif
                                             class="sr-only peer">
                                         <div class="relative w-10 h-5 rounded-full transition-colors duration-200 peer-checked:opacity-100"
-                                            style="background:#f5f6f8;border:1px solid #e4e7ec;"
+                                            style="background:#f7f7f7;border:1px solid #e4e4e4;"
                                             :class="$wire.matrix['{{ $role }}']['{{ $gateKey }}'] ? '' : ''">
                                             {{-- Custom toggle UI --}}
                                             <div class="w-10 h-5 rounded-full transition-all duration-200 flex items-center {{ ($matrix[$role][$gateKey] ?? false) ? '' : '' }}"
-                                                style="{{ ($matrix[$role][$gateKey] ?? false) ? 'background:rgba(16,24,40,0.2);border:1px solid rgba(16,24,40,0.4);' : 'background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);' }}
+                                                style="{{ ($matrix[$role][$gateKey] ?? false) ? 'background:rgba(21,99,223,0.2);border:1px solid rgba(21,99,223,0.4);' : 'background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);' }}
                                                     {{ ($gateKey === 'manage-admin' && $role !== 'admin') ? 'opacity:0.35;cursor:not-allowed;' : '' }}">
                                                 @if($matrix[$role][$gateKey] ?? false)
-                                                    <svg class="w-3.5 h-3.5 mx-auto" style="color:#111827;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                                    <svg class="w-3.5 h-3.5 mx-auto" style="color:#161e2d;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                                 @else
-                                                    <svg class="w-3 h-3 mx-auto" style="color:#98a2b3;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                    <svg class="w-3 h-3 mx-auto" style="color:#a3abb0;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                                 @endif
                                             </div>
                                         </div>
@@ -170,25 +170,25 @@
             </div>
 
             {{-- Footer --}}
-            <div class="px-5 py-4 flex items-center justify-between" style="border-top:1px solid #eef0f3;background:#ffffff;">
-                <div class="flex items-center gap-4 text-xs" style="color:#98a2b3;">
+            <div class="px-5 py-4 flex items-center justify-between" style="border-top:1px solid #f7f7f7;background:#ffffff;">
+                <div class="flex items-center gap-4 text-xs" style="color:#a3abb0;">
                     <span class="flex items-center gap-1.5">
-                        <span class="w-4 h-4 rounded flex items-center justify-center" style="background:rgba(16,24,40,0.2);border:1px solid rgba(16,24,40,0.4);">
-                            <svg class="w-2.5 h-2.5" style="color:#111827;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        <span class="w-4 h-4 rounded flex items-center justify-center" style="background:rgba(21,99,223,0.2);border:1px solid rgba(21,99,223,0.4);">
+                            <svg class="w-2.5 h-2.5" style="color:#161e2d;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                         </span>
                         Punya Akses
                     </span>
                     <span class="flex items-center gap-1.5">
-                        <span class="w-4 h-4 rounded flex items-center justify-center" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);">
-                            <svg class="w-2.5 h-2.5" style="color:#98a2b3;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        <span class="w-4 h-4 rounded flex items-center justify-center" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
+                            <svg class="w-2.5 h-2.5" style="color:#a3abb0;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </span>
                         Tidak Punya Akses
                     </span>
                 </div>
                 <button wire:click="save"
                     class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
-                    style="background:#111827;color:#ffffff;"
-                    onmouseover="this.style.background='#1f2a37'" onmouseout="this.style.background='#1f2a37'"
+                    style="background:#1563df;color:#ffffff;"
+                    onmouseover="this.style.background='#0e49a6'" onmouseout="this.style.background='#0e49a6'"
                     wire:loading.attr="disabled">
                     <span wire:loading.remove wire:target="save">Simpan Perubahan</span>
                     <span wire:loading wire:target="save">Menyimpan...</span>
@@ -197,10 +197,10 @@
         </div>
 
         {{-- Info: Dashboard always accessible --}}
-        <div class="rounded-xl p-4 mt-4 flex items-start gap-3" style="background:rgba(16,24,40,0.05);border:1px solid rgba(16,24,40,0.15);">
-            <svg class="w-4 h-4 shrink-0 mt-0.5" style="color:#111827;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <p class="text-xs" style="color:#667085;">
-                <span style="color:#111827;">Dashboard</span> selalu dapat diakses oleh semua pengguna yang sudah login, tidak perlu pengaturan khusus.
+        <div class="rounded-xl p-4 mt-4 flex items-start gap-3" style="background:rgba(21,99,223,0.05);border:1px solid rgba(21,99,223,0.15);">
+            <svg class="w-4 h-4 shrink-0 mt-0.5" style="color:#161e2d;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <p class="text-xs" style="color:#5c6368;">
+                <span style="color:#161e2d;">Dashboard</span> selalu dapat diakses oleh semua pengguna yang sudah login, tidak perlu pengaturan khusus.
                 Perubahan akses berlaku setelah pengguna login ulang atau session cache habis (maks. 1 jam).
             </p>
         </div>

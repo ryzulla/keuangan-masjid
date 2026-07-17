@@ -8,6 +8,7 @@ use App\Models\Campaign;
 use App\Models\IplPeriod;
 use App\Models\IplBilling;
 use App\Models\Resident;
+use App\Models\ResidentHouseBlock;
 use Illuminate\Support\Facades\DB as DBFacade;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -96,6 +97,12 @@ class Dashboard extends Component
 
     public function render()
     {
-        return view('livewire.dashboard');
+        $contractedHouses = ResidentHouseBlock::whereNull('ended_at')
+            ->where('ownership_type', '!=', 'pemilik')
+            ->with(['resident', 'houseBlock'])
+            ->orderBy('contract_end_date')
+            ->get();
+
+        return view('livewire.dashboard', compact('contractedHouses'));
     }
 }

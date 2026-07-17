@@ -5,8 +5,11 @@ use Livewire\Component;
 use App\Models\Campaign;
 use App\Models\Resident;
 use App\Models\HouseBlock;
+use App\Models\HouseBlockPhoto;
 use App\Models\IplPeriod;
 use App\Models\IplBilling;
+use App\Models\Account;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -21,11 +24,16 @@ class WelcomePage extends Component
     public $activeCampaignsDkm;
     public $iplSummary = [];
     public $currentIplPeriod = null;
+    public $dkmBalance = 0;
+    public $dkmMonthlyIncome = 0;
+    public $dkmMonthlyExpense = 0;
+    public $rentalListings;
 
     public function mount()
     {
         $this->activeCampaignsPerumahan = collect();
         $this->activeCampaignsDkm = collect();
+        $this->rentalListings = collect();
 
         try {
             $this->totalResidents = Resident::active()->count();
@@ -49,19 +57,39 @@ class WelcomePage extends Component
                 ->take(3)
                 ->get();
 
-            $latestPeriod = IplPeriod::latest('year')->latest('month')->first();
-            if ($latestPeriod) {
-                $this->currentIplPeriod = $latestPeriod;
+            $currentPeriod = IplPeriod::where('year', now()->year)->where('month', now()->month)->first();
+            if ($currentPeriod) {
+                $this->currentIplPeriod = $currentPeriod;
                 $this->iplSummary = [
-                    'lunas' => IplBilling::where('ipl_period_id', $latestPeriod->id)->where('status', 'paid')->count(),
-                    'belum' => IplBilling::where('ipl_period_id', $latestPeriod->id)->where('status', 'unpaid')->count(),
-                    'sebagian' => IplBilling::where('ipl_period_id', $latestPeriod->id)->where('status', 'partial')->count(),
-                    'total_unit' => IplBilling::where('ipl_period_id', $latestPeriod->id)->count(),
-                    'terkumpul' => IplBilling::where('ipl_period_id', $latestPeriod->id)->sum(DB::raw('paid_security + paid_garbage')),
-                    'tunggakan' => IplBilling::where('ipl_period_id', $latestPeriod->id)
+                    'lunas' => IplBilling::where('ipl_period_id', $currentPeriod->id)->where('status', 'paid')->count(),
+                    'belum' => IplBilling::where('ipl_period_id', $currentPeriod->id)->where('status', 'unpaid')->count(),
+                    'sebagian' => IplBilling::where('ipl_period_id', $currentPeriod->id)->where('status', 'partial')->count(),
+                    'total_unit' => IplBilling::where('ipl_period_id', $currentPeriod->id)->count(),
+                    'terkumpul' => IplBilling::where('ipl_period_id', $currentPeriod->id)->sum(DB::raw('paid_security + paid_garbage')),
+                    'tunggakan' => IplBilling::where('ipl_period_id', $currentPeriod->id)
                         ->sum(DB::raw('(ipl_security_amount - paid_security) + (ipl_garbage_amount - paid_garbage)')),
                 ];
             }
+
+            $dkmAccountIds = Account::byOrg('dkm')->pluck('id');
+            $this->dkmBalance = Account::byOrg('dkm')->sum('balance');
+            $this->dkmMonthlyIncome = Transaction::where('type', 'debit')
+                ->whereIn('account_id', $dkmAccountIds)
+                ->whereMonth('transaction_date', now()->month)
+                ->whereYear('transaction_date', now()->year)
+                ->sum('amount');
+            $this->dkmMonthlyExpense = Transaction::where('type', 'credit')
+                ->whereIn('account_id', $dkmAccountIds)
+                ->whereMonth('transaction_date', now()->month)
+                ->whereYear('transaction_date', now()->year)
+                ->sum('amount');
+
+            $this->rentalListings = HouseBlock::active()
+                ->where('is_for_rent', true)
+                ->with(['photos', 'owners'])
+                ->orderBy('created_at', 'desc')
+                ->take(6)
+                ->get();
 
         } catch (\Exception $e) {
             Log::error('Error fetching welcome page data: ' . $e->getMessage());

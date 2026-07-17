@@ -13,8 +13,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['IBM Plex Sans', ...defaultTheme.fontFamily.sans],
-                serif: ['IBM Plex Sans', ...defaultTheme.fontFamily.serif],
+                sans: ['Manrope', ...defaultTheme.fontFamily.sans],
+                serif: ['Manrope', ...defaultTheme.fontFamily.serif],
             },
             colors: {
                 gold: {
@@ -36,7 +36,7 @@ export default {
                     200: '#c2c2c2',
                     300: '#a3a3a3',
                     400: '#858585',
-                    500: '#667085',
+                    500: '#5c6368',
                     600: '#474747',
                     700: '#2d2d2d',
                     800: '#1a1a1a',

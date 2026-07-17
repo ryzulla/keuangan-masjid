@@ -79,8 +79,8 @@ $register = function () {
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <a class="text-sm transition-colors hover:underline" style="color:#111827;"
-                onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#111827'"
+            <a class="text-sm transition-colors hover:underline" style="color:#161e2d;"
+                onmouseover="this.style.color='#1563df'" onmouseout="this.style.color='#1563df'"
                 href="{{ route('login') }}" wire:navigate>
                 {{ __('Already registered?') }}
             </a>

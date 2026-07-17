@@ -27,13 +27,15 @@ use App\Livewire\Penghuni\ProgramPortal;
 use App\Livewire\Penghuni\IplPortal;
 use App\Livewire\Penghuni\KeluargaPortal;
 use App\Livewire\Penghuni\CreateEditFamilyMember;
-use App\Livewire\Penghuni\PenyewaPortal;
+use App\Livewire\Penghuni\RumahSaya;
+use App\Livewire\Penghuni\DetailRumah;
 use App\Livewire\Penghuni\CampaignDetail as PenghuniCampaignDetail;
 use App\Livewire\Penghuni\Settings as PenghuniSettings;
 use App\Livewire\Penghuni\KeuanganPortal;
 use App\Livewire\Admin\PaymentRequestAdmin;
 
 Route::get('/', WelcomePage::class)->name('welcome');
+Route::get('/sewa/{id}', \App\Livewire\Public\RentalDetail::class)->name('rental.detail');
 Route::get('/tes-murni', function () {
     return 'Halo, server membaca file ini!';
 });
@@ -129,7 +131,8 @@ Route::prefix('penghuni')->name('penghuni.')->group(function () {
         Route::get('keluarga/tambah', CreateEditFamilyMember::class)->name('keluarga.create');
         Route::get('keluarga/{member}/edit', CreateEditFamilyMember::class)->name('keluarga.edit');
         Route::get('program/{campaign}', PenghuniCampaignDetail::class)->name('program.detail');
-        Route::get('penyewa', PenyewaPortal::class)->name('penyewa');
+        Route::get('rumah-saya', RumahSaya::class)->name('rumah-saya');
+        Route::get('rumah-saya/{houseBlock}', DetailRumah::class)->name('detail-rumah');
         Route::get('keuangan', KeuanganPortal::class)->name('keuangan');
         Route::get('settings', PenghuniSettings::class)->name('settings');
     });
@@ -145,16 +148,5 @@ Route::post('admin/notifikasi/read-all', function () {
     auth()->user()?->unreadNotifications->markAsRead();
     return response()->noContent();
 })->middleware(['auth', 'verified'])->name('admin.notifikasi.read-all');
-
-if (app()->environment('local')) {
-    Route::get('__devlogin/{id}', function ($id) {
-        \Illuminate\Support\Facades\Auth::loginUsingId((int) $id);
-        return redirect('/dashboard');
-    });
-    Route::get('__devlogin-resident/{id}', function ($id) {
-        \Illuminate\Support\Facades\Auth::guard('resident')->loginUsingId((int) $id);
-        return redirect('/' . ltrim(request('to', 'penghuni/dashboard'), '/'));
-    });
-}
 
 require __DIR__.'/auth.php';

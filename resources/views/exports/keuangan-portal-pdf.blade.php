@@ -4,24 +4,24 @@
     <meta charset="utf-8">
     <title>Laporan Keuangan</title>
     <style>
-        body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #1d2939; }
+        body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #161e2d; }
         h1 { font-size: 16px; margin: 0 0 4px; text-align: center; }
-        .subtitle { text-align: center; font-size: 9px; color: #7c8698; margin-bottom: 16px; }
-        h2 { font-size: 11px; margin: 16px 0 8px; padding-bottom: 4px; border-bottom: 1px solid #e4e7ec; }
+        .subtitle { text-align: center; font-size: 9px; color: #a3abb0; margin-bottom: 16px; }
+        h2 { font-size: 11px; margin: 16px 0 8px; padding-bottom: 4px; border-bottom: 1px solid #e4e4e4; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
-        th, td { padding: 4px 6px; text-align: left; border: 1px solid #e4e7ec; }
+        th, td { padding: 4px 6px; text-align: left; border: 1px solid #e4e4e4; }
         th { font-size: 9px; background: #ffffff; }
         td { font-size: 9px; }
         .text-right { text-align: right; }
         .text-green { color: #12805c; }
         .text-red { color: #c0453b; }
-        .text-orange { color: #111827; }
+        .text-orange { color: #1563df; }
         .font-bold { font-weight: 700; }
         .summary-cards { margin-bottom: 16px; }
-        .summary-card { display: inline-block; width: 23%; padding: 8px; border: 1px solid #e4e7ec; text-align: center; margin-right: 1%; }
-        .summary-label { font-size: 8px; color: #98a2b3; }
+        .summary-card { display: inline-block; width: 23%; padding: 8px; border: 1px solid #e4e4e4; text-align: center; margin-right: 1%; }
+        .summary-label { font-size: 8px; color: #a3abb0; }
         .summary-value { font-size: 11px; font-weight: 700; margin-top: 2px; }
-        .footer { margin-top: 20px; text-align: center; font-size: 8px; color: #98a2b3; }
+        .footer { margin-top: 20px; text-align: center; font-size: 8px; color: #a3abb0; }
     </style>
 </head>
 <body>

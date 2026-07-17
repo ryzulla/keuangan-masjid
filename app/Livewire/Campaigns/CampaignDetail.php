@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use App\Models\Campaign;
 use App\Models\CampaignPhoto;
+use App\Models\Category;
 use App\Models\Donation;
 use App\Models\Transaction;
 use App\Models\Account;
@@ -49,19 +50,43 @@ class CampaignDetail extends Component
     public string $filterDonorType = '';
 
     public $orgAccounts = [];
+    public $expenseAccounts = [];
     public $residents = [];
+
+    // Expense modal
+    public bool $isExpenseModalOpen = false;
+    public string $expenseAmount = '';
+    public string $expenseDescription = '';
+    public string $expenseDate = '';
+    public ?int $expenseCategoryId = null;
+    public ?int $expenseAccountId = null;
 
     public function mount(Campaign $campaign): void
     {
         $this->campaign = $campaign;
         $this->donationDate = now()->format('Y-m-d');
+        $this->expenseDate = now()->format('Y-m-d');
         $this->orgAccounts = Account::byOrg($campaign->organization_type)->orderBy('name')->get();
+        $this->expenseAccounts = Account::byOrg($campaign->organization_type)->orderBy('name')->get();
         $this->residents = Resident::orderBy('name')->get();
+
+        $catName = $campaign->organization_type === 'perumahan'
+            ? 'Pengeluaran Program Perumahan'
+            : 'Pengeluaran Program';
+        $this->expenseCategoryId = Category::where('name', $catName)
+            ->where('organization_type', $campaign->organization_type)
+            ->where('type', 'expense')
+            ->value('id');
     }
 
     public function render()
     {
-        $this->campaign->load(['photos', 'sourceAccount']);
+        $this->campaign->load([
+            'photos',
+            'sourceAccount',
+            'expenseTransactions.category',
+            'expenseTransactions.account',
+        ]);
 
         $donationsQuery = Donation::with(['resident', 'transaction'])
             ->where('campaign_id', $this->campaign->id)
@@ -83,9 +108,14 @@ class CampaignDetail extends Component
             'count_luaran' => Donation::where('campaign_id', $cid)->where('donor_type', 'luaran')->count(),
         ];
 
+        $expenses = $this->campaign->expenseTransactions->sortByDesc('transaction_date');
+        $totalExpense = $expenses->sum('amount');
+
         return view('livewire.campaigns.campaign-detail', [
-            'donations' => $donations,
-            'stats'     => $stats,
+            'donations'    => $donations,
+            'stats'        => $stats,
+            'expenses'     => $expenses,
+            'totalExpense' => $totalExpense,
         ]);
     }
 
@@ -281,6 +311,88 @@ class CampaignDetail extends Component
     public function closeDonationModal(): void
     {
         $this->isDonationModalOpen = false;
+        $this->resetErrorBag();
+        session()->forget('modal_error');
+    }
+
+    public function openAddExpense(): void
+    {
+        $this->resetErrorBag();
+        $this->expenseAmount      = '';
+        $this->expenseDescription = '';
+        $this->expenseDate        = now()->format('Y-m-d');
+        $this->expenseAccountId   = $this->expenseAccounts->first()?->id;
+        $this->isExpenseModalOpen = true;
+
+        $catName = $this->campaign->organization_type === 'perumahan'
+            ? 'Pengeluaran Program Perumahan'
+            : 'Pengeluaran Program';
+        $this->expenseCategoryId = Category::where('name', $catName)
+            ->where('organization_type', $this->campaign->organization_type)
+            ->where('type', 'expense')
+            ->value('id');
+    }
+
+    public function saveExpense(): void
+    {
+        $this->validate([
+            'expenseAmount'      => 'required|numeric|min:1',
+            'expenseDescription' => 'required|string|max:500',
+            'expenseDate'        => 'required|date',
+            'expenseCategoryId'  => 'required|exists:categories,id',
+            'expenseAccountId'   => 'required|exists:accounts,id',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            Transaction::create([
+                'type'             => 'credit',
+                'amount'           => (float) $this->expenseAmount,
+                'account_id'       => $this->expenseAccountId,
+                'category_id'      => $this->expenseCategoryId,
+                'description'      => $this->expenseDescription,
+                'transaction_date' => $this->expenseDate,
+                'user_id'          => Auth::id(),
+                'campaign_id'      => $this->campaign->id,
+            ]);
+
+            DB::commit();
+            session()->flash('success', 'Pengeluaran berhasil dicatat.');
+            $this->isExpenseModalOpen = false;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error saving expense: ' . $e->getMessage());
+            session()->flash('modal_error', 'Gagal menyimpan pengeluaran: ' . $e->getMessage());
+        }
+    }
+
+    public function confirmDeleteExpense(int $id): void
+    {
+        $this->dispatch('show-expense-delete', id: $id);
+    }
+
+    public function deleteExpense(int $id): void
+    {
+        try {
+            DB::beginTransaction();
+            $tx = Transaction::where('campaign_id', $this->campaign->id)
+                ->where('id', $id)
+                ->where('type', 'credit')
+                ->firstOrFail();
+            $tx->delete();
+            DB::commit();
+            session()->flash('success', 'Pengeluaran berhasil dihapus.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting expense: ' . $e->getMessage());
+            session()->flash('error', 'Gagal menghapus pengeluaran: ' . $e->getMessage());
+        }
+    }
+
+    public function closeExpenseModal(): void
+    {
+        $this->isExpenseModalOpen = false;
         $this->resetErrorBag();
         session()->forget('modal_error');
     }

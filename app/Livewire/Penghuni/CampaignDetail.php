@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Campaign;
 use App\Models\ResidentPaymentRequest;
 use App\Models\User;
+use App\Models\Transaction;
 use App\Notifications\ResidentPaymentSubmitted;
 
 #[Layout('layouts.penghuni')]
@@ -45,6 +46,8 @@ class CampaignDetail extends Component
             'donations.transaction',
             'residentPaymentRequests' => fn($q) => $q->where('status', 'confirmed')->orderByDesc('confirmed_at'),
             'photos',
+            'expenseTransactions.category',
+            'expenseTransactions.account',
         ]);
     }
 
@@ -186,19 +189,8 @@ class CampaignDetail extends Component
                     'type'   => $don->donor_type ?? 'luaran',
                     'amount' => $don->transaction->amount,
                     'date'   => $don->transaction->transaction_date ?? $don->created_at,
-                    'source' => 'admin',
                 ]);
             }
-        }
-        foreach ($this->campaign->residentPaymentRequests as $rpr) {
-            $allRaw->push([
-                'name'   => $rpr->donor_name ?? 'Penghuni',
-                'form'   => $rpr->donation_form ?? 'uang',
-                'type'   => $rpr->donor_type ?? 'warga',
-                'amount' => $rpr->amount,
-                'date'   => $rpr->confirmed_at ?? $rpr->created_at,
-                'source' => 'resident',
-            ]);
         }
 
         // Stats (unfiltered)
@@ -219,6 +211,9 @@ class CampaignDetail extends Component
         }
         $donors = $donors->sortByDesc('date')->values();
 
-        return view('livewire.penghuni.campaign-detail', compact('donors', 'stats'));
+        $expenses = $this->campaign->expenseTransactions->sortByDesc('transaction_date');
+        $totalExpense = $expenses->sum('amount');
+
+        return view('livewire.penghuni.campaign-detail', compact('donors', 'stats', 'expenses', 'totalExpense'));
     }
 }

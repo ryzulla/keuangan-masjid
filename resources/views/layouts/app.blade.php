@@ -8,25 +8,25 @@
         <title>{{ config('app.name', 'Sistem Perumahan') }}</title>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         @livewireStyles
         <style>
-            body { background-color:#f5f6f8; }
+            body { background-color:#f7f7f7; }
             [x-cloak] { display: none !important; }
         </style>
         @stack('styles')
         {{-- CKEditor loaded in head so wire:navigate won't re-execute it on each navigation --}}
         <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js" data-navigate-once></script>
     </head>
-    <body class="font-sans antialiased" style="background-color:#f5f6f8; color:#1d2939;">
-        <div class="min-h-screen" style="background-color:#f5f6f8;">
+    <body class="font-sans antialiased" style="background-color:#f7f7f7; color:#161e2d;">
+        <div class="min-h-screen" style="background-color:#f7f7f7;">
             <livewire:layout.navigation />
 
             @if (isset($header))
-                <header style="background-color:#f5f6f8; border-bottom:1px solid #e4e7ec;">
+                <header style="background-color:#ffffff; border-bottom:1px solid #e4e4e4;">
                     <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>

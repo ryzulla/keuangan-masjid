@@ -41,11 +41,11 @@ $updatePassword = function () {
 
 <section>
     <header>
-        <h2 class="text-lg font-medium" style="color:#1d2939;font-family:'IBM Plex Sans',serif;">
+        <h2 class="text-lg font-medium" style="color:#161e2d;font-family:'Manrope',serif;">
             {{ __('Update Password') }}
         </h2>
 
-        <p class="mt-1 text-sm" style="color:#7c8698;">
+        <p class="mt-1 text-sm" style="color:#a3abb0;">
             {{ __('Ensure your account is using a long, random password to stay secure.') }}
         </p>
     </header>

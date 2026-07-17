@@ -1,6 +1,6 @@
 <div>
     <x-slot name="header">
-        <h2 class="font-semibold text-base" style="color:#111827;">Manajemen Kategori</h2>
+        <h2 class="font-semibold text-base" style="color:#161e2d;">Manajemen Kategori</h2>
     </x-slot>
 
     <div class="py-8">
@@ -21,16 +21,16 @@
             @endif
 
             {{-- Header Banner --}}
-            <div class="rounded-2xl p-6" style="background:linear-gradient(135deg,#ffffff 0%,#ffffff 62%);border:1px solid rgba(16,24,40,0.35);">
+            <div class="rounded-2xl p-6" style="background:linear-gradient(135deg,#ffffff 0%,#ffffff 62%);border:1px solid rgba(21,99,223,0.35);">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl font-bold" style="color:#111827;font-family:'IBM Plex Sans',serif;">Manajemen Kategori</h1>
-                        <p class="text-sm mt-1" style="color:#111827;">Kategori pemasukan dan pengeluaran keuangan</p>
+                        <h1 class="text-2xl font-bold" style="color:#161e2d;font-family:'Manrope',serif;">Manajemen Kategori</h1>
+                        <p class="text-sm mt-1" style="color:#161e2d;">Kategori pemasukan dan pengeluaran keuangan</p>
                     </div>
                     <button wire:click="create()"
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors shrink-0"
-                        style="background:#111827;color:#ffffff;"
-                        onmouseover="this.style.background='#1f2a37'" onmouseout="this.style.background='#1f2a37'">
+                        style="background:#1563df;color:#ffffff;"
+                        onmouseover="this.style.background='#0e49a6'" onmouseout="this.style.background='#0e49a6'">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         Tambah Kategori
                     </button>
@@ -38,22 +38,22 @@
             </div>
 
             {{-- Table --}}
-            <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #e4e7ec;box-shadow:0 1px 2px rgba(16,24,40,0.04),0 8px 20px -8px rgba(16,24,40,0.06);">
+            <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
                 <div class="overflow-x-auto hidden md:block">
                     <table class="w-full text-sm">
                         <thead>
-                            <tr style="background:#ffffff;border-bottom:1px solid #f5f6f8;">
-                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Nama Kategori</th>
-                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Tipe</th>
-                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Organisasi</th>
-                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Jenis Dana</th>
-                                <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#98a2b3;">Aksi</th>
+                            <tr style="background:#ffffff;border-bottom:1px solid #f7f7f7;">
+                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#a3abb0;">Nama Kategori</th>
+                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#a3abb0;">Tipe</th>
+                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#a3abb0;">Organisasi</th>
+                                <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#a3abb0;">Jenis Dana</th>
+                                <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#a3abb0;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($categories as $category)
-                                <tr style="border-bottom:1px solid #eef0f3;" onmouseover="this.style.backgroundColor='#f5f6f8'" onmouseout="this.style.backgroundColor=''">
-                                    <td class="px-4 py-3 font-medium" style="color:#1d2939;">{{ $category->name }}</td>
+                                <tr style="border-bottom:1px solid #f7f7f7;" onmouseover="this.style.backgroundColor='#f7f7f7'" onmouseout="this.style.backgroundColor=''">
+                                    <td class="px-4 py-3 font-medium" style="color:#161e2d;">{{ $category->name }}</td>
                                     <td class="px-4 py-3">
                                         @if($category->type === 'income')
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background:rgba(18,128,92,0.1);color:#12805c;border:1px solid rgba(18,128,92,0.2);">
@@ -67,19 +67,19 @@
                                     </td>
                                     <td class="px-4 py-3">
                                         @if(($category->organization_type ?? '') === 'perumahan')
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background:rgba(16,24,40,0.1);color:#111827;border:1px solid rgba(16,24,40,0.2);">Perumahan</span>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background:rgba(21,99,223,0.1);color:#161e2d;border:1px solid rgba(21,99,223,0.2);">Perumahan</span>
                                         @elseif(($category->organization_type ?? '') === 'dkm')
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background:rgba(18,128,92,0.1);color:#12805c;border:1px solid rgba(18,128,92,0.2);">DKM</span>
                                         @else
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background:#f5f6f8;color:#667085;border:1px solid #e4e7ec;">Umum</span>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background:#f7f7f7;color:#5c6368;border:1px solid #e4e4e4;">Umum</span>
                                         @endif
                                     </td>
                                     <td class="px-4 py-3">
                                         @if($category->fund_type)
                                             @php
-                                                $ftColors = ['zakat'=>'#c77d1a','infaq'=>'#12805c','sedekah'=>'#12805c','wakaf'=>'#2563eb','umum'=>'#667085'];
+                                                $ftColors = ['zakat'=>'#c77d1a','infaq'=>'#12805c','sedekah'=>'#12805c','wakaf'=>'#2563eb','umum'=>'#5c6368'];
                                                 $ftBg = ['zakat'=>'rgba(199,125,26,0.1)','infaq'=>'rgba(18,128,92,0.1)','sedekah'=>'rgba(52,211,153,0.1)','wakaf'=>'rgba(96,165,250,0.1)','umum'=>'rgba(136,136,136,0.1)'];
-                                                $c = $ftColors[$category->fund_type] ?? '#667085';
+                                                $c = $ftColors[$category->fund_type] ?? '#5c6368';
                                                 $b = $ftBg[$category->fund_type] ?? 'rgba(136,136,136,0.1)';
                                             @endphp
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize"
@@ -87,15 +87,15 @@
                                                 {{ ucfirst($category->fund_type) }}
                                             </span>
                                         @else
-                                            <span style="color:#98a2b3;">—</span>
+                                            <span style="color:#a3abb0;">—</span>
                                         @endif
                                     </td>
                                     <td class="px-4 py-3">
                                         <div class="flex items-center justify-center gap-2">
                                             <button wire:click="edit({{ $category->id }})"
                                                 class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium transition-colors"
-                                                style="background:rgba(16,24,40,0.1);color:#111827;border:1px solid rgba(16,24,40,0.2);"
-                                                onmouseover="this.style.background='rgba(16,24,40,0.2)'" onmouseout="this.style.background='rgba(16,24,40,0.1)'">
+                                                style="background:rgba(21,99,223,0.1);color:#161e2d;border:1px solid rgba(21,99,223,0.2);"
+                                                onmouseover="this.style.background='rgba(21,99,223,0.2)'" onmouseout="this.style.background='rgba(21,99,223,0.1)'">
                                                 Edit
                                             </button>
                                             <button wire:click="delete({{ $category->id }})"
@@ -111,9 +111,9 @@
                             @empty
                                 <tr>
                                     <td colspan="5" class="px-4 py-14 text-center">
-                                        <svg class="w-10 h-10 mx-auto mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="#111827"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-                                        <p class="text-sm font-medium" style="color:#98a2b3;">Belum ada kategori</p>
-                                        <p class="text-xs mt-1" style="color:#98a2b3;">Klik "+ Tambah Kategori" untuk mulai.</p>
+                                        <svg class="w-10 h-10 mx-auto mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="#1563df"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                                        <p class="text-sm font-medium" style="color:#a3abb0;">Belum ada kategori</p>
+                                        <p class="text-xs mt-1" style="color:#a3abb0;">Klik "+ Tambah Kategori" untuk mulai.</p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -122,11 +122,11 @@
                 </div>
 
                 {{-- Mobile cards --}}
-                <div class="md:hidden divide-y" style="border-color:#eef0f3;">
+                <div class="md:hidden divide-y" style="border-color:#f7f7f7;">
                     @forelse($categories as $category)
                         <div class="p-4" wire:key="cat-card-{{ $category->id }}">
                             <div class="flex items-start justify-between gap-3">
-                                <p class="font-semibold min-w-0 break-words" style="color:#1d2939;">{{ $category->name }}</p>
+                                <p class="font-semibold min-w-0 break-words" style="color:#161e2d;">{{ $category->name }}</p>
                                 @if($category->type === 'income')
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium shrink-0" style="background:rgba(18,128,92,0.1);color:#12805c;border:1px solid rgba(18,128,92,0.2);">
                                         ↑ Pemasukan
@@ -139,17 +139,17 @@
                             </div>
                             <div class="mt-2 flex flex-wrap items-center gap-2">
                                 @if(($category->organization_type ?? '') === 'perumahan')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background:rgba(16,24,40,0.1);color:#111827;border:1px solid rgba(16,24,40,0.2);">Perumahan</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background:rgba(21,99,223,0.1);color:#161e2d;border:1px solid rgba(21,99,223,0.2);">Perumahan</span>
                                 @elseif(($category->organization_type ?? '') === 'dkm')
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background:rgba(18,128,92,0.1);color:#12805c;border:1px solid rgba(18,128,92,0.2);">DKM</span>
                                 @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background:#f5f6f8;color:#667085;border:1px solid #e4e7ec;">Umum</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background:#f7f7f7;color:#5c6368;border:1px solid #e4e4e4;">Umum</span>
                                 @endif
                                 @if($category->fund_type)
                                     @php
-                                        $ftColors = ['zakat'=>'#c77d1a','infaq'=>'#12805c','sedekah'=>'#12805c','wakaf'=>'#2563eb','umum'=>'#667085'];
+                                        $ftColors = ['zakat'=>'#c77d1a','infaq'=>'#12805c','sedekah'=>'#12805c','wakaf'=>'#2563eb','umum'=>'#5c6368'];
                                         $ftBg = ['zakat'=>'rgba(199,125,26,0.1)','infaq'=>'rgba(18,128,92,0.1)','sedekah'=>'rgba(52,211,153,0.1)','wakaf'=>'rgba(96,165,250,0.1)','umum'=>'rgba(136,136,136,0.1)'];
-                                        $c = $ftColors[$category->fund_type] ?? '#667085';
+                                        $c = $ftColors[$category->fund_type] ?? '#5c6368';
                                         $b = $ftBg[$category->fund_type] ?? 'rgba(136,136,136,0.1)';
                                     @endphp
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize"
@@ -161,7 +161,7 @@
                             <div class="mt-3 flex gap-2">
                                 <button wire:click="edit({{ $category->id }})"
                                     class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-medium transition-colors"
-                                    style="background:rgba(16,24,40,0.1);color:#111827;border:1px solid rgba(16,24,40,0.2);">Edit</button>
+                                    style="background:rgba(21,99,223,0.1);color:#161e2d;border:1px solid rgba(21,99,223,0.2);">Edit</button>
                                 <button wire:click="delete({{ $category->id }})"
                                     wire:confirm="Anda yakin? Menghapus kategori tidak bisa dibatalkan."
                                     class="flex-1 inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-medium transition-colors"
@@ -170,15 +170,15 @@
                         </div>
                     @empty
                         <div class="px-4 py-14 text-center">
-                            <svg class="w-10 h-10 mx-auto mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="#111827"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-                            <p class="text-sm font-medium" style="color:#98a2b3;">Belum ada kategori</p>
-                            <p class="text-xs mt-1" style="color:#98a2b3;">Klik "+ Tambah Kategori" untuk mulai.</p>
+                            <svg class="w-10 h-10 mx-auto mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="#1563df"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                            <p class="text-sm font-medium" style="color:#a3abb0;">Belum ada kategori</p>
+                            <p class="text-xs mt-1" style="color:#a3abb0;">Klik "+ Tambah Kategori" untuk mulai.</p>
                         </div>
                     @endforelse
                 </div>
 
                 @if($categories->hasPages())
-                    <div class="px-4 py-3" style="border-top:1px solid #e4e7ec;">{{ $categories->links() }}</div>
+                    <div class="px-4 py-3" style="border-top:1px solid #e4e4e4;">{{ $categories->links() }}</div>
                 @endif
             </div>
 
@@ -189,43 +189,43 @@
     @if($isModalOpen)
     <div class="fixed inset-0 z-50 flex items-center justify-center">
         <div class="absolute inset-0" style="background:rgba(0,0,0,0.1);backdrop-filter:blur(4px);" wire:click="closeModal()"></div>
-        <div class="relative rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden" style="background:#ffffff;border:1px solid #d0d5dd;" @click.stop>
-            <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-4" style="background:#f2f4f7;border-bottom:1px solid rgba(16,24,40,0.35);">
-                <h3 class="font-bold text-lg" style="color:#1d2939;font-family:'IBM Plex Sans',serif;">{{ $selected_id ? 'Edit Kategori' : 'Buat Kategori Baru' }}</h3>
-                <button wire:click="closeModal()" class="p-1 rounded-lg transition-colors" style="color:#1d2939;" onmouseover="this.style.background='rgba(16,24,40,0.1)'" onmouseout="this.style.background=''">
+        <div class="relative rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden" style="background:#ffffff;border:1px solid #d9d9d9;" @click.stop>
+            <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-4" style="background:#f7f7f7;border-bottom:1px solid rgba(21,99,223,0.35);">
+                <h3 class="font-bold text-lg" style="color:#161e2d;font-family:'Manrope',serif;">{{ $selected_id ? 'Edit Kategori' : 'Buat Kategori Baru' }}</h3>
+                <button wire:click="closeModal()" class="p-1 rounded-lg transition-colors" style="color:#161e2d;" onmouseover="this.style.background='rgba(21,99,223,0.1)'" onmouseout="this.style.background=''">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
             <form wire:submit="store" class="p-6 space-y-4">
                 <div>
-                    <label class="block text-sm font-medium mb-1" style="color:#475467;">Nama Kategori <span style="color:#c0453b;">*</span></label>
+                    <label class="block text-sm font-medium mb-1" style="color:#5c6368;">Nama Kategori <span style="color:#c0453b;">*</span></label>
                     <input type="text" wire:model="name"
                         class="w-full px-3 py-2 text-sm rounded-xl outline-none transition-colors"
-                        style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;"
-                        onfocus="this.style.borderColor='#111827';this.style.boxShadow='0 0 0 2px rgba(16,24,40,0.2)'"
-                        onblur="this.style.borderColor='#e4e7ec';this.style.boxShadow=''"
+                        style="background:#ffffff;border:1px solid #e4e4e4;color:#161e2d;"
+                        onfocus="this.style.borderColor='#1563df';this.style.boxShadow='0 0 0 2px rgba(21,99,223,0.2)'"
+                        onblur="this.style.borderColor='#e4e4e4';this.style.boxShadow=''"
                         placeholder="Contoh: Iuran IPL Security">
                     @error('name')<p class="text-xs mt-1" style="color:#c0453b;">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1" style="color:#475467;">Tipe Kategori <span style="color:#c0453b;">*</span></label>
+                    <label class="block text-sm font-medium mb-1" style="color:#5c6368;">Tipe Kategori <span style="color:#c0453b;">*</span></label>
                     <select wire:model="type"
                         class="w-full px-3 py-2 text-sm rounded-xl outline-none transition-colors"
-                        style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;"
-                        onfocus="this.style.borderColor='#111827';this.style.boxShadow='0 0 0 2px rgba(16,24,40,0.2)'"
-                        onblur="this.style.borderColor='#e4e7ec';this.style.boxShadow=''">
+                        style="background:#ffffff;border:1px solid #e4e4e4;color:#161e2d;"
+                        onfocus="this.style.borderColor='#1563df';this.style.boxShadow='0 0 0 2px rgba(21,99,223,0.2)'"
+                        onblur="this.style.borderColor='#e4e4e4';this.style.boxShadow=''">
                         <option value="income">↑ Pemasukan (Income)</option>
                         <option value="expense">↓ Pengeluaran (Expense)</option>
                     </select>
                     @error('type')<p class="text-xs mt-1" style="color:#c0453b;">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1" style="color:#475467;">Organisasi <span style="color:#c0453b;">*</span></label>
+                    <label class="block text-sm font-medium mb-1" style="color:#5c6368;">Organisasi <span style="color:#c0453b;">*</span></label>
                     <select wire:model.live="organization_type"
                         class="w-full px-3 py-2 text-sm rounded-xl outline-none transition-colors"
-                        style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;"
-                        onfocus="this.style.borderColor='#111827';this.style.boxShadow='0 0 0 2px rgba(16,24,40,0.2)'"
-                        onblur="this.style.borderColor='#e4e7ec';this.style.boxShadow=''">
+                        style="background:#ffffff;border:1px solid #e4e4e4;color:#161e2d;"
+                        onfocus="this.style.borderColor='#1563df';this.style.boxShadow='0 0 0 2px rgba(21,99,223,0.2)'"
+                        onblur="this.style.borderColor='#e4e4e4';this.style.boxShadow=''">
                         <option value="perumahan">Perumahan</option>
                         <option value="dkm">DKM Masjid</option>
                         <option value="umum">Umum</option>
@@ -234,13 +234,13 @@
                 </div>
                 @if($organization_type === 'dkm')
                 <div class="rounded-xl p-4" style="background:rgba(18,128,92,0.04);border:1px solid rgba(18,128,92,0.2);">
-                    <label class="block text-sm font-medium mb-1.5" style="color:#475467;">Jenis Dana Syariat
-                        <span class="text-xs font-normal ml-1" style="color:#98a2b3;">(opsional — panduan peruntukan)</span>
+                    <label class="block text-sm font-medium mb-1.5" style="color:#5c6368;">Jenis Dana Syariat
+                        <span class="text-xs font-normal ml-1" style="color:#a3abb0;">(opsional — panduan peruntukan)</span>
                     </label>
                     <select wire:model="fund_type"
                         class="w-full px-3 py-2 text-sm rounded-xl outline-none transition-colors"
-                        style="background:#ffffff;border:1px solid #e4e7ec;color:#1d2939;"
-                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e4e7ec'">
+                        style="background:#ffffff;border:1px solid #e4e4e4;color:#161e2d;"
+                        onfocus="this.style.borderColor='#1563df'" onblur="this.style.borderColor='#e4e4e4'">
                         <option value="">-- Tidak ada aturan khusus --</option>
                         <option value="zakat">Zakat (8 Asnaf)</option>
                         <option value="infaq">Infaq</option>
@@ -254,12 +254,12 @@
                 <div class="flex justify-end gap-3 pt-2">
                     <button type="button" wire:click="closeModal()"
                         class="px-4 py-2 text-sm rounded-xl font-medium transition-colors"
-                        style="background:#f5f6f8;color:#344054;border:1px solid #d0d5dd;"
-                        onmouseover="this.style.background='#e4e7ec'" onmouseout="this.style.background='#f5f6f8'">Batal</button>
+                        style="background:#f7f7f7;color:#161e2d;border:1px solid #d9d9d9;"
+                        onmouseover="this.style.background='#e4e4e4'" onmouseout="this.style.background='#f7f7f7'">Batal</button>
                     <button type="submit"
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
-                        style="background:#111827;color:#ffffff;"
-                        onmouseover="this.style.background='#1f2a37'" onmouseout="this.style.background='#1f2a37'">Simpan</button>
+                        style="background:#1563df;color:#ffffff;"
+                        onmouseover="this.style.background='#0e49a6'" onmouseout="this.style.background='#0e49a6'">Simpan</button>
                 </div>
             </form>
         </div>

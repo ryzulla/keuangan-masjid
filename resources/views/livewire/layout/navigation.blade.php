@@ -5,7 +5,7 @@ $logout = function (Logout $logout) {
     $this->redirect('/', navigate: true);
 };
 ?>
-<nav x-data="{ open: false }" style="background-color:#f5f6f8;border-bottom:1px solid rgba(16,24,40,0.2);">
+<nav x-data="{ open: false }" style="background-color:#ffffff;border-bottom:1px solid #e4e4e4;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
 
@@ -14,12 +14,12 @@ $logout = function (Logout $logout) {
                 {{-- Logo --}}
                 <a href="{{ route('dashboard') }}" wire:navigate class="shrink-0 flex items-center gap-2.5 mr-6">
                     <div class="w-8 h-8 rounded-lg flex items-center justify-center"
-                        style="background:#f2f4f7;border:1px solid rgba(16,24,40,0.5);">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2">
+                        style="background:#f7f7f7;border:1px solid rgba(21,99,223,0.5);">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#1563df" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                         </svg>
                     </div>
-                    <span class="hidden sm:block text-sm font-semibold" style="color:#111827;font-family:'IBM Plex Sans',serif;letter-spacing:0.02em;">
+                    <span class="hidden sm:block text-sm font-semibold" style="color:#161e2d;font-family:'Manrope',serif;letter-spacing:0.02em;">
                         Sistem Perumahan
                     </span>
                 </a>
@@ -30,9 +30,9 @@ $logout = function (Logout $logout) {
                     {{-- Dashboard --}}
                     <a href="{{ route('dashboard') }}" wire:navigate
                         class="px-3 py-2 text-sm rounded-lg transition-colors duration-150"
-                        style="{{ request()->routeIs('dashboard') ? 'color:#111827;background:rgba(16,24,40,0.1);' : 'color:#667085;' }}"
-                        onmouseover="if(!this.dataset.active)this.style.color='#111827'"
-                        onmouseout="if(!this.dataset.active)this.style.color='#667085'"
+                        style="{{ request()->routeIs('dashboard') ? 'color:#161e2d;background:rgba(21,99,223,0.1);' : 'color:#5c6368;' }}"
+                        onmouseover="if(!this.dataset.active)this.style.color='#1563df'"
+                        onmouseout="if(!this.dataset.active)this.style.color='#5c6368'"
                         {{ request()->routeIs('dashboard') ? 'data-active=1' : '' }}>
                         Dashboard
                     </a>
@@ -42,76 +42,76 @@ $logout = function (Logout $logout) {
                     <div x-data="{ open: false }" class="relative" @click.outside="open=false">
                         <button @click="open=!open"
                             class="flex items-center gap-1 px-3 py-2 text-sm rounded-lg transition-colors"
-                            style="color:#667085;"
-                            :style="open ? 'color:#111827;background:rgba(16,24,40,0.1);' : ''">
+                            style="color:#5c6368;"
+                            :style="open ? 'color:#161e2d;background:rgba(21,99,223,0.1);' : ''">
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                             Perumahan
                             <svg class="w-3 h-3 transition-transform" :class="open?'rotate-180':''" fill="none" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill="currentColor"/></svg>
                         </button>
                         <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
                             class="absolute left-0 top-full mt-1 w-52 rounded-xl py-1 z-50 shadow-2xl"
-                            style="background-color:#f5f6f8;border:1px solid #e4e7ec;">
+                            style="background-color:#f7f7f7;border:1px solid #e4e4e4;">
                             @can('manage-residents')
                             <a href="{{ route('residents.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                 Data Penghuni
                             </a>
                             <a href="{{ route('house-blocks.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                                 Data Blok Rumah
                             </a>
                             @endcan
                             @can('manage-ipl')
-                            <div style="height:1px;background:#f5f6f8;margin:2px 12px;"></div>
+                            <div style="height:1px;background:#f7f7f7;margin:2px 12px;"></div>
                             <a href="{{ route('ipl.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
                                 IPL Iuran Perumahan
                             </a>
                             <a href="{{ route('ipl.report') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                                 Laporan IPL
                             </a>
                             <a href="{{ route('ipl.tariffs') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
                                 Pengaturan Tarif
                             </a>
                             <a href="{{ route('payment-requests.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
+                                style="color:#5c6368;"
                                 onmouseover="this.style.color='#c77d1a';this.style.backgroundColor='rgba(199,125,26,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 Konfirmasi Bayar Penghuni
                             </a>
                             @endcan
                             @canany(['manage-perumahan', 'manage-programs'])
-                            <div style="height:1px;background:#f5f6f8;margin:2px 12px;"></div>
+                            <div style="height:1px;background:#f7f7f7;margin:2px 12px;"></div>
                             @can('manage-perumahan')
                             <a href="{{ route('perumahan.transaksi') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                                 Transaksi Perumahan
                             </a>
@@ -119,9 +119,9 @@ $logout = function (Logout $logout) {
                             @can('manage-programs')
                             <a href="{{ route('campaigns.index') . '?org=perumahan' }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                                 Program Perumahan
                             </a>
@@ -136,29 +136,29 @@ $logout = function (Logout $logout) {
                     <div x-data="{ open: false }" class="relative" @click.outside="open=false">
                         <button @click="open=!open"
                             class="flex items-center gap-1 px-3 py-2 text-sm rounded-lg transition-colors"
-                            style="color:#667085;"
-                            :style="open ? 'color:#111827;background:rgba(16,24,40,0.1);' : ''">
+                            style="color:#5c6368;"
+                            :style="open ? 'color:#161e2d;background:rgba(21,99,223,0.1);' : ''">
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                             DKM Masjid
                             <svg class="w-3 h-3 transition-transform" :class="open?'rotate-180':''" fill="none" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill="currentColor"/></svg>
                         </button>
                         <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                             class="absolute left-0 top-full mt-1 w-48 rounded-xl py-1 z-50 shadow-2xl"
-                            style="background-color:#f5f6f8;border:1px solid #e4e7ec;">
+                            style="background-color:#f7f7f7;border:1px solid #e4e4e4;">
                             @can('manage-dkm')
                             <a href="{{ route('transactions.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                                 Transaksi DKM
                             </a>
                             <a href="{{ route('payment-requests.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
+                                style="color:#5c6368;"
                                 onmouseover="this.style.color='#c77d1a';this.style.backgroundColor='rgba(199,125,26,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 Konfirmasi Donasi
                             </a>
@@ -166,9 +166,9 @@ $logout = function (Logout $logout) {
                             @can('manage-programs')
                             <a href="{{ route('campaigns.index') . '?org=dkm' }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
                                 Program DKM
                             </a>
@@ -182,28 +182,28 @@ $logout = function (Logout $logout) {
                     <div x-data="{ open: false }" class="relative" @click.outside="open=false">
                         <button @click="open=!open"
                             class="flex items-center gap-1 px-3 py-2 text-sm rounded-lg transition-colors"
-                            style="color:#667085;"
-                            :style="open ? 'color:#111827;background:rgba(16,24,40,0.1);' : ''">
+                            style="color:#5c6368;"
+                            :style="open ? 'color:#161e2d;background:rgba(21,99,223,0.1);' : ''">
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                             Laporan
                             <svg class="w-3 h-3 transition-transform" :class="open?'rotate-180':''" fill="none" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill="currentColor"/></svg>
                         </button>
                         <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                             class="absolute left-0 top-full mt-1 w-52 rounded-xl py-1 z-50 shadow-2xl"
-                            style="background-color:#f5f6f8;border:1px solid #e4e7ec;">
+                            style="background-color:#f7f7f7;border:1px solid #e4e4e4;">
                             <a href="{{ route('reports.cashflow') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                                 Laporan Arus Kas
                             </a>
                             <a href="{{ route('reports.balancesheet') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
                                 Neraca Keuangan
                             </a>
@@ -216,28 +216,28 @@ $logout = function (Logout $logout) {
                     <div x-data="{ open: false }" class="relative" @click.outside="open=false">
                         <button @click="open=!open"
                             class="flex items-center gap-1 px-3 py-2 text-sm rounded-lg transition-colors"
-                            style="color:#667085;"
-                            :style="open ? 'color:#111827;background:rgba(16,24,40,0.1);' : ''">
+                            style="color:#5c6368;"
+                            :style="open ? 'color:#161e2d;background:rgba(21,99,223,0.1);' : ''">
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             Master
                             <svg class="w-3 h-3 transition-transform" :class="open?'rotate-180':''" fill="none" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill="currentColor"/></svg>
                         </button>
                         <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                             class="absolute left-0 top-full mt-1 w-48 rounded-xl py-1 z-50 shadow-2xl"
-                            style="background-color:#f5f6f8;border:1px solid #e4e7ec;">
+                            style="background-color:#f7f7f7;border:1px solid #e4e4e4;">
                             <a href="{{ route('accounts.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                                 Akun &amp; Kas
                             </a>
                             <a href="{{ route('categories.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
                                 Kategori
                             </a>
@@ -250,28 +250,28 @@ $logout = function (Logout $logout) {
                     <div x-data="{ open: false }" class="relative" @click.outside="open=false">
                         <button @click="open=!open"
                             class="flex items-center gap-1 px-3 py-2 text-sm rounded-lg transition-colors"
-                            style="color:#667085;"
-                            :style="open ? 'color:#111827;background:rgba(16,24,40,0.1);' : ''">
+                            style="color:#5c6368;"
+                            :style="open ? 'color:#161e2d;background:rgba(21,99,223,0.1);' : ''">
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             Admin
                             <svg class="w-3 h-3 transition-transform" :class="open?'rotate-180':''" fill="none" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill="currentColor"/></svg>
                         </button>
                         <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                             class="absolute left-0 top-full mt-1 w-52 rounded-xl py-1 z-50 shadow-2xl"
-                            style="background-color:#f5f6f8;border:1px solid #e4e7ec;">
+                            style="background-color:#f7f7f7;border:1px solid #e4e4e4;">
                             <a href="{{ route('users.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                                 Manajemen Pengguna
                             </a>
                             <a href="{{ route('role-access.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                                style="color:#475467;"
-                                onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                                onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                                style="color:#5c6368;"
+                                onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                                onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                                 Pengaturan Akses Role
                             </a>
@@ -290,22 +290,22 @@ $logout = function (Logout $logout) {
                 <div x-data="{ open: false }" class="relative" @click.outside="open=false">
                     <button @click="open=!open"
                         class="flex items-center gap-2 px-2 sm:px-3 py-2 rounded-xl text-sm transition-colors"
-                        style="border:1px solid #e4e7ec;background:#ffffff;"
-                        :style="open ? 'border-color:rgba(16,24,40,0.4);' : ''"
-                        onmouseover="this.style.borderColor='rgba(16,24,40,0.4)'"
-                        onmouseout="if(!{{ 'false' }})this.style.borderColor='#e4e7ec'">
+                        style="border:1px solid #e4e4e4;background:#ffffff;"
+                        :style="open ? 'border-color:rgba(21,99,223,0.4);' : ''"
+                        onmouseover="this.style.borderColor='rgba(21,99,223,0.4)'"
+                        onmouseout="if(!{{ 'false' }})this.style.borderColor='#e4e4e4'">
                         <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                            style="background:#f2f4f7;color:#111827;">
+                            style="background:#f7f7f7;color:#161e2d;">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </div>
                         <span x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"
-                            class="hidden sm:block text-sm font-medium max-w-24 truncate" style="color:#344054;"></span>
-                        <svg class="w-3 h-3 transition-transform" :class="open?'rotate-180':''" fill="none" viewBox="0 0 20 20" style="color:#7c8698;"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill="currentColor"/></svg>
+                            class="hidden sm:block text-sm font-medium max-w-24 truncate" style="color:#161e2d;"></span>
+                        <svg class="w-3 h-3 transition-transform" :class="open?'rotate-180':''" fill="none" viewBox="0 0 20 20" style="color:#a3abb0;"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill="currentColor"/></svg>
                     </button>
                     <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                         class="absolute right-0 top-full mt-1 w-48 rounded-xl py-1 z-50 shadow-2xl"
-                        style="background-color:#f5f6f8;border:1px solid #e4e7ec;">
-                        <div class="px-4 py-2.5 border-b" style="border-color:#f5f6f8;">
+                        style="background-color:#f7f7f7;border:1px solid #e4e4e4;">
+                        <div class="px-4 py-2.5 border-b" style="border-color:#f7f7f7;">
                             @php
                                 $roleLabels = [
                                     'super_admin' => 'Super Admin', 'admin' => 'Admin',
@@ -314,23 +314,23 @@ $logout = function (Logout $logout) {
                                     'pengurus_rt' => 'Pengurus RT',
                                 ];
                             @endphp
-                            <p class="text-xs font-semibold" style="color:#111827;">{{ $roleLabels[auth()->user()->role] ?? ucfirst(auth()->user()->role) }}</p>
-                            <p class="text-xs truncate" style="color:#98a2b3;">{{ auth()->user()->email }}</p>
+                            <p class="text-xs font-semibold" style="color:#161e2d;">{{ $roleLabels[auth()->user()->role] ?? ucfirst(auth()->user()->role) }}</p>
+                            <p class="text-xs truncate" style="color:#a3abb0;">{{ auth()->user()->email }}</p>
                         </div>
                         <a href="{{ route('profile.edit') }}" wire:navigate @click="open=false"
                             class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                            style="color:#475467;"
-                            onmouseover="this.style.color='#111827';this.style.backgroundColor='rgba(16,24,40,0.08)'"
-                            onmouseout="this.style.color='#475467';this.style.backgroundColor=''">
+                            style="color:#5c6368;"
+                            onmouseover="this.style.color='#1563df';this.style.backgroundColor='rgba(21,99,223,0.08)'"
+                            onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             Profil Saya
                         </a>
-                        <div style="height:1px;background:#f5f6f8;margin:2px 0;"></div>
+                        <div style="height:1px;background:#f7f7f7;margin:2px 0;"></div>
                         <button wire:click="logout" @click="open=false"
                             class="w-full flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
-                            style="color:#667085;"
+                            style="color:#5c6368;"
                             onmouseover="this.style.color='#c0453b';this.style.backgroundColor='rgba(192,69,59,0.08)'"
-                            onmouseout="this.style.color='#667085';this.style.backgroundColor=''">
+                            onmouseout="this.style.color='#5c6368';this.style.backgroundColor=''">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                             Keluar
                         </button>
@@ -351,73 +351,73 @@ $logout = function (Logout $logout) {
         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0"
         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full"
         class="sm:hidden fixed inset-x-0 bottom-0 z-50 rounded-t-2xl max-h-[78vh] overflow-y-auto overscroll-contain"
-        style="background-color:#f5f6f8;border-top:1px solid #e4e7ec;padding-bottom:calc(4rem + env(safe-area-inset-bottom,0px));">
-        <div class="sticky top-0 z-10 flex items-center justify-between px-4 py-3" style="background:#ffffff;border-bottom:1px solid #eef0f3;">
-            <span class="text-sm font-semibold" style="color:#111827;">Menu</span>
-            <button @click="open=false" type="button" class="p-1 rounded-lg" style="color:#7c8698;" aria-label="Tutup">
+        style="background-color:#f7f7f7;border-top:1px solid #e4e4e4;padding-bottom:calc(4rem + env(safe-area-inset-bottom,0px));">
+        <div class="sticky top-0 z-10 flex items-center justify-between px-4 py-3" style="background:#ffffff;border-bottom:1px solid #f7f7f7;">
+            <span class="text-sm font-semibold" style="color:#161e2d;">Menu</span>
+            <button @click="open=false" type="button" class="p-1 rounded-lg" style="color:#a3abb0;" aria-label="Tutup">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
         <div class="px-4 py-3 space-y-1">
             <a href="{{ route('dashboard') }}" wire:navigate @click="open=false"
-                class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#475467;">Dashboard</a>
+                class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Dashboard</a>
         </div>
 
         @canany(['manage-residents', 'manage-ipl', 'manage-perumahan', 'manage-programs'])
-        <div class="px-4 py-3 border-t" style="border-color:#eef0f3;">
-            <p class="text-xs font-semibold px-3 mb-2" style="color:#111827;">Perumahan</p>
+        <div class="px-4 py-3 border-t" style="border-color:#f7f7f7;">
+            <p class="text-xs font-semibold px-3 mb-2" style="color:#161e2d;">Perumahan</p>
             @can('manage-residents')
-            <a href="{{ route('residents.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Data Penghuni</a>
-            <a href="{{ route('house-blocks.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Data Blok Rumah</a>
+            <a href="{{ route('residents.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Data Penghuni</a>
+            <a href="{{ route('house-blocks.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Data Blok Rumah</a>
             @endcan
             @can('manage-ipl')
-            <a href="{{ route('ipl.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">IPL Iuran Perumahan</a>
-            <a href="{{ route('ipl.report') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Laporan IPL</a>
-            <a href="{{ route('ipl.tariffs') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Pengaturan Tarif</a>
+            <a href="{{ route('ipl.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">IPL Iuran Perumahan</a>
+            <a href="{{ route('ipl.report') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Laporan IPL</a>
+            <a href="{{ route('ipl.tariffs') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Pengaturan Tarif</a>
             @endcan
             @can('manage-perumahan')
-            <a href="{{ route('perumahan.transaksi') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Transaksi Perumahan</a>
+            <a href="{{ route('perumahan.transaksi') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Transaksi Perumahan</a>
             @endcan
             @can('manage-programs')
-            <a href="{{ route('campaigns.index') . '?org=perumahan' }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Program Perumahan</a>
+            <a href="{{ route('campaigns.index') . '?org=perumahan' }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Program Perumahan</a>
             @endcan
         </div>
         @endcanany
 
         @canany(['manage-dkm', 'manage-programs'])
-        <div class="px-4 py-3 border-t" style="border-color:#eef0f3;">
-            <p class="text-xs font-semibold px-3 mb-2" style="color:#111827;">DKM Masjid</p>
+        <div class="px-4 py-3 border-t" style="border-color:#f7f7f7;">
+            <p class="text-xs font-semibold px-3 mb-2" style="color:#161e2d;">DKM Masjid</p>
             @can('manage-dkm')
-            <a href="{{ route('transactions.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Transaksi DKM</a>
-            <a href="{{ route('payment-requests.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Konfirmasi Donasi</a>
+            <a href="{{ route('transactions.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Transaksi DKM</a>
+            <a href="{{ route('payment-requests.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Konfirmasi Donasi</a>
             @endcan
             @can('manage-programs')
-            <a href="{{ route('campaigns.index') . '?org=dkm' }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Program DKM</a>
+            <a href="{{ route('campaigns.index') . '?org=dkm' }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Program DKM</a>
             @endcan
         </div>
         @endcanany
 
         @can('view-reports')
-        <div class="px-4 py-3 border-t" style="border-color:#eef0f3;">
-            <p class="text-xs font-semibold px-3 mb-2" style="color:#111827;">Laporan</p>
-            <a href="{{ route('reports.cashflow') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Laporan Arus Kas</a>
-            <a href="{{ route('reports.balancesheet') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Neraca Keuangan</a>
+        <div class="px-4 py-3 border-t" style="border-color:#f7f7f7;">
+            <p class="text-xs font-semibold px-3 mb-2" style="color:#161e2d;">Laporan</p>
+            <a href="{{ route('reports.cashflow') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Laporan Arus Kas</a>
+            <a href="{{ route('reports.balancesheet') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Neraca Keuangan</a>
         </div>
         @endcan
 
         @can('manage-transactions')
-        <div class="px-4 py-3 border-t" style="border-color:#eef0f3;">
-            <p class="text-xs font-semibold px-3 mb-2" style="color:#111827;">Master Data</p>
-            <a href="{{ route('accounts.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Akun &amp; Kas</a>
-            <a href="{{ route('categories.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Kategori</a>
+        <div class="px-4 py-3 border-t" style="border-color:#f7f7f7;">
+            <p class="text-xs font-semibold px-3 mb-2" style="color:#161e2d;">Master Data</p>
+            <a href="{{ route('accounts.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Akun &amp; Kas</a>
+            <a href="{{ route('categories.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Kategori</a>
         </div>
         @endcan
 
         @can('manage-admin')
-        <div class="px-4 py-3 border-t" style="border-color:#eef0f3;">
+        <div class="px-4 py-3 border-t" style="border-color:#f7f7f7;">
             <p class="text-xs font-semibold px-3 mb-2" style="color:#c0453b;">Admin</p>
-            <a href="{{ route('users.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Manajemen Pengguna</a>
-            <a href="{{ route('role-access.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#667085;">Pengaturan Akses Role</a>
+            <a href="{{ route('users.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Manajemen Pengguna</a>
+            <a href="{{ route('role-access.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#5c6368;">Pengaturan Akses Role</a>
         </div>
         @endcan
 
@@ -425,41 +425,41 @@ $logout = function (Logout $logout) {
 
     {{-- Mobile bottom navigation bar --}}
     <div class="sm:hidden fixed inset-x-0 bottom-0 z-30 flex"
-        style="background:#ffffff;border-top:1px solid rgba(16,24,40,0.15);padding-bottom:env(safe-area-inset-bottom,0px);">
+        style="background:#ffffff;border-top:1px solid rgba(21,99,223,0.15);padding-bottom:env(safe-area-inset-bottom,0px);">
         <a href="{{ route('dashboard') }}" wire:navigate class="flex-1 flex flex-col items-center py-2 text-xs gap-0.5"
-            style="{{ request()->routeIs('dashboard') ? 'color:#111827;' : 'color:#7c8698;' }}">
+            style="{{ request()->routeIs('dashboard') ? 'color:#161e2d;' : 'color:#a3abb0;' }}">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
             Home
         </a>
         @can('manage-ipl')
         <a href="{{ route('ipl.index') }}" wire:navigate class="flex-1 flex flex-col items-center py-2 text-xs gap-0.5"
-            style="{{ request()->routeIs('ipl.*') ? 'color:#111827;' : 'color:#7c8698;' }}">
+            style="{{ request()->routeIs('ipl.*') ? 'color:#161e2d;' : 'color:#a3abb0;' }}">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
             IPL
         </a>
         @endcan
         @can('manage-perumahan')
         <a href="{{ route('perumahan.transaksi') }}" wire:navigate class="flex-1 flex flex-col items-center py-2 text-xs gap-0.5"
-            style="{{ request()->routeIs('perumahan.*') ? 'color:#111827;' : 'color:#7c8698;' }}">
+            style="{{ request()->routeIs('perumahan.*') ? 'color:#161e2d;' : 'color:#a3abb0;' }}">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
             Transaksi
         </a>
         @elsecan('manage-dkm')
         <a href="{{ route('transactions.index') }}" wire:navigate class="flex-1 flex flex-col items-center py-2 text-xs gap-0.5"
-            style="{{ request()->routeIs('transactions.*') ? 'color:#111827;' : 'color:#7c8698;' }}">
+            style="{{ request()->routeIs('transactions.*') ? 'color:#161e2d;' : 'color:#a3abb0;' }}">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
             Transaksi
         </a>
         @endcan
         @can('manage-programs')
         <a href="{{ route('campaigns.index') }}" wire:navigate class="flex-1 flex flex-col items-center py-2 text-xs gap-0.5"
-            style="{{ request()->routeIs('campaigns.*') ? 'color:#111827;' : 'color:#7c8698;' }}">
+            style="{{ request()->routeIs('campaigns.*') ? 'color:#161e2d;' : 'color:#a3abb0;' }}">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
             Program
         </a>
         @endcan
         <button type="button" @click="open = !open" class="flex-1 flex flex-col items-center py-2 text-xs gap-0.5"
-            :style="open ? 'color:#111827;' : 'color:#7c8698;'" style="color:#7c8698;">
+            :style="open ? 'color:#161e2d;' : 'color:#a3abb0;'" style="color:#a3abb0;">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
             Menu
         </button>

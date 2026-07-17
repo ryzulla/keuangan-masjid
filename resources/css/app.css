@@ -1,22 +1,22 @@
-/* ── Google Fonts ────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+/* ── Google Fonts (HomeLengo: Manrope + Rubik) ───────────────── */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Manrope:wght@400;500;600;700;800&family=Rubik:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── CSS Custom Properties ───────────────────────────────────── */
+/* ── CSS Custom Properties (HomeLengo palette) ───────────────── */
 :root {
-    --gold:       #111827;
-    --gold-light: #111827;
-    --gold-dark:  #111827;
-    --gold-muted: rgba(16,24,40, 0.15);
-    --dark-bg:    #f5f6f8;
+    --gold:       #1563df;   /* HomeLengo blue accent */
+    --gold-light: #3f7ee6;
+    --gold-dark:  #0e49a6;
+    --gold-muted: rgba(21,99,223, 0.12);
+    --dark-bg:    #f7f7f7;   /* light section background */
     --dark-card:  #ffffff;
-    --dark-card2: #f2f4f7;
-    --dark-hover: #eef0f3;
-    --dark-bdr:   #e4e7ec;
-    --dark-bdr2:  rgba(16,24,40, 0.25);
+    --dark-card2: #f7f7f7;
+    --dark-hover: #f7f7f7;
+    --dark-bdr:   #e4e4e4;
+    --dark-bdr2:  rgba(21,99,223, 0.25);
 }
 
 /* ── Base ────────────────────────────────────────────────────── */
@@ -24,14 +24,26 @@ html { scroll-behavior: smooth; }
 
 body {
     background-color: var(--dark-bg);
-    color: #1d2939;
+    color: #5c6368;
+    font-family: 'Manrope', sans-serif;
 }
+
+/* HomeLengo headings: Manrope, bold, dark navy */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Manrope', sans-serif;
+    color: #161e2d;
+    font-weight: 700;
+}
+
+/* HomeLengo soft card shadow */
+.fh-shadow { box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
+.fh-shadow-lg { box-shadow: 0 30px 60px rgba(0,0,0,0.10); }
 
 /* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--dark-card2); }
-::-webkit-scrollbar-thumb { background: #d0d5dd; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
 /* ── CKEditor ────────────────────────────────────────────────── */
 .ck-editor__editable_inline { min-height: 200px; }
@@ -47,27 +59,28 @@ body {
     .bg-dark-card2    { background-color: var(--dark-card2); }
     .border-dark      { border-color: var(--dark-bdr); }
     .border-gold-dim  { border-color: var(--dark-bdr2); }
-    .text-serif       { font-family: 'IBM Plex Sans', serif; }
+    .text-serif       { font-family: 'Manrope', serif; }
 }
 
 /* ── Gold Gradient Background ────────────────────────────────── */
 .bg-gold-gradient {
-    background: linear-gradient(135deg, #111827 0%, #344054 50%, #111827 100%);
-    border: 1px solid rgba(16,24,40, 0.3);
+    background: linear-gradient(135deg, #1563df 0%, #0e49a6 100%);
+    border: 1px solid rgba(21,99,223, 0.3);
 }
 
 /* ── Dark Card ───────────────────────────────────────────────── */
 .card-dark {
     background-color: var(--dark-card);
     border: 1px solid var(--dark-bdr);
-    border-radius: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
 }
 
 /* ── Gold Input Focus ────────────────────────────────────────── */
 .input-dark {
-    background-color:#f5f6f8;
-    border: 1px solid #e4e7ec;
-    color: #1d2939;
+    background-color:#f7f7f7;
+    border: 1px solid #e4e4e4;
+    color: #161e2d;
     border-radius: 0.75rem;
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
@@ -75,19 +88,19 @@ body {
     transition: border-color 0.15s, box-shadow 0.15s;
     width: 100%;
 }
-.input-dark::placeholder { color: #98a2b3; }
+.input-dark::placeholder { color: #a3abb0; }
 .input-dark:focus {
     border-color: var(--gold-dark);
-    box-shadow: 0 0 0 2px rgba(16,24,40, 0.2);
+    box-shadow: 0 0 0 2px rgba(21,99,223, 0.2);
 }
 
 /* ── Table Dark ──────────────────────────────────────────────── */
 .table-dark thead tr {
-    background-color:#f5f6f8;
+    background-color:#f7f7f7;
     border-bottom: 1px solid var(--dark-bdr);
 }
 .table-dark thead th {
-    color: #667085;
+    color: #5c6368;
     font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -95,16 +108,16 @@ body {
     padding: 0.75rem 1rem;
 }
 .table-dark tbody tr {
-    border-bottom: 1px solid #eef0f3;
+    border-bottom: 1px solid #f7f7f7;
     transition: background-color 0.15s;
 }
 .table-dark tbody tr:hover { background-color: var(--dark-hover); }
 
 /* ── Badge Gold ──────────────────────────────────────────────── */
 .badge-gold {
-    background-color: rgba(16,24,40, 0.15);
+    background-color: rgba(21,99,223, 0.15);
     color: var(--gold-light);
-    border: 1px solid rgba(16,24,40, 0.3);
+    border: 1px solid rgba(21,99,223, 0.3);
     padding: 0.125rem 0.5rem;
     border-radius: 9999px;
     font-size: 0.7rem;
@@ -115,9 +128,9 @@ body {
 .btn-gold {
     background-color: var(--gold);
     color:#ffffff;
-    font-weight: 600;
-    border-radius: 0.75rem;
-    padding: 0.5rem 1.25rem;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 0.55rem 1.4rem;
     font-size: 0.875rem;
     transition: background-color 0.15s, box-shadow 0.15s;
     border: none;
@@ -125,36 +138,37 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    box-shadow: 0 6px 16px rgba(21,99,223,0.28);
 }
-.btn-gold:hover { background-color: var(--gold-light); }
+.btn-gold:hover { background-color: var(--gold-dark); }
 .btn-gold:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .btn-dark {
-    background-color: #f5f6f8;
-    color: #344054;
-    font-weight: 500;
-    border-radius: 0.75rem;
+    background-color: #ffffff;
+    color: #161e2d;
+    font-weight: 600;
+    border-radius: 8px;
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
-    transition: background-color 0.15s;
-    border: 1px solid #d0d5dd;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    border: 1px solid #e4e4e4;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
 }
-.btn-dark:hover { background-color: #e4e7ec; color: #1d2939; }
+.btn-dark:hover { border-color: var(--gold); color: var(--gold); }
 
 /* ── Modal Dark ──────────────────────────────────────────────── */
 .modal-dark {
     background-color: var(--dark-card);
-    border: 1px solid #d0d5dd;
+    border: 1px solid #d9d9d9;
     border-radius: 1rem;
     box-shadow: 0 25px 60px rgba(0,0,0,0.1);
 }
 .modal-header-gold {
-    background: linear-gradient(135deg, #111827 0%, #344054 100%);
-    border-bottom: 1px solid rgba(16,24,40, 0.35);
+    background: linear-gradient(135deg, #1563df 0%, #161e2d 100%);
+    border-bottom: 1px solid rgba(21,99,223, 0.35);
     padding: 1.25rem 1.5rem;
     display: flex;
     align-items: center;
@@ -167,13 +181,13 @@ nav[aria-label="Pagination Navigation"] span,
 nav[aria-label="Pagination Navigation"] a,
 [data-pagination] span,
 [data-pagination] a {
-    background-color:#f5f6f8 !important;
-    color: #475467 !important;
-    border-color: #e4e7ec !important;
+    background-color:#f7f7f7 !important;
+    color: #5c6368 !important;
+    border-color: #e4e4e4 !important;
 }
 nav[aria-label="Pagination Navigation"] a:hover,
 [data-pagination] a:hover {
-    background-color: #f5f6f8 !important;
+    background-color: #f7f7f7 !important;
     color: var(--gold) !important;
 }
 nav[aria-label="Pagination Navigation"] span[aria-current],

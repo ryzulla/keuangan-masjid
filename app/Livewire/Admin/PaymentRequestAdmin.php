@@ -304,11 +304,12 @@ class PaymentRequestAdmin extends Component
         ]);
 
         $tx->donation()->create([
-            'donor_name'  => $req->donor_name ?? $req->resident->name,
-            'donor_type'  => 'warga',
-            'resident_id' => $req->resident_id,
-            'campaign_id' => $req->campaign_id,
-            'type'        => $org === 'dkm' ? 'infaq' : 'umum',
+            'donor_name'    => $req->donor_name ?? $req->resident->name,
+            'donor_type'    => 'warga',
+            'donation_form' => $req->donation_form ?? 'uang',
+            'resident_id'   => $req->resident_id,
+            'campaign_id'   => $req->campaign_id,
+            'type'          => $org === 'dkm' ? 'infaq' : 'umum',
         ]);
     }
 

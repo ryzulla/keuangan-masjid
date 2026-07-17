@@ -10,6 +10,8 @@ use App\Models\Campaign;
 use App\Models\IplBilling;
 use App\Models\Account;
 use App\Models\Transaction;
+use App\Models\ResidentHouseBlock;
+use App\Models\HouseBlock;
 
 #[Layout('layouts.penghuni')]
 class Dashboard extends Component
@@ -94,8 +96,21 @@ class Dashboard extends Component
             ->where('status', 'pending')
             ->count();
 
+        $contractedHouses = ResidentHouseBlock::whereHas('houseBlock', function ($q) use ($resident) {
+                $q->whereHas('owners', fn($oq) => $oq->where('residents.id', $resident->id));
+            })
+            ->whereNull('ended_at')
+            ->where('ownership_type', '!=', 'pemilik')
+            ->with(['resident', 'houseBlock'])
+            ->get();
+
+        $listedHouses = HouseBlock::whereHas('owners', fn($q) => $q->where('residents.id', $resident->id))
+            ->where('is_for_rent', true)
+            ->with('photos')
+            ->get();
+
         return view('livewire.penghuni.dashboard', compact(
-            'resident', 'billings', 'totalOutstanding', 'campaigns', 'pendingRequests'
+            'resident', 'billings', 'totalOutstanding', 'campaigns', 'pendingRequests', 'contractedHouses', 'listedHouses'
         ));
     }
 }

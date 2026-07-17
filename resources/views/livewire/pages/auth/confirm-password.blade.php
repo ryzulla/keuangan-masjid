@@ -33,7 +33,7 @@ $confirmPassword = function () {
 ?>
 
 <div>
-    <div class="mb-4 text-sm" style="color:#7c8698;">
+    <div class="mb-4 text-sm" style="color:#a3abb0;">
         {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
     </div>
 

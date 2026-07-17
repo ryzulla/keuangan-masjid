@@ -11,7 +11,7 @@
         .header-info p { margin: 2px 0; color: #555; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #333; padding: 4px 6px; text-align: left; vertical-align: top; font-size: 9px; }
-        th { background-color: #1d2939; color: #fff; font-weight: bold; text-align: center; }
+        th { background-color: #161e2d; color: #fff; font-weight: bold; text-align: center; }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
         .currency { font-family: monospace; white-space: nowrap; }
