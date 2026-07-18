@@ -13,7 +13,7 @@ class Resident extends Authenticatable
 
     protected $fillable = [
         'name', 'photo', 'nik', 'phone', 'whatsapp', 'email', 'notes', 'is_active',
-        'password', 'notification_preferences',
+        'password', 'notification_preferences', 'last_health_report_at',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -22,6 +22,7 @@ class Resident extends Authenticatable
         'nik'                      => 'encrypted',
         'is_active'                => 'boolean',
         'notification_preferences' => 'array',
+        'last_health_report_at'    => 'datetime',
     ];
 
     /**

@@ -7,222 +7,213 @@
         </div>
     @endif
 
-    {{-- Welcome Header --}}
-    <div class="rounded-2xl p-6" style="background:linear-gradient(135deg,#ffffff 0%,#ffffff 62%);border:1px solid rgba(21,99,223,0.35);">
-        <div class="flex items-center gap-4">
-            @if($resident->photo)
-                <img src="{{ Storage::disk('public')->url($resident->photo) }}"
-                    alt="{{ $resident->name }}"
-                    class="w-16 h-16 rounded-2xl object-cover shrink-0"
-                    style="border:2px solid rgba(21,99,223,0.5);">
-            @else
-                <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold shrink-0"
-                    style="background:rgba(21,99,223,0.15);color:#161e2d;border:1px solid rgba(21,99,223,0.3);">
-                    {{ strtoupper(substr($resident->name, 0, 1)) }}
+    {{-- ═══ HERO — Denah Warga ═══ --}}
+    <div class="pp-reveal relative overflow-hidden rounded-[22px] p-6 sm:p-7" style="background:linear-gradient(150deg,#0B2E28,#164A40 72%);color:#F4EFE2;">
+        <div class="pp-denah"></div>
+        <div class="relative flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+            <div class="min-w-0">
+                <div class="flex items-center gap-3.5">
+                    @if($resident->photo)
+                        <img src="{{ Storage::disk('public')->url($resident->photo) }}" alt="{{ $resident->name }}"
+                            class="w-14 h-14 rounded-2xl object-cover shrink-0" style="border:1.5px solid rgba(244,239,226,0.4);">
+                    @else
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 pp-display"
+                            style="background:rgba(244,239,226,0.14);color:#F4EFE2;font-weight:600;font-size:22px;border:1px solid rgba(244,239,226,0.25);">
+                            {{ strtoupper(substr($resident->name, 0, 1)) }}
+                        </div>
+                    @endif
+                    <div class="min-w-0">
+                        <p style="font-size:12.5px;color:rgba(244,239,226,0.78);">Assalamualaikum, selamat datang</p>
+                        <h2 class="pp-display truncate" style="font-weight:500;font-size:26px;line-height:1.12;color:#F4EFE2;margin-top:2px;">{{ $resident->name }}</h2>
+                    </div>
                 </div>
-            @endif
-            <div>
-                <p class="text-xs mb-1" style="color:#161e2d;">Selamat datang,</p>
-                <h2 class="text-xl font-bold" style="color:#161e2d;font-family:'Manrope',serif;">{{ $resident->name }}</h2>
-                <div class="flex flex-wrap items-center gap-3 mt-2">
+
+                <div class="flex flex-wrap items-center gap-2 mt-4">
                     @forelse($resident->currentAssignments as $assignment)
-                        <span class="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg font-medium"
-                            style="background:rgba(21,99,223,0.12);color:#161e2d;border:1px solid rgba(21,99,223,0.25);">
-                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                            {{ $assignment->houseBlock?->block_code ?? '-' }}
-                            <span style="color:#161e2d;">{{ ucfirst($assignment->ownership_type) }}</span>
+                        <span class="inline-flex items-center gap-2 rounded-lg" style="background:#1C5749;border:1px solid rgba(244,239,226,0.22);padding:5px 11px 5px 8px;">
+                            <span class="w-5 h-5 rounded-md flex items-center justify-center shrink-0" style="background:rgba(244,239,226,0.16);">
+                                <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="#F4EFE2" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 3l9 7.5M5 9v11h14V9"/></svg>
+                            </span>
+                            <span class="leading-tight">
+                                <span class="block pp-display" style="font-weight:600;font-size:14px;letter-spacing:.02em;color:#F4EFE2;">{{ $assignment->houseBlock?->block_code ?? '—' }}</span>
+                                <span class="block" style="font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:rgba(244,239,226,0.6);">{{ ucfirst($assignment->ownership_type) }}</span>
+                            </span>
                         </span>
                     @empty
-                        <span class="text-xs" style="color:#a3abb0;">Belum ada blok ditetapkan</span>
+                        <span class="text-xs" style="color:rgba(244,239,226,0.7);">Belum ada blok terdaftar</span>
                     @endforelse
-                    <span class="text-xs" style="color:#a3abb0;">
-                        {{ $resident->familyMembers->count() }} anggota keluarga
-                    </span>
                 </div>
+                <p style="margin-top:13px;font-size:12.5px;color:rgba(244,239,226,0.68);">{{ $resident->familyMembers->count() }} anggota keluarga terdaftar</p>
             </div>
-        </div>
-    </div>
 
-    @php $monthly = $this->monthlySummary; @endphp
-
-    {{-- Keuangan Transparan --}}
-    <div class="rounded-2xl p-5" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm font-semibold" style="color:#161e2d;">Info Keuangan</h3>
-            <div class="flex items-center gap-1.5">
-                <button wire:click="$set('activeOrg', 'semua')" class="text-xs px-2.5 py-1 rounded-lg font-medium transition-colors"
-                    style="{{ $activeOrg === 'semua' ? 'background:#1563df;color:#ffffff;' : 'background:rgba(21,99,223,0.08);color:#5c6368;border:1px solid rgba(21,99,223,0.15);' }}">Semua</button>
-                <button wire:click="$set('activeOrg', 'perumahan')" class="text-xs px-2.5 py-1 rounded-lg font-medium transition-colors"
-                    style="{{ $activeOrg === 'perumahan' ? 'background:#1563df;color:#ffffff;' : 'background:rgba(21,99,223,0.08);color:#5c6368;border:1px solid rgba(21,99,223,0.15);' }}">Perumahan</button>
-                <button wire:click="$set('activeOrg', 'dkm')" class="text-xs px-2.5 py-1 rounded-lg font-medium transition-colors"
-                    style="{{ $activeOrg === 'dkm' ? 'background:#1563df;color:#ffffff;' : 'background:rgba(21,99,223,0.08);color:#5c6368;border:1px solid rgba(21,99,223,0.15);' }}">DKM</button>
-                <a href="{{ route('penghuni.keuangan') }}" wire:navigate class="text-xs ml-2 hover:underline" style="color:#5c6368;">Detail</a>
-            </div>
-        </div>
-
-        <div class="flex gap-6">
-            {{-- Left: Chart --}}
-            <div class="shrink-0 w-28 h-28 flex items-center justify-center"
-                wire:key="dash-donut-{{ $activeOrg }}"
-                x-data="{
-                    chart: null,
-                    init() { this.$nextTick(() => this.renderChart()); },
-                    renderChart() {
-                        if (this.chart) this.chart.destroy();
-                        const ti = {{ $monthly['totalIncome'] }};
-                        const te = {{ $monthly['totalExpense'] }};
-                        if (ti === 0 && te === 0) return;
-                        const ctx = document.getElementById('dashDonut');
-                        if (!ctx) return;
-                        this.chart = new Chart(ctx, {
-                            type: 'doughnut',
-                            data: {
-                                labels: ['Pemasukan', 'Pengeluaran'],
-                                datasets: [{ data: [ti, te], backgroundColor: ['#12805c', '#c0453b'], borderWidth: 0 }]
-                            },
-                            options: { responsive: true, cutout: '70%', plugins: { legend: { display: false } } }
-                        });
-                    }
-                }">
-                <canvas id="dashDonut"></canvas>
-            </div>
-            {{-- Right: accounts + summary --}}
-            <div class="flex-1 min-w-0">
-                <div class="grid grid-cols-2 gap-2 mb-3">
-                    @foreach($this->accounts as $account)
-                        <div class="rounded-lg p-2.5" style="background:rgba(21,99,223,0.04);border:1px solid rgba(21,99,223,0.12);">
-                            <p class="text-[10px]" style="color:#a3abb0;">{{ ucfirst($account->organization_type) }}</p>
-                            <p class="text-xs font-semibold" style="color:#161e2d;">{{ $account->name }}</p>
-                            <p class="text-sm font-bold" style="color:#12805c;">
-                                Rp {{ number_format($account->balance, 0, ',', '.') }}
-                            </p>
-                        </div>
-                    @endforeach
-                </div>
-                <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs">
-                    <span style="color:#161e2d;">
-                        <span class="inline-block w-2 h-2 rounded-full mr-1" style="background:#12805c;"></span>
-                        Pemasukan: <strong>Rp {{ number_format($monthly['totalIncome'], 0, ',', '.') }}</strong>
-                    </span>
-                    <span style="color:#161e2d;">
-                        <span class="inline-block w-2 h-2 rounded-full mr-1" style="background:#c0453b;"></span>
-                        Pengeluaran: <strong>Rp {{ number_format($monthly['totalExpense'], 0, ',', '.') }}</strong>
-                    </span>
-                    <span style="color:{{ $monthly['totalIncome'] >= $monthly['totalExpense'] ? '#12805c' : '#c0453b' }};">
-                        Selisih: <strong>Rp {{ number_format($monthly['totalIncome'] - $monthly['totalExpense'], 0, ',', '.') }}</strong>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Stats --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div class="rounded-2xl p-4 sm:p-5" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
-            <p class="text-xs mb-2" style="color:#a3abb0;">IPL Tunggakan</p>
-            <p class="text-base sm:text-lg font-bold leading-tight" style="color:{{ $totalOutstanding > 0 ? '#c0453b' : '#12805c' }};">
-                Rp {{ number_format($totalOutstanding, 0, ',', '.') }}
-            </p>
-            @if($totalOutstanding > 0)
-                <a href="{{ route('penghuni.ipl') }}" wire:navigate class="text-xs mt-1.5 inline-block hover:underline" style="color:#161e2d;">Bayar sekarang</a>
-            @else
-                <p class="text-xs mt-1.5" style="color:#12805c;">Lunas</p>
-            @endif
-        </div>
-
-        <div class="rounded-2xl p-4 sm:p-5" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
-            <p class="text-xs mb-2" style="color:#a3abb0;">Anggota Keluarga</p>
-            <p class="text-base sm:text-lg font-bold" style="color:#161e2d;">{{ $resident->familyMembers->count() }}</p>
-            <a href="{{ route('penghuni.keluarga') }}" wire:navigate class="text-xs mt-1.5 inline-block hover:underline" style="color:#5c6368;">Kelola data</a>
-        </div>
-
-        <div class="rounded-2xl p-4 sm:p-5" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
-            <p class="text-xs mb-2" style="color:#a3abb0;">Menunggu Konfirmasi</p>
-            <p class="text-base sm:text-lg font-bold" style="color:{{ $pendingRequests > 0 ? '#c77d1a' : '#5c6368' }};">{{ $pendingRequests }}</p>
-            <p class="text-xs mt-1.5" style="color:#a3abb0;">pembayaran</p>
-        </div>
-    </div>
-
-    {{-- Rumah Disewakan --}}
-    @if($contractedHouses->isNotEmpty())
-    <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
-        <div class="px-5 py-4 flex items-center justify-between" style="border-bottom:1px solid #f7f7f7;">
-            <h3 class="text-sm font-semibold" style="color:#161e2d;">Rumah Disewakan</h3>
-            <a href="{{ route('penghuni.rumah-saya') }}" wire:navigate class="text-xs hover:underline" style="color:#5c6368;">Kelola</a>
-        </div>
-        <div class="overflow-x-auto hidden md:block">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr style="border-bottom:1px solid #f7f7f7;">
-                        <th class="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#a3abb0;">Blok</th>
-                        <th class="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#a3abb0;">Penyewa</th>
-                        <th class="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#a3abb0;">Sewa/Bulan</th>
-                        <th class="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style="color:#a3abb0;">Kontrak Berakhir</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($contractedHouses as $ch)
-                    @php
-                        $endingSoon = $ch->contract_end_date && $ch->contract_end_date->diffInDays(now()) <= 30;
-                    @endphp
-                    <tr style="border-bottom:1px solid #ffffff;" onmouseover="this.style.backgroundColor='#f7f7f7'" onmouseout="this.style.backgroundColor=''">
-                        <td class="px-5 py-3.5">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium"
-                                style="background:rgba(21,99,223,0.1);color:#161e2d;border:1px solid rgba(21,99,223,0.2);">
-                                {{ $ch->houseBlock?->block_code ?? '—' }}
-                            </span>
-                        </td>
-                        <td class="px-5 py-3.5">
-                            <div class="flex items-center gap-2">
-                                <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                                    style="background:rgba(199,125,26,0.1);color:#c77d1a;border:1px solid rgba(199,125,26,0.2);">
-                                    {{ strtoupper(substr($ch->resident->name, 0, 1)) }}
-                                </div>
-                                <span class="text-xs font-medium" style="color:#161e2d;">{{ $ch->resident->name }}</span>
-                            </div>
-                        </td>
-                        <td class="px-5 py-3.5 text-xs font-medium" style="color:#161e2d;">
-                            @if($ch->monthly_rent)
-                                Rp {{ number_format($ch->monthly_rent, 0, ',', '.') }}
-                            @else
-                                &mdash;
-                            @endif
-                        </td>
-                        <td class="px-5 py-3.5 text-xs" style="color:{{ $endingSoon ? '#c77d1a' : '#5c6368' }};">
-                            @if($ch->contract_end_date)
-                                {{ $ch->contract_end_date->format('d M Y') }}
-                                @if($endingSoon)
-                                    <span class="ml-1 font-medium">(segera berakhir)</span>
-                                @endif
-                            @else
-                                &mdash;
-                            @endif
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        {{-- Mobile --}}
-        <div class="md:hidden divide-y" style="border-color:#f7f7f7;">
-            @foreach($contractedHouses as $ch)
-            @php $endingSoon = $ch->contract_end_date && $ch->contract_end_date->diffInDays(now()) <= 30; @endphp
-            <div class="px-4 py-3">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium"
-                            style="background:rgba(21,99,223,0.1);color:#161e2d;border:1px solid rgba(21,99,223,0.2);">
-                            {{ $ch->houseBlock?->block_code ?? '—' }}
+            {{-- Ringkasan IPL --}}
+            <div class="rounded-2xl shrink-0 w-full sm:w-auto sm:min-w-[220px]" style="background:rgba(244,239,226,0.96);color:#17231E;padding:16px 18px;box-shadow:0 18px 34px -20px rgba(0,0,0,0.55);">
+                @if($totalOutstanding > 0)
+                    <p class="pp-eyebrow">Tagihan IPL Aktif</p>
+                    <p class="pp-rp" style="font-weight:600;font-size:25px;color:#B0402C;margin:5px 0 2px;">Rp {{ number_format($totalOutstanding, 0, ',', '.') }}</p>
+                    <p style="font-size:12px;color:#586359;">{{ $unpaidBillings->count() }} bulan belum lunas</p>
+                    <a href="{{ route('penghuni.ipl') }}" wire:navigate class="mt-3 flex items-center justify-center gap-2 rounded-[10px] transition-colors"
+                        style="background:#164A40;color:#F4EFE2;padding:10px;font-weight:600;font-size:13.5px;"
+                        onmouseover="this.style.background='#0F3A32'" onmouseout="this.style.background='#164A40'">
+                        Bayar IPL Sekarang
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </a>
+                @else
+                    <p class="pp-eyebrow">Status IPL</p>
+                    <div class="flex items-center gap-2.5 mt-2">
+                        <span class="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style="background:rgba(18,128,92,0.12);">
+                            <svg class="w-5 h-5" style="color:#12805c;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                         </span>
-                        <span class="text-xs" style="color:#5c6368;">{{ $ch->resident->name }}</span>
+                        <div>
+                            <p class="pp-display" style="font-weight:600;font-size:16px;color:#12805c;">Semua Lunas</p>
+                            <p style="font-size:11.5px;color:#586359;">Tidak ada tagihan aktif</p>
+                        </div>
                     </div>
-                    <span class="text-xs" style="color:{{ $endingSoon ? '#c77d1a' : '#a3abb0' }};">
-                        @if($ch->contract_end_date)
-                            {{ $ch->contract_end_date->format('d M Y') }}
-                        @else
-                            &mdash;
-                        @endif
-                    </span>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    {{-- ═══ YANG PERLU PERHATIAN ═══ --}}
+    @php
+        $hasAlerts = $totalOutstanding > 0 || $pendingRequests > 0 || $expiringContracts->isNotEmpty();
+    @endphp
+    @if($hasAlerts)
+    <div class="rounded-2xl overflow-hidden" style="border:1px solid rgba(176,64,44,0.25);background:rgba(176,64,44,0.04);">
+        <div class="px-5 py-3 flex items-center gap-2" style="background:rgba(176,64,44,0.08);border-bottom:1px solid rgba(176,64,44,0.15);">
+            <svg class="w-4 h-4 shrink-0" style="color:#B0402C;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <h3 class="text-sm font-semibold" style="color:#B0402C;">Yang Perlu Perhatian</h3>
+        </div>
+        <div class="divide-y" style="border-color:rgba(176,64,44,0.1);">
+            @if($totalOutstanding > 0)
+            <a href="{{ route('penghuni.ipl') }}" wire:navigate class="flex items-center justify-between px-5 py-3 hover:bg-white/50 transition-colors">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(176,64,44,0.12);">
+                        <svg class="w-4 h-4" style="color:#B0402C;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium" style="color:#17231E;">IPL belum lunas</p>
+                        <p class="text-xs" style="color:#909A8F;">{{ $unpaidBillings->count() }} tagihan · Rp {{ number_format($totalOutstanding, 0, ',', '.') }}</p>
+                    </div>
+                </div>
+                <svg class="w-4 h-4 shrink-0" style="color:#909A8F;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            @endif
+
+            @if($pendingRequests > 0)
+            <a href="{{ route('penghuni.ipl') }}" wire:navigate class="flex items-center justify-between px-5 py-3 hover:bg-white/50 transition-colors">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(169,116,26,0.12);">
+                        <svg class="w-4 h-4" style="color:#A9741A;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium" style="color:#17231E;">{{ $pendingRequests }} pembayaran menunggu konfirmasi</p>
+                        <p class="text-xs" style="color:#909A8F;">Pengurus akan memverifikasi</p>
+                    </div>
+                </div>
+                <svg class="w-4 h-4 shrink-0" style="color:#909A8F;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            @endif
+
+            @foreach($expiringContracts as $ec)
+            <a href="{{ route('penghuni.rumah-saya') }}" wire:navigate class="flex items-center justify-between px-5 py-3 hover:bg-white/50 transition-colors">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:rgba(169,116,26,0.12);">
+                        <svg class="w-4 h-4" style="color:#A9741A;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium" style="color:#17231E;">Kontrak {{ $ec->houseBlock?->block_code ?? '—' }} berakhir {{ $ec->contract_end_date->diffInDays(now()) }} hari lagi</p>
+                        <p class="text-xs" style="color:#909A8F;">{{ $ec->resident?->name ?? '—' }} · {{ $ec->contract_end_date->format('d M Y') }}</p>
+                    </div>
+                </div>
+                <svg class="w-4 h-4 shrink-0" style="color:#909A8F;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
+    {{-- ═══ QUICK ACTIONS ═══ --}}
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <a href="{{ route('penghuni.ipl') }}" wire:navigate
+            class="rounded-2xl p-4 flex flex-col items-center gap-2 transition-all hover:shadow-md"
+            style="background:#ffffff;border:1px solid #E0DFD4;">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(22,74,64,0.1);">
+                <svg class="w-5 h-5" style="color:#164A40;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+            </div>
+            <span class="text-xs font-semibold text-center" style="color:#17231E;">Bayar IPL</span>
+        </a>
+        <a href="{{ route('penghuni.program') }}" wire:navigate
+            class="rounded-2xl p-4 flex flex-col items-center gap-2 transition-all hover:shadow-md"
+            style="background:#ffffff;border:1px solid #E0DFD4;">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(18,128,92,0.1);">
+                <svg class="w-5 h-5" style="color:#12805c;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            </div>
+            <span class="text-xs font-semibold text-center" style="color:#17231E;">Donasi</span>
+        </a>
+        @if($resident->isPemilik())
+        <a href="{{ route('penghuni.rumah-saya') }}" wire:navigate
+            class="rounded-2xl p-4 flex flex-col items-center gap-2 transition-all hover:shadow-md"
+            style="background:#ffffff;border:1px solid #E0DFD4;">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(169,116,26,0.1);">
+                <svg class="w-5 h-5" style="color:#A9741A;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            </div>
+            <span class="text-xs font-semibold text-center" style="color:#17231E;">Rumah Saya</span>
+        </a>
+        @endif
+        <a href="{{ route('penghuni.keluarga') }}" wire:navigate
+            class="rounded-2xl p-4 flex flex-col items-center gap-2 transition-all hover:shadow-md"
+            style="background:#ffffff;border:1px solid #E0DFD4;">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(107,91,149,0.1);">
+                <svg class="w-5 h-5" style="color:#6B5B95;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <span class="text-xs font-semibold text-center" style="color:#17231E;">Keluarga</span>
+        </a>
+        <button type="button" wire:click="openHealthModal"
+            class="rounded-2xl p-4 flex flex-col items-center gap-2 transition-all hover:shadow-md cursor-pointer"
+            style="background:#ffffff;border:1px solid #E0DFD4;">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(176,64,44,0.1);">
+                <svg class="w-5 h-5" style="color:#B0402C;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            </div>
+            <span class="text-xs font-semibold text-center" style="color:#17231E;">Lapor Warga</span>
+        </button>
+    </div>
+
+    {{-- ═══ PENGUMUMAN ═══ --}}
+    @if($notices->isNotEmpty())
+    <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #E0DFD4;box-shadow:0 1px 2px rgba(22,74,64,0.04),0 8px 20px -8px rgba(22,74,64,0.06);">
+        <div class="px-5 py-4 flex items-center gap-2" style="border-bottom:1px solid #F1F3EC;">
+            <svg class="w-4 h-4" style="color:#164A40;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+            <h3 class="text-sm font-semibold" style="color:#17231E;">Pengumuman</h3>
+        </div>
+        <div class="divide-y" style="border-color:#F1F3EC;">
+            @foreach($notices as $notice)
+            @php
+                $pStyle = match($notice->priority) {
+                    'warning' => 'background:rgba(169,116,26,0.1);color:#A9741A;',
+                    'urgent'  => 'background:rgba(176,64,44,0.1);color:#B0402C;',
+                    default   => 'background:rgba(22,74,64,0.08);color:#164A40;',
+                };
+                $liked = in_array($notice->id, $likedNoticeIds);
+                $likeCount = $notice->likers_count ?? 0;
+            @endphp
+            <div class="px-5 py-3.5">
+                <div class="flex items-start gap-3">
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 shrink-0 uppercase" style="{{ $pStyle }}">{{ $notice->priority }}</span>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-medium" style="color:#17231E;">{{ $notice->title }}</p>
+                        <p class="text-xs mt-0.5 line-clamp-2" style="color:#586359;">{{ $notice->content }}</p>
+                        <div class="flex items-center gap-3 mt-2">
+                            <button type="button" wire:click="toggleLike({{ $notice->id }})" wire:loading.attr="disabled"
+                                class="inline-flex items-center gap-1.5 text-xs font-medium rounded-full px-2.5 py-1 transition-colors"
+                                style="{{ $liked ? 'background:rgba(176,64,44,0.1);color:#B0402C;border:1px solid rgba(176,64,44,0.25);' : 'background:#F1F3EC;color:#586359;border:1px solid #E0DFD4;' }}">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="{{ $liked ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                <span>{{ $liked ? 'Disukai' : 'Suka' }}</span>
+                                @if($likeCount > 0)<span style="opacity:.7;">· {{ $likeCount }}</span>@endif
+                            </button>
+                            <span class="text-[10px]" style="color:#909A8F;">{{ $notice->published_at?->diffForHumans() ?? '' }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             @endforeach
@@ -230,48 +221,150 @@
     </div>
     @endif
 
-    {{-- Rumah Dijual / Disewakan --}}
-    @if($listedHouses->isNotEmpty())
-    <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
-        <div class="px-5 py-4 flex items-center justify-between" style="border-bottom:1px solid #f7f7f7;">
-            <h3 class="text-sm font-semibold" style="color:#161e2d;">Rumah Dijual / Disewakan</h3>
-            <a href="{{ route('penghuni.rumah-saya') }}" wire:navigate class="text-xs hover:underline" style="color:#5c6368;">Kelola</a>
+    {{-- ═══ INFO KEUANGAN (Ringkas) ═══ --}}
+    <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #E0DFD4;box-shadow:0 1px 2px rgba(22,74,64,0.04),0 8px 20px -8px rgba(22,74,64,0.06);">
+        <div class="px-5 py-4 flex items-center justify-between" style="border-bottom:1px solid #F1F3EC;">
+            <h3 class="text-sm font-semibold" style="color:#17231E;">Saldo Rekening</h3>
+            <a href="{{ route('penghuni.keuangan') }}" wire:navigate class="text-xs hover:underline" style="color:#586359;">Detail</a>
+        </div>
+        <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+            @forelse($this->accounts as $account)
+                <div class="flex items-center justify-between rounded-xl px-4 py-3" style="background:#F1F3EC;">
+                    <div>
+                        <p class="text-[10px] uppercase tracking-wider font-medium" style="color:#909A8F;">{{ $account->organization_type }}</p>
+                        <p class="text-xs font-medium mt-0.5" style="color:#17231E;">{{ $account->name }}</p>
+                    </div>
+                    <p class="text-sm font-bold pp-rp" style="color:#12805c;">Rp {{ number_format($account->balance, 0, ',', '.') }}</p>
+                </div>
+            @empty
+                <p class="text-sm text-center py-4" style="color:#909A8F;">Belum ada rekening.</p>
+            @endforelse
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        {{-- ═══ IPL TERBARU (Hanya Belum Lunas) ═══ --}}
+        <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #E0DFD4;box-shadow:0 1px 2px rgba(22,74,64,0.04),0 8px 20px -8px rgba(22,74,64,0.06);">
+            <div class="px-5 py-4 flex items-center justify-between" style="border-bottom:1px solid #F1F3EC;">
+                <h3 class="text-sm font-semibold" style="color:#17231E;">Tagihan IPL</h3>
+                <a href="{{ route('penghuni.ipl') }}" wire:navigate class="text-xs hover:underline" style="color:#586359;">Bayar sekarang</a>
+            </div>
+            @forelse($recentBillings as $billing)
+                @php
+                    $statusStyle = match($billing->status) {
+                        'partial' => 'background:rgba(169,116,26,0.12);color:#A9741A;border:1px solid rgba(169,116,26,0.25);',
+                        default   => 'background:rgba(176,64,44,0.12);color:#B0402C;border:1px solid rgba(176,64,44,0.25);',
+                    };
+                    $statusLabel = match($billing->status) {
+                        'partial' => 'Sebagian',
+                        default   => 'Belum Bayar',
+                    };
+                @endphp
+                <div class="px-5 py-3.5 flex items-center justify-between" style="border-bottom:1px solid #ffffff;">
+                    <div>
+                        <p class="text-sm font-medium" style="color:#17231E;">
+                            {{ \Carbon\Carbon::create($billing->period->year, $billing->period->month)->translatedFormat('F Y') }}
+                        </p>
+                        <p class="text-xs mt-0.5" style="color:#909A8F;">
+                            {{ $billing->houseBlock?->block_code ?? '-' }}
+                            &middot; Sisa Rp {{ number_format($billing->outstanding, 0, ',', '.') }}
+                        </p>
+                    </div>
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium shrink-0" style="{{ $statusStyle }}">{{ $statusLabel }}</span>
+                </div>
+            @empty
+                <div class="px-5 py-10 text-center">
+                    <svg class="w-10 h-10 mx-auto mb-2" style="color:#12805c;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <p class="text-sm font-medium" style="color:#12805c;">Semua tagihan lunas!</p>
+                </div>
+            @endforelse
+        </div>
+
+        {{-- ═══ RUMAH DITAWARKAN ═══ --}}
+        <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #E0DFD4;box-shadow:0 1px 2px rgba(22,74,64,0.04),0 8px 20px -8px rgba(22,74,64,0.06);">
+            <div class="px-5 py-4 flex items-center justify-between" style="border-bottom:1px solid #F1F3EC;">
+                <h3 class="text-sm font-semibold" style="color:#17231E;">Rumah Ditawarkan</h3>
+                @if($resident->isPemilik())
+                <a href="{{ route('penghuni.rumah-saya') }}" wire:navigate class="text-xs hover:underline" style="color:#586359;">Kelola</a>
+                @endif
+            </div>
+            @if($listedHouses->isNotEmpty())
+            <div class="p-4 space-y-2">
+                @foreach($listedHouses as $lh)
+                    @php
+                        $photo = $lh->photos->firstWhere('is_primary') ?? $lh->photos->first();
+                        $isForSale = ($lh->listing_type ?? 'sewa') === 'jual';
+                    @endphp
+                    <a href="{{ route('penghuni.detail-rumah', $lh->id) }}" wire:navigate
+                        class="flex items-center gap-3 p-3 rounded-xl transition-colors"
+                        style="background:#F1F3EC;border:1px solid #E0DFD4;"
+                        onmouseover="this.style.borderColor='rgba(22,74,64,0.3)'" onmouseout="this.style.borderColor='#E0DFD4'">
+                        <div class="w-12 h-12 rounded-lg overflow-hidden shrink-0" style="background:#E0DFD4;">
+                            @if($photo)
+                                <img src="{{ Storage::disk('public')->url($photo->photo_path) }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <svg class="w-5 h-5" style="color:#C9C7BA;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold" style="color:#17231E;">Blok {{ $lh->block_code }}</span>
+                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md"
+                                    style="background:{{ $isForSale ? 'rgba(22,74,64,0.1)' : 'rgba(169,116,26,0.1)' }};color:{{ $isForSale ? '#164A40' : '#A9741A' }};">
+                                    {{ $isForSale ? 'Jual' : 'Sewa' }}
+                                </span>
+                            </div>
+                            @if($lh->rental_price)
+                                <p class="text-xs font-bold mt-0.5" style="color:#164A40;">
+                                    Rp {{ number_format($lh->rental_price, 0, ',', '.') }}
+                                    @if(!$isForSale)
+                                        <span class="font-medium" style="color:#909A8F;">/ {{ match($lh->rental_duration ?? 'bulanan') { '6bulan' => '6bln', 'tahunan' => 'thn', default => 'bln' } }}</span>
+                                    @endif
+                                </p>
+                            @endif
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+            @else
+            <div class="px-5 py-10 text-center">
+                <p class="text-sm" style="color:#909A8F;">Belum ada rumah ditawarkan.</p>
+            </div>
+            @endif
+        </div>
+
+    </div>
+
+    {{-- ═══ PROGRAM AKTIF ═══ --}}
+    @if($campaigns->isNotEmpty())
+    <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #E0DFD4;box-shadow:0 1px 2px rgba(22,74,64,0.04),0 8px 20px -8px rgba(22,74,64,0.06);">
+        <div class="px-5 py-4 flex items-center justify-between" style="border-bottom:1px solid #F1F3EC;">
+            <h3 class="text-sm font-semibold" style="color:#17231E;">Program Aktif</h3>
+            <a href="{{ route('penghuni.program') }}" wire:navigate class="text-xs hover:underline" style="color:#586359;">Lihat semua</a>
         </div>
         <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            @foreach($listedHouses as $lh)
+            @foreach($campaigns as $campaign)
                 @php
-                    $photo = $lh->photos->firstWhere('is_primary') ?? $lh->photos->first();
-                    $isForSale = ($lh->listing_type ?? 'sewa') === 'jual';
+                    $raised   = $campaign->donations->sum(fn($d) => optional($d->transaction)->amount ?? 0);
+                    $progress = $campaign->target_amount > 0 ? min(100, ($raised / $campaign->target_amount) * 100) : 0;
                 @endphp
-                <a href="{{ route('penghuni.detail-rumah', $lh->id) }}" wire:navigate
-                    class="flex gap-3 p-3 rounded-xl transition-colors"
-                    style="background:#f7f7f7;border:1px solid #e4e4e4;"
-                    onmouseover="this.style.borderColor='rgba(21,99,223,0.3)'" onmouseout="this.style.borderColor='#e4e4e4'">
-                    <div class="w-16 h-16 rounded-lg overflow-hidden shrink-0" style="background:#e4e4e4;">
-                        @if($photo)
-                            <img src="{{ Storage::disk('public')->url($photo->photo_path) }}" class="w-full h-full object-cover">
-                        @else
-                            <div class="w-full h-full flex items-center justify-center">
-                                <svg class="w-6 h-6" style="color:#d0d0d0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                            </div>
-                        @endif
+                <a href="{{ route('penghuni.program.detail', $campaign->id) }}" wire:navigate
+                    class="block p-4 rounded-xl transition-colors"
+                    style="background:#F1F3EC;border:1px solid #E0DFD4;"
+                    onmouseover="this.style.borderColor='rgba(22,74,64,0.3)'" onmouseout="this.style.borderColor='#E0DFD4'">
+                    <p class="text-sm font-medium truncate" style="color:#17231E;">{{ $campaign->name }}</p>
+                    <p class="text-xs mt-0.5" style="color:#909A8F;">
+                        Target: Rp {{ number_format($campaign->target_amount, 0, ',', '.') }}
+                    </p>
+                    <div class="mt-2.5 h-1.5 rounded-full" style="background:#E0DFD4;">
+                        <div class="h-1.5 rounded-full" style="width:{{ $progress }}%;background:#164A40;"></div>
                     </div>
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs font-semibold" style="color:#161e2d;">Blok {{ $lh->block_code }}</span>
-                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md"
-                                style="background:{{ $isForSale ? 'rgba(21,99,223,0.1)' : 'rgba(199,125,26,0.1)' }};color:{{ $isForSale ? '#1563df' : '#c77d1a' }};">
-                                {{ $isForSale ? 'Jual' : 'Sewa' }}
-                            </span>
-                        </div>
-                        @if($lh->rental_price)
-                            <p class="text-sm font-bold" style="color:#1563df;">
-                                Rp {{ number_format($lh->rental_price, 0, ',', '.') }}
-                                @if(!$isForSale)
-                                    <span class="text-[10px] font-medium" style="color:#a3abb0;">/ {{ match($lh->rental_duration ?? 'bulanan') { '6bulan' => '6bln', 'tahunan' => 'thn', default => 'bln' } }}</span>
-                                @endif
-                            </p>
-                        @endif
+                    <div class="flex items-center justify-between mt-1.5">
+                        <p class="text-[10px]" style="color:#909A8F;">{{ number_format($progress, 0) }}% terkumpul</p>
+                        <span class="text-[10px] font-bold" style="color:#164A40;">Donasi →</span>
                     </div>
                 </a>
             @endforeach
@@ -279,96 +372,114 @@
     </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        {{-- IPL Terbaru --}}
-        <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
-            <div class="px-5 py-4 flex items-center justify-between" style="border-bottom:1px solid #f7f7f7;">
-                <h3 class="text-sm font-semibold" style="color:#161e2d;">IPL Terbaru</h3>
-                <a href="{{ route('penghuni.ipl') }}" wire:navigate class="text-xs hover:underline" style="color:#5c6368;">Lihat semua</a>
+    {{-- ═══ MODAL LAPORAN KESEHATAN ═══ --}}
+    @if($showHealthModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0" style="background:rgba(0,0,0,0.1);backdrop-filter:blur(4px);" wire:click="dismissHealth"></div>
+        <div class="relative rounded-2xl shadow-2xl w-full max-w-lg" style="background:#ffffff;border:1px solid #D8D6C9;">
+            <div class="px-6 py-4 rounded-t-2xl" style="background:#F1F3EC;border-bottom:1px solid rgba(22,74,64,0.35);">
+                <h3 class="font-bold" style="color:#17231E;font-family:'Fraunces',Georgia,serif;">Lapor Warga</h3>
+                <p class="text-xs mt-1" style="color:#586359;">Bantu kami mengetahui kondisi Anda dan keluarga.</p>
             </div>
-            @forelse($billings as $billing)
-                @php
-                    $statusStyle = match($billing->status) {
-                        'paid'    => 'background:rgba(18,128,92,0.12);color:#12805c;border:1px solid rgba(18,128,92,0.25);',
-                        'partial' => 'background:rgba(199,125,26,0.12);color:#c77d1a;border:1px solid rgba(199,125,26,0.25);',
-                        default   => 'background:rgba(192,69,59,0.12);color:#c0453b;border:1px solid rgba(192,69,59,0.25);',
-                    };
-                    $statusLabel = match($billing->status) {
-                        'paid'    => 'Lunas',
-                        'partial' => 'Sebagian',
-                        default   => 'Belum Bayar',
-                    };
-                @endphp
-                <div class="px-5 py-3.5 flex items-center justify-between" style="border-bottom:1px solid #ffffff;">
-                    <div>
-                        <p class="text-sm font-medium" style="color:#161e2d;">
-                            {{ \Carbon\Carbon::create($billing->period->year, $billing->period->month)->translatedFormat('F Y') }}
-                        </p>
-                        <p class="text-xs mt-0.5" style="color:#a3abb0;">
-                            {{ $billing->houseBlock?->block_code ?? '-' }}
-                            &middot;
-                            Rp {{ number_format($billing->total_amount, 0, ',', '.') }}
-                        </p>
+            <div class="px-6 py-5 space-y-4">
+                {{-- Kategori --}}
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color:#586359;">Jenis Laporan</label>
+                    <div class="flex flex-wrap gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="healthCategory" value="sakit" class="sr-only peer">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors peer-checked:ring-2"
+                                style="background:#F1F3EC;color:#586359;border:1px solid #E0DFD4;--tw-ring-color:#A9741A;"
+                                :style="$wire.healthCategory === 'sakit' ? 'background:rgba(169,116,26,0.1);color:#A9741A;border-color:rgba(169,116,26,0.3);' : ''">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                Sakit
+                            </span>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="healthCategory" value="meninggal" class="sr-only peer">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors peer-checked:ring-2"
+                                style="background:#F1F3EC;color:#586359;border:1px solid #E0DFD4;--tw-ring-color:#B0402C;"
+                                :style="$wire.healthCategory === 'meninggal' ? 'background:rgba(176,64,44,0.1);color:#B0402C;border-color:rgba(176,64,44,0.3);' : ''">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                Berita Duka
+                            </span>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="healthCategory" value="lainnya" class="sr-only peer">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors peer-checked:ring-2"
+                                style="background:#F1F3EC;color:#586359;border:1px solid #E0DFD4;--tw-ring-color:#164A40;"
+                                :style="$wire.healthCategory === 'lainnya' ? 'background:rgba(22,74,64,0.1);color:#164A40;border-color:rgba(22,74,64,0.3);' : ''">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                Info Lainnya
+                            </span>
+                        </label>
                     </div>
-                    <div class="flex items-center gap-2 shrink-0">
-                        <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="{{ $statusStyle }}">{{ $statusLabel }}</span>
-                        @if($billing->status !== 'paid')
-                            <a href="{{ route('penghuni.ipl') }}" wire:navigate
-                                class="text-xs px-2.5 py-1 rounded-lg font-medium transition-colors"
-                                style="background:rgba(21,99,223,0.1);color:#161e2d;border:1px solid rgba(21,99,223,0.2);">
-                                Bayar
-                            </a>
-                        @endif
-                    </div>
+                    @error('healthCategory') <p class="text-xs mt-1" style="color:#B0402C;">{{ $message }}</p> @enderror
                 </div>
-            @empty
-                <div class="px-5 py-10 text-center">
-                    <p class="text-sm" style="color:#a3abb0;">Belum ada tagihan IPL.</p>
-                </div>
-            @endforelse
-        </div>
 
-        {{-- Program Aktif --}}
-        <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #e4e4e4;box-shadow:0 1px 2px rgba(21,99,223,0.04),0 8px 20px -8px rgba(21,99,223,0.06);">
-            <div class="px-5 py-4 flex items-center justify-between" style="border-bottom:1px solid #f7f7f7;">
-                <h3 class="text-sm font-semibold" style="color:#161e2d;">Program Aktif</h3>
-                <a href="{{ route('penghuni.program') }}" wire:navigate class="text-xs hover:underline" style="color:#5c6368;">Lihat semua</a>
+                {{-- Report For --}}
+                <div>
+                    <label class="block text-sm font-medium mb-2" style="color:#586359;">Laporan Untuk</label>
+                    <div class="flex flex-wrap gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="healthReportFor" value="diri_sendiri" class="sr-only peer">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors peer-checked:ring-2"
+                                style="background:#F1F3EC;color:#586359;border:1px solid #E0DFD4;--tw-ring-color:#164A40;"
+                                :style="$wire.healthReportFor === 'diri_sendiri' ? 'background:rgba(22,74,64,0.1);color:#164A40;border-color:rgba(22,74,64,0.3);' : ''">
+                                Diri Sendiri
+                            </span>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="healthReportFor" value="keluarga" class="sr-only peer">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors peer-checked:ring-2"
+                                style="background:#F1F3EC;color:#586359;border:1px solid #E0DFD4;--tw-ring-color:#6B5B95;"
+                                :style="$wire.healthReportFor === 'keluarga' ? 'background:rgba(107,91,149,0.1);color:#6B5B95;border-color:rgba(107,91,149,0.3);' : ''">
+                                Keluarga
+                            </span>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" wire:model="healthReportFor" value="warga_lain" class="sr-only peer">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors peer-checked:ring-2"
+                                style="background:#F1F3EC;color:#586359;border:1px solid #E0DFD4;--tw-ring-color:#A9741A;"
+                                :style="$wire.healthReportFor === 'warga_lain' ? 'background:rgba(169,116,26,0.1);color:#A9741A;border-color:rgba(169,116,26,0.3);' : ''">
+                                Warga Lain
+                            </span>
+                        </label>
+                    </div>
+                    @error('healthReportFor') <p class="text-xs mt-1" style="color:#B0402C;">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- Person Name --}}
+                @if(in_array($healthReportFor, ['keluarga', 'warga_lain']))
+                <div>
+                    <label class="block text-sm font-medium mb-1.5" style="color:#586359;">Nama</label>
+                    <input type="text" wire:model="healthPersonName" placeholder="Nama yang dilaporkan"
+                        style="background:#ffffff;border:1px solid #E0DFD4;color:#17231E;border-radius:0.75rem;padding:0.625rem 0.875rem;width:100%;font-size:0.875rem;outline:none;">
+                    @error('healthPersonName') <p class="text-xs mt-1" style="color:#B0402C;">{{ $message }}</p> @enderror
+                </div>
+                @endif
+
+                {{-- Description --}}
+                <div>
+                    <label class="block text-sm font-medium mb-1.5" style="color:#586359;">Deskripsi</label>
+                    <textarea wire:model="healthDescription" rows="3" placeholder="Jelaskan kondisi yang terjadi..."
+                        style="background:#ffffff;border:1px solid #E0DFD4;color:#17231E;border-radius:0.75rem;padding:0.625rem 0.875rem;width:100%;font-size:0.875rem;outline:none;resize:none;"></textarea>
+                    @error('healthDescription') <p class="text-xs mt-1" style="color:#B0402C;">{{ $message }}</p> @enderror
+                </div>
             </div>
-            @forelse($campaigns as $campaign)
-                @php
-                    $raised   = $campaign->donations->sum(fn($d) => optional($d->transaction)->amount ?? 0);
-                    $progress = $campaign->target_amount > 0 ? min(100, ($raised / $campaign->target_amount) * 100) : 0;
-                @endphp
-                <div class="px-5 py-4" style="border-bottom:1px solid #ffffff;">
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium truncate" style="color:#161e2d;">{{ $campaign->name }}</p>
-                            <p class="text-xs mt-0.5" style="color:#a3abb0;">
-                                Target: Rp {{ number_format($campaign->target_amount, 0, ',', '.') }}
-                            </p>
-                            <div class="mt-2 h-1.5 rounded-full" style="background:#e4e4e4;">
-                                <div class="h-1.5 rounded-full transition-all"
-                                    style="width:{{ $progress }}%;background:linear-gradient(90deg,#1563df,#1563df);"></div>
-                            </div>
-                            <p class="text-xs mt-1" style="color:#a3abb0;">{{ number_format($progress, 0) }}% terkumpul</p>
-                        </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                            <a href="{{ route('penghuni.program.detail', $campaign->id) }}" wire:navigate
-                                class="text-xs px-3 py-1.5 rounded-lg font-medium transition-colors"
-                                style="background:#1563df;color:#ffffff;">
-                                Detail
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <div class="px-5 py-10 text-center">
-                    <p class="text-sm" style="color:#a3abb0;">Belum ada program aktif.</p>
-                </div>
-            @endforelse
+            <div class="px-6 py-4 flex justify-end gap-3" style="border-top:1px solid #E0DFD4;">
+                <button type="button" wire:click="dismissHealth"
+                    class="px-4 py-2 text-sm rounded-xl font-medium"
+                    style="background:#F1F3EC;color:#17231E;border:1px solid #D8D6C9;">Nanti Saja</button>
+                <button wire:click="submitHealthReport" wire:loading.attr="disabled"
+                    class="px-5 py-2 text-sm rounded-xl font-semibold"
+                    style="background:#164A40;color:#ffffff;">
+                    <span wire:loading.remove wire:target="submitHealthReport">Kirim Laporan</span>
+                    <span wire:loading wire:target="submitHealthReport">Mengirim...</span>
+                </button>
+            </div>
         </div>
-
     </div>
+    @endif
 
 </div>

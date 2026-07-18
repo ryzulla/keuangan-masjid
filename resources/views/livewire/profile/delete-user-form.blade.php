@@ -22,11 +22,11 @@ $deleteUser = function (Logout $logout) {
 
 <section class="space-y-6">
     <header>
-        <h2 class="text-lg font-medium" style="color:#161e2d;font-family:'Manrope',serif;">
+        <h2 class="text-lg font-medium" style="color:#17231E;font-family:'Fraunces',Georgia,serif;">
             {{ __('Delete Account') }}
         </h2>
 
-        <p class="mt-1 text-sm" style="color:#a3abb0;">
+        <p class="mt-1 text-sm" style="color:#909A8F;">
             {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
         </p>
     </header>
@@ -39,11 +39,11 @@ $deleteUser = function (Logout $logout) {
     <x-modal name="confirm-user-deletion" :show="$errors->isNotEmpty()" focusable>
         <form wire:submit="deleteUser" class="p-6">
 
-            <h2 class="text-lg font-medium" style="color:#161e2d;font-family:'Manrope',serif;">
+            <h2 class="text-lg font-medium" style="color:#17231E;font-family:'Fraunces',Georgia,serif;">
                 {{ __('Are you sure you want to delete your account?') }}
             </h2>
 
-            <p class="mt-1 text-sm" style="color:#a3abb0;">
+            <p class="mt-1 text-sm" style="color:#909A8F;">
                 {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
             </p>
 

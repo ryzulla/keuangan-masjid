@@ -13,8 +13,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Manrope', ...defaultTheme.fontFamily.sans],
-                serif: ['Manrope', ...defaultTheme.fontFamily.serif],
+                sans: ['Plus Jakarta Sans', ...defaultTheme.fontFamily.sans],
+                serif: ['Fraunces', ...defaultTheme.fontFamily.serif],
             },
             colors: {
                 gold: {

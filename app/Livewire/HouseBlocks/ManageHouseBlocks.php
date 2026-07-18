@@ -43,6 +43,9 @@ class ManageHouseBlocks extends Component
                 ->whereHas('assignments', fn($q2) => $q2->whereNull('ended_at')))
             ->when($this->filterStatus === 'kosong', fn($q) => $q->where('is_active', true)
                 ->whereDoesntHave('assignments', fn($q2) => $q2->whereNull('ended_at')))
+            ->when($this->filterStatus === 'disewa', fn($q) => $q->where('is_active', true)
+                ->whereHas('assignments', fn($q2) => $q2->whereNull('ended_at')
+                    ->whereIn('ownership_type', ['kontrak', 'kos'])))
             ->orderBy('block_letter')
             ->orderBy('unit_number')
             ->get();
@@ -54,10 +57,13 @@ class ManageHouseBlocks extends Component
         $activeBlocks   = HouseBlock::where('is_active', true)->count();
         $occupiedBlocks = HouseBlock::where('is_active', true)
             ->whereHas('assignments', fn($q) => $q->whereNull('ended_at'))->count();
+        $rentedBlocks = HouseBlock::where('is_active', true)
+            ->whereHas('assignments', fn($q) => $q->whereNull('ended_at')
+                ->whereIn('ownership_type', ['kontrak', 'kos']))->count();
         $totalResidents = Resident::where('is_active', true)->count();
 
         return view('livewire.house-blocks.manage-house-blocks', compact(
-            'blocksByLetter', 'allLetters', 'totalBlocks', 'activeBlocks', 'occupiedBlocks', 'totalResidents'
+            'blocksByLetter', 'allLetters', 'totalBlocks', 'activeBlocks', 'occupiedBlocks', 'rentedBlocks', 'totalResidents'
         ));
     }
 

@@ -29,7 +29,7 @@ $logout = function (Logout $logout) {
 ?>
 
 <div>
-    <div class="mb-4 text-sm" style="color:#a3abb0;">
+    <div class="mb-4 text-sm" style="color:#909A8F;">
         {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
     </div>
 
@@ -44,7 +44,7 @@ $logout = function (Logout $logout) {
             {{ __('Resend Verification Email') }}
         </x-primary-button>
 
-        <button wire:click="logout" type="submit" class="underline text-sm rounded-md" style="color:#a3abb0;" onmouseover="this.style.color='#1563df'" onmouseout="this.style.color='#a3abb0'">
+        <button wire:click="logout" type="submit" class="underline text-sm rounded-md" style="color:#909A8F;" onmouseover="this.style.color='#164A40'" onmouseout="this.style.color='#909A8F'">
             {{ __('Log Out') }}
         </button>
     </div>

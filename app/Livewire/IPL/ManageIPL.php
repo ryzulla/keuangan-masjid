@@ -75,6 +75,11 @@ class ManageIPL extends Component
     public string $checkPayReceivedBy = '';
     public string $checkPayNotes = '';
 
+    // Partial payment per billing in checklist: [billingId => ['security' => bool, 'garbage' => bool, 'kas_rt' => bool]]
+    public array $checkPartialAmounts = [];
+    // Which billings are in partial mode
+    public array $checkPartialMode = [];
+
     // Pemutihan / pembebasan tunggakan (waiver) — aksi admin, bukan kas
     public bool $isWaiveModalOpen = false;
     public ?int $waivingBillingId = null;
@@ -96,8 +101,10 @@ class ManageIPL extends Component
             'periodKasRtAmount'    => 'required|numeric|min:0',
             'periodNotes'          => 'nullable|string',
         ];
-        foreach (array_keys($this->extraTariffRates) as $typeId) {
-            $rules["extraTariffRates.{$typeId}"] = 'required|numeric|min:0';
+        if ($this->editingPeriodId) {
+            foreach (array_keys($this->extraTariffRates) as $typeId) {
+                $rules["extraTariffRates.{$typeId}"] = 'required|numeric|min:0';
+            }
         }
         return $rules;
     }
@@ -740,6 +747,8 @@ class ManageIPL extends Component
     public function updatedChecklistResidentId(): void
     {
         $this->checklistSelectedIds = [];
+        $this->checkPartialAmounts = [];
+        $this->checkPartialMode = [];
     }
 
     public function toggleChecklistAll(): void
@@ -783,9 +792,22 @@ class ManageIPL extends Component
             $totalPaid = 0;
 
             foreach ($billings as $billing) {
-                $amtSec  = $billing->remainingSecurity();
-                $amtGarb = $billing->remainingGarbage();
-                $amtKrt  = $billing->remainingKasRt();
+                // Use partial flags if in partial mode, otherwise pay full remaining
+                if (isset($this->checkPartialAmounts[$billing->id])) {
+                    $pa = $this->checkPartialAmounts[$billing->id];
+                    $period = $billing->period;
+                    $amtSec  = !empty($pa['security']) && $period ? (float) $period->ipl_security_amount : 0;
+                    $amtGarb = !empty($pa['garbage'])  && $period ? (float) $period->ipl_garbage_amount  : 0;
+                    $amtKrt  = !empty($pa['kas_rt'])   && $period ? (float) $period->ipl_kas_rt_amount   : 0;
+                    // Cap at remaining
+                    $amtSec  = min($amtSec, $billing->remainingSecurity());
+                    $amtGarb = min($amtGarb, $billing->remainingGarbage());
+                    $amtKrt  = min($amtKrt, $billing->remainingKasRt());
+                } else {
+                    $amtSec  = $billing->remainingSecurity();
+                    $amtGarb = $billing->remainingGarbage();
+                    $amtKrt  = $billing->remainingKasRt();
+                }
 
                 if ($amtSec + $amtGarb + $amtKrt <= 0) continue;
 
@@ -833,8 +855,28 @@ class ManageIPL extends Component
     {
         $this->isChecklistPaymentOpen = false;
         $this->checklistSelectedIds = [];
+        $this->checkPartialAmounts = [];
+        $this->checkPartialMode = [];
         $this->resetErrorBag();
         session()->forget('modal_error');
+    }
+
+    public function toggleCheckPartialMode(int $billingId): void
+    {
+        if (isset($this->checkPartialMode[$billingId])) {
+            unset($this->checkPartialMode[$billingId]);
+            unset($this->checkPartialAmounts[$billingId]);
+        } else {
+            $billing = IplBilling::with('period')->find($billingId);
+            if ($billing && $billing->period) {
+                $this->checkPartialMode[$billingId] = true;
+                $this->checkPartialAmounts[$billingId] = [
+                    'security' => true,
+                    'garbage'  => true,
+                    'kas_rt'   => true,
+                ];
+            }
+        }
     }
 
     // --- Pemutihan / Pembebasan Tunggakan (Waiver) ---

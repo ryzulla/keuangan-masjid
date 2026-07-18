@@ -30,7 +30,7 @@ class KeuanganPortal extends Component
     }
 
     #[Computed]
-    public function reportData()
+    public function monthlySummary()
     {
         $monthPadded = str_pad($this->month, 2, '0', STR_PAD_LEFT);
         $startDate = "{$this->year}-{$monthPadded}-01";
@@ -40,37 +40,46 @@ class KeuanganPortal extends Component
             ? Account::where('organization_type', $this->activeOrg)->pluck('id')
             : null;
 
-        $totalDebitBefore = Transaction::where('transaction_date', '<', $startDate)
-            ->where('type', 'debit')
-            ->when($orgAccountIds, fn($q) => $q->whereIn('account_id', $orgAccountIds))
-            ->sum('amount');
-        $totalCreditBefore = Transaction::where('transaction_date', '<', $startDate)
-            ->where('type', 'credit')
-            ->when($orgAccountIds, fn($q) => $q->whereIn('account_id', $orgAccountIds))
-            ->sum('amount');
-        $startingBalance = (float)($totalDebitBefore ?? 0) - (float)($totalCreditBefore ?? 0);
+        $totalIncome = Transaction::where('transactions.type', 'debit')
+            ->whereBetween('transaction_date', [$startDate, $endDate])
+            ->when($orgAccountIds, fn($q) => $q->whereIn('transactions.account_id', $orgAccountIds))
+            ->sum('transactions.amount');
 
-        $incomeSummary = Transaction::where('transactions.type', 'debit')
+        $totalExpense = Transaction::where('transactions.type', 'credit')
+            ->whereBetween('transaction_date', [$startDate, $endDate])
+            ->when($orgAccountIds, fn($q) => $q->whereIn('transactions.account_id', $orgAccountIds))
+            ->sum('transactions.amount');
+
+        $incomeByCategory = Transaction::where('transactions.type', 'debit')
             ->whereBetween('transaction_date', [$startDate, $endDate])
             ->join('categories', 'transactions.category_id', '=', 'categories.id')
             ->when($orgAccountIds, fn($q) => $q->whereIn('transactions.account_id', $orgAccountIds))
             ->select('categories.name', DB::raw('SUM(transactions.amount) as total'))
             ->groupBy('categories.name')->orderBy('total', 'desc')->get();
 
-        $expenseSummary = Transaction::where('transactions.type', 'credit')
+        $expenseByCategory = Transaction::where('transactions.type', 'credit')
             ->whereBetween('transaction_date', [$startDate, $endDate])
             ->join('categories', 'transactions.category_id', '=', 'categories.id')
             ->when($orgAccountIds, fn($q) => $q->whereIn('transactions.account_id', $orgAccountIds))
             ->select('categories.name', DB::raw('SUM(transactions.amount) as total'))
             ->groupBy('categories.name')->orderBy('total', 'desc')->get();
 
-        $totalIncome = $incomeSummary->sum('total');
-        $totalExpense = $expenseSummary->sum('total');
-        $endingBalance = $startingBalance + (float)$totalIncome - (float)$totalExpense;
+        return compact('totalIncome', 'totalExpense', 'incomeByCategory', 'expenseByCategory');
+    }
 
-        $actualBalance = Account::when($orgAccountIds, fn($q) => $q->whereIn('id', $orgAccountIds))->sum('balance');
+    #[Computed]
+    public function recentTransactions()
+    {
+        $orgAccountIds = $this->activeOrg !== 'semua'
+            ? Account::where('organization_type', $this->activeOrg)->pluck('id')
+            : null;
 
-        return compact('startingBalance', 'incomeSummary', 'expenseSummary', 'totalIncome', 'totalExpense', 'endingBalance', 'actualBalance', 'startDate', 'endDate');
+        return Transaction::with(['category', 'account'])
+            ->when($orgAccountIds, fn($q) => $q->whereIn('account_id', $orgAccountIds))
+            ->orderByDesc('transaction_date')
+            ->orderByDesc('id')
+            ->take(10)
+            ->get();
     }
 
     #[Computed]
@@ -113,11 +122,11 @@ class KeuanganPortal extends Component
     public function printPdf()
     {
         $accounts = $this->accounts;
-        $data = $this->reportData;
+        $summary = $this->monthlySummary;
 
         $pdf = Pdf::loadView('exports.keuangan-portal-pdf', [
             'accounts' => $accounts,
-            'reportData' => (object) $data,
+            'reportData' => (object) $summary,
             'month' => $this->month,
             'year' => $this->year,
             'activeOrg' => $this->activeOrg,

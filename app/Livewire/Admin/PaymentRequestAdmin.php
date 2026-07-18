@@ -89,9 +89,10 @@ class PaymentRequestAdmin extends Component
                 $remGarbage  = max(0, (float)$billing->ipl_garbage_amount  - (float)$billing->paid_garbage);
                 $remKasRt    = max(0, (float)$billing->ipl_kas_rt_amount   - (float)$billing->paid_kas_rt);
 
-                $amtSecurity = min($outstanding, $remSecurity);
-                $amtGarbage  = min(max(0, $outstanding - $amtSecurity), $remGarbage);
-                $amtKasRt    = min(max(0, $outstanding - $amtSecurity - $amtGarbage), $remKasRt);
+                $payAmount = (float) $req->amount;
+                $amtSecurity = min($payAmount, $remSecurity);
+                $amtGarbage  = min(max(0, $payAmount - $amtSecurity), $remGarbage);
+                $amtKasRt    = min(max(0, $payAmount - $amtSecurity - $amtGarbage), $remKasRt);
 
                 // Posting ke buku besar per komponen ke akun tujuan masing-masing.
                 $period = $billing->period

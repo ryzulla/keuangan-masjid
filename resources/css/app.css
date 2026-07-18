@@ -1,5 +1,5 @@
-/* ── Google Fonts (HomeLengo: Manrope + Rubik) ───────────────── */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Manrope:wght@400;500;600;700;800&family=Rubik:wght@400;500;600&display=swap');
+/* ── Google Fonts (Denah Warga: Fraunces + Plus Jakarta Sans) ─── */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,16 +7,16 @@
 
 /* ── CSS Custom Properties (HomeLengo palette) ───────────────── */
 :root {
-    --gold:       #1563df;   /* HomeLengo blue accent */
-    --gold-light: #3f7ee6;
-    --gold-dark:  #0e49a6;
-    --gold-muted: rgba(21,99,223, 0.12);
-    --dark-bg:    #f7f7f7;   /* light section background */
+    --gold:       #164A40;   /* Denah Warga — pine (nama var legacy) */
+    --gold-light: #2E7A6A;
+    --gold-dark:  #0F3A32;
+    --gold-muted: rgba(22,74,64, 0.12);
+    --dark-bg:    #E9ECE4;   /* warm paper canvas */
     --dark-card:  #ffffff;
-    --dark-card2: #f7f7f7;
-    --dark-hover: #f7f7f7;
-    --dark-bdr:   #e4e4e4;
-    --dark-bdr2:  rgba(21,99,223, 0.25);
+    --dark-card2: #F1F3EC;
+    --dark-hover: #F1F3EC;
+    --dark-bdr:   #E0DFD4;
+    --dark-bdr2:  rgba(22,74,64, 0.25);
 }
 
 /* ── Base ────────────────────────────────────────────────────── */
@@ -24,16 +24,52 @@ html { scroll-behavior: smooth; }
 
 body {
     background-color: var(--dark-bg);
-    color: #5c6368;
-    font-family: 'Manrope', sans-serif;
+    color: #586359;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
-/* HomeLengo headings: Manrope, bold, dark navy */
+/* Denah Warga headings: Fraunces display, warm ink */
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Manrope', sans-serif;
-    color: #161e2d;
-    font-weight: 700;
+    font-family: 'Fraunces', Georgia, serif;
+    color: #17231E;
+    font-weight: 600;
+    font-optical-sizing: auto;
+    letter-spacing: -.01em;
 }
+
+/* Denah Warga — hero header card (dashboard & house-blocks via slot) */
+.pp-admin-header :is(h1,h2,h3,h4){ color:#F4EFE2 !important; font-family:'Fraunces',Georgia,serif; font-weight:500; letter-spacing:-.01em; }
+.pp-admin-header h2{ font-size:1.25rem; }
+.pp-admin-header p{ color:rgba(244,239,226,.72); }
+
+/* Denah Warga — pine hero applied to a page's own header card */
+.pp-hero{
+    background:
+        linear-gradient(rgba(244,239,226,.10) 1px,transparent 1px) 0 0/34px 34px,
+        linear-gradient(90deg,rgba(244,239,226,.10) 1px,transparent 1px) 0 0/34px 34px,
+        linear-gradient(150deg,#0B2E28,#164A40 72%) !important;
+    border:1px solid transparent !important;
+    color:#F4EFE2;
+}
+.pp-hero :is(h1,h2,h3,h4){ color:#F4EFE2 !important; font-family:'Fraunces',Georgia,serif; letter-spacing:-.01em; }
+.pp-hero p{ color:rgba(244,239,226,.74) !important; }
+/* aksi di dalam hero → tombol cream (kontras di atas pine) */
+.pp-hero a[href], .pp-hero a[wire\:navigate], .pp-hero button{
+    background:#F4EFE2 !important; color:#164A40 !important; border-color:transparent !important; box-shadow:none !important;
+}
+.pp-hero a[href] svg, .pp-hero button svg{ color:#164A40 !important; }
+
+/* Searchable select (ala Select2) — trigger button (samakan dgn native select) */
+.pp-ss-btn{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:0.5rem;
+    background:#ffffff; border:1px solid #E0DFD4; box-shadow:0 1px 2px rgba(22,74,64,0.04),0 8px 20px -8px rgba(22,74,64,0.06);
+    color:#17231E; padding:0.5rem 0.75rem; border-radius:0.75rem; font-size:0.875rem; line-height:1.5rem;
+    text-align:left; cursor:pointer; transition:border-color .15s, box-shadow .15s; }
+.pp-ss-btn.open, .pp-ss-btn:focus-visible{ border-color:#164A40; box-shadow:0 0 0 2px rgba(22,74,64,.12); outline:none; }
+
+/* Searchable select (ala Select2) — opsi */
+.pp-ss-opt{ display:block; width:100%; text-align:left; padding:0.45rem 0.6rem; font-size:0.85rem; border-radius:0.5rem; color:#586359; background:transparent; border:none; cursor:pointer; }
+.pp-ss-opt:hover{ background:#F1F3EC; }
+.pp-ss-opt.sel{ background:var(--gold-muted); color:#164A40; font-weight:600; }
 
 /* HomeLengo soft card shadow */
 .fh-shadow { box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
@@ -42,7 +78,7 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--dark-card2); }
-::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #D8D6C9; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
 /* ── CKEditor ────────────────────────────────────────────────── */
@@ -59,13 +95,13 @@ h1, h2, h3, h4, h5, h6 {
     .bg-dark-card2    { background-color: var(--dark-card2); }
     .border-dark      { border-color: var(--dark-bdr); }
     .border-gold-dim  { border-color: var(--dark-bdr2); }
-    .text-serif       { font-family: 'Manrope', serif; }
+    .text-serif       { font-family: 'Fraunces',Georgia,serif; }
 }
 
 /* ── Gold Gradient Background ────────────────────────────────── */
 .bg-gold-gradient {
-    background: linear-gradient(135deg, #1563df 0%, #0e49a6 100%);
-    border: 1px solid rgba(21,99,223, 0.3);
+    background: linear-gradient(135deg, #164A40 0%, #0F3A32 100%);
+    border: 1px solid rgba(22,74,64, 0.3);
 }
 
 /* ── Dark Card ───────────────────────────────────────────────── */
@@ -78,9 +114,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Gold Input Focus ────────────────────────────────────────── */
 .input-dark {
-    background-color:#f7f7f7;
-    border: 1px solid #e4e4e4;
-    color: #161e2d;
+    background-color:#F1F3EC;
+    border: 1px solid #E0DFD4;
+    color: #17231E;
     border-radius: 0.75rem;
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
@@ -88,19 +124,19 @@ h1, h2, h3, h4, h5, h6 {
     transition: border-color 0.15s, box-shadow 0.15s;
     width: 100%;
 }
-.input-dark::placeholder { color: #a3abb0; }
+.input-dark::placeholder { color: #909A8F; }
 .input-dark:focus {
     border-color: var(--gold-dark);
-    box-shadow: 0 0 0 2px rgba(21,99,223, 0.2);
+    box-shadow: 0 0 0 2px rgba(22,74,64, 0.2);
 }
 
 /* ── Table Dark ──────────────────────────────────────────────── */
 .table-dark thead tr {
-    background-color:#f7f7f7;
+    background-color:#F1F3EC;
     border-bottom: 1px solid var(--dark-bdr);
 }
 .table-dark thead th {
-    color: #5c6368;
+    color: #586359;
     font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -108,16 +144,16 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0.75rem 1rem;
 }
 .table-dark tbody tr {
-    border-bottom: 1px solid #f7f7f7;
+    border-bottom: 1px solid #F1F3EC;
     transition: background-color 0.15s;
 }
 .table-dark tbody tr:hover { background-color: var(--dark-hover); }
 
 /* ── Badge Gold ──────────────────────────────────────────────── */
 .badge-gold {
-    background-color: rgba(21,99,223, 0.15);
+    background-color: rgba(22,74,64, 0.15);
     color: var(--gold-light);
-    border: 1px solid rgba(21,99,223, 0.3);
+    border: 1px solid rgba(22,74,64, 0.3);
     padding: 0.125rem 0.5rem;
     border-radius: 9999px;
     font-size: 0.7rem;
@@ -138,20 +174,20 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 6px 16px rgba(21,99,223,0.28);
+    box-shadow: 0 6px 16px rgba(22,74,64,0.28);
 }
 .btn-gold:hover { background-color: var(--gold-dark); }
 .btn-gold:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .btn-dark {
     background-color: #ffffff;
-    color: #161e2d;
+    color: #17231E;
     font-weight: 600;
     border-radius: 8px;
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
     transition: background-color 0.15s, border-color 0.15s, color 0.15s;
-    border: 1px solid #e4e4e4;
+    border: 1px solid #E0DFD4;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -162,13 +198,13 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Modal Dark ──────────────────────────────────────────────── */
 .modal-dark {
     background-color: var(--dark-card);
-    border: 1px solid #d9d9d9;
+    border: 1px solid #D8D6C9;
     border-radius: 1rem;
     box-shadow: 0 25px 60px rgba(0,0,0,0.1);
 }
 .modal-header-gold {
-    background: linear-gradient(135deg, #1563df 0%, #161e2d 100%);
-    border-bottom: 1px solid rgba(21,99,223, 0.35);
+    background: linear-gradient(135deg, #164A40 0%, #17231E 100%);
+    border-bottom: 1px solid rgba(22,74,64, 0.35);
     padding: 1.25rem 1.5rem;
     display: flex;
     align-items: center;
@@ -181,13 +217,13 @@ nav[aria-label="Pagination Navigation"] span,
 nav[aria-label="Pagination Navigation"] a,
 [data-pagination] span,
 [data-pagination] a {
-    background-color:#f7f7f7 !important;
-    color: #5c6368 !important;
-    border-color: #e4e4e4 !important;
+    background-color:#F1F3EC !important;
+    color: #586359 !important;
+    border-color: #E0DFD4 !important;
 }
 nav[aria-label="Pagination Navigation"] a:hover,
 [data-pagination] a:hover {
-    background-color: #f7f7f7 !important;
+    background-color: #F1F3EC !important;
     color: var(--gold) !important;
 }
 nav[aria-label="Pagination Navigation"] span[aria-current],

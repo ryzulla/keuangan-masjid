@@ -3,8 +3,8 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <a href="{{ route('welcome') }}" wire:navigate
             class="inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
-            style="color:#5c6368;"
-            onmouseover="this.style.color='#1563df'" onmouseout="this.style.color='#5c6368'">
+            style="color:#586359;"
+            onmouseover="this.style.color='#164A40'" onmouseout="this.style.color='#586359'">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
             Kembali
         </a>
@@ -17,7 +17,7 @@
             <div class="lg:col-span-3 space-y-3">
 
                 {{-- Main Photo --}}
-                <div class="relative rounded-2xl overflow-hidden aspect-[4/3]" style="background:#f0f0f0;border:1px solid #e4e4e4;">
+                <div class="relative rounded-2xl overflow-hidden aspect-[4/3]" style="background:#F1F3EC;border:1px solid #E0DFD4;">
                     @if($houseBlock->photos->count() > 0)
                         @php $currentPhoto = $houseBlock->photos[$activePhotoIndex] ?? $houseBlock->photos->first(); @endphp
                         <img src="{{ Storage::disk('public')->url($currentPhoto->photo_path) }}"
@@ -25,10 +25,10 @@
                             alt="Rumah Blok {{ $houseBlock->block_code }}">
                     @else
                         <div class="w-full h-full flex flex-col items-center justify-center gap-2">
-                            <svg class="w-16 h-16" style="color:#d0d0d0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.8">
+                            <svg class="w-16 h-16" style="color:#C9C7BA;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.8">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                             </svg>
-                            <p class="text-sm" style="color:#a3abb0;">Belum ada foto</p>
+                            <p class="text-sm" style="color:#909A8F;">Belum ada foto</p>
                         </div>
                     @endif
 
@@ -60,7 +60,7 @@
                         @foreach($houseBlock->photos as $idx => $photo)
                             <button wire:click="setActivePhoto({{ $idx }})"
                                 class="shrink-0 w-16 h-16 rounded-xl overflow-hidden transition-all"
-                                style="border:{{ $activePhotoIndex === $idx ? '2px solid #1563df' : '2px solid #e4e4e4' }};opacity:{{ $activePhotoIndex === $idx ? '1' : '0.7' }};">
+                                style="border:{{ $activePhotoIndex === $idx ? '2px solid #164A40' : '2px solid #E0DFD4' }};opacity:{{ $activePhotoIndex === $idx ? '1' : '0.7' }};">
                                 <img src="{{ Storage::disk('public')->url($photo->photo_path) }}" class="w-full h-full object-cover">
                             </button>
                         @endforeach
@@ -74,24 +74,24 @@
                 {{-- Title & Badge --}}
                 <div>
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="text-xs font-semibold px-2.5 py-1 rounded-lg" style="background:{{ ($houseBlock->listing_type ?? 'sewa') === 'jual' ? 'rgba(21,99,223,0.1)' : 'rgba(18,128,92,0.1)' }};color:{{ ($houseBlock->listing_type ?? 'sewa') === 'jual' ? '#1563df' : '#12805c' }};border:1px solid {{ ($houseBlock->listing_type ?? 'sewa') === 'jual' ? 'rgba(21,99,223,0.2)' : 'rgba(18,128,92,0.2)' }};">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-lg" style="background:{{ ($houseBlock->listing_type ?? 'sewa') === 'jual' ? 'rgba(22,74,64,0.1)' : 'rgba(18,128,92,0.1)' }};color:{{ ($houseBlock->listing_type ?? 'sewa') === 'jual' ? '#164A40' : '#12805c' }};border:1px solid {{ ($houseBlock->listing_type ?? 'sewa') === 'jual' ? 'rgba(22,74,64,0.2)' : 'rgba(18,128,92,0.2)' }};">
                             {{ ($houseBlock->listing_type ?? 'sewa') === 'jual' ? 'Dijual' : 'Disewakan' }}
                         </span>
                     </div>
-                    <h1 class="text-xl sm:text-2xl font-extrabold" style="color:#161e2d;font-family:'Manrope',sans-serif;">
+                    <h1 class="text-xl sm:text-2xl font-extrabold" style="color:#17231E;font-family:'Plus Jakarta Sans',sans-serif;">
                         Blok {{ $houseBlock->block_code }}
                     </h1>
-                    <p class="text-sm mt-1" style="color:#a3abb0;">{{ $houseBlock->block_letter }}-{{ $houseBlock->unit_number }}</p>
+                    <p class="text-sm mt-1" style="color:#909A8F;">{{ $houseBlock->block_letter }}-{{ $houseBlock->unit_number }}</p>
                 </div>
 
                 {{-- Price --}}
                 @if($houseBlock->rental_price)
-                    <div class="rounded-2xl p-5" style="background:linear-gradient(135deg,rgba(21,99,223,0.06),rgba(21,99,223,0.02));border:1px solid rgba(21,99,223,0.15);">
-                        <p class="text-xs font-medium uppercase tracking-wide mb-1" style="color:#a3abb0;">Harga {{ ($houseBlock->listing_type ?? 'sewa') === 'jual' ? 'Jual' : 'Sewa' }}</p>
+                    <div class="rounded-2xl p-5" style="background:linear-gradient(135deg,rgba(22,74,64,0.06),rgba(22,74,64,0.02));border:1px solid rgba(22,74,64,0.15);">
+                        <p class="text-xs font-medium uppercase tracking-wide mb-1" style="color:#909A8F;">Harga {{ ($houseBlock->listing_type ?? 'sewa') === 'jual' ? 'Jual' : 'Sewa' }}</p>
                         <div class="flex items-baseline gap-1.5">
-                            <span class="text-2xl sm:text-3xl font-extrabold" style="color:#1563df;">Rp {{ number_format($houseBlock->rental_price, 0, ',', '.') }}</span>
+                            <span class="text-2xl sm:text-3xl font-extrabold" style="color:#164A40;">Rp {{ number_format($houseBlock->rental_price, 0, ',', '.') }}</span>
                             @if(($houseBlock->listing_type ?? 'sewa') === 'sewa')
-                                <span class="text-sm font-medium" style="color:#a3abb0;">/ {{ match($houseBlock->rental_duration ?? 'bulanan') { '6bulan' => '6 bulan', 'tahunan' => 'tahun', default => 'bulan' } }}</span>
+                                <span class="text-sm font-medium" style="color:#909A8F;">/ {{ match($houseBlock->rental_duration ?? 'bulanan') { '6bulan' => '6 bulan', 'tahunan' => 'tahun', default => 'bulan' } }}</span>
                             @endif
                         </div>
                     </div>
@@ -99,57 +99,57 @@
 
                 {{-- Description --}}
                 @if($houseBlock->rental_description)
-                    <div class="rounded-2xl p-5" style="background:#ffffff;border:1px solid #e4e4e4;">
-                        <h3 class="text-sm font-semibold mb-2" style="color:#161e2d;">Deskripsi</h3>
-                        <p class="text-sm leading-relaxed whitespace-pre-line" style="color:#5c6368;">{{ $houseBlock->rental_description }}</p>
+                    <div class="rounded-2xl p-5" style="background:#ffffff;border:1px solid #E0DFD4;">
+                        <h3 class="text-sm font-semibold mb-2" style="color:#17231E;">Deskripsi</h3>
+                        <p class="text-sm leading-relaxed whitespace-pre-line" style="color:#586359;">{{ $houseBlock->rental_description }}</p>
                     </div>
                 @endif
 
                 {{-- Property Specs --}}
                 @if($houseBlock->land_area || $houseBlock->building_area || $houseBlock->bedrooms || $houseBlock->bathrooms || $houseBlock->electricity || $houseBlock->water_source || $houseBlock->garage)
-                    <div class="rounded-2xl p-5" style="background:#ffffff;border:1px solid #e4e4e4;">
-                        <h3 class="text-sm font-semibold mb-3" style="color:#161e2d;">Spesifikasi Properti</h3>
+                    <div class="rounded-2xl p-5" style="background:#ffffff;border:1px solid #E0DFD4;">
+                        <h3 class="text-sm font-semibold mb-3" style="color:#17231E;">Spesifikasi Properti</h3>
                         <div class="grid grid-cols-2 gap-3">
                             @if($houseBlock->land_area)
-                                <div class="rounded-xl p-3" style="background:#f7f7f7;">
-                                    <p class="text-[11px]" style="color:#a3abb0;">Luas Tanah</p>
-                                    <p class="text-sm font-semibold" style="color:#161e2d;">{{ $houseBlock->land_area }} m²</p>
+                                <div class="rounded-xl p-3" style="background:#F1F3EC;">
+                                    <p class="text-[11px]" style="color:#909A8F;">Luas Tanah</p>
+                                    <p class="text-sm font-semibold" style="color:#17231E;">{{ $houseBlock->land_area }} m²</p>
                                 </div>
                             @endif
                             @if($houseBlock->building_area)
-                                <div class="rounded-xl p-3" style="background:#f7f7f7;">
-                                    <p class="text-[11px]" style="color:#a3abb0;">Luas Bangunan</p>
-                                    <p class="text-sm font-semibold" style="color:#161e2d;">{{ $houseBlock->building_area }} m²</p>
+                                <div class="rounded-xl p-3" style="background:#F1F3EC;">
+                                    <p class="text-[11px]" style="color:#909A8F;">Luas Bangunan</p>
+                                    <p class="text-sm font-semibold" style="color:#17231E;">{{ $houseBlock->building_area }} m²</p>
                                 </div>
                             @endif
                             @if($houseBlock->bedrooms)
-                                <div class="rounded-xl p-3" style="background:#f7f7f7;">
-                                    <p class="text-[11px]" style="color:#a3abb0;">Kamar Tidur</p>
-                                    <p class="text-sm font-semibold" style="color:#161e2d;">{{ $houseBlock->bedrooms }} KT</p>
+                                <div class="rounded-xl p-3" style="background:#F1F3EC;">
+                                    <p class="text-[11px]" style="color:#909A8F;">Kamar Tidur</p>
+                                    <p class="text-sm font-semibold" style="color:#17231E;">{{ $houseBlock->bedrooms }} KT</p>
                                 </div>
                             @endif
                             @if($houseBlock->bathrooms)
-                                <div class="rounded-xl p-3" style="background:#f7f7f7;">
-                                    <p class="text-[11px]" style="color:#a3abb0;">Kamar Mandi</p>
-                                    <p class="text-sm font-semibold" style="color:#161e2d;">{{ $houseBlock->bathrooms }} KM</p>
+                                <div class="rounded-xl p-3" style="background:#F1F3EC;">
+                                    <p class="text-[11px]" style="color:#909A8F;">Kamar Mandi</p>
+                                    <p class="text-sm font-semibold" style="color:#17231E;">{{ $houseBlock->bathrooms }} KM</p>
                                 </div>
                             @endif
                             @if($houseBlock->electricity)
-                                <div class="rounded-xl p-3" style="background:#f7f7f7;">
-                                    <p class="text-[11px]" style="color:#a3abb0;">Listrik</p>
-                                    <p class="text-sm font-semibold" style="color:#161e2d;">{{ number_format($houseBlock->electricity) }} W</p>
+                                <div class="rounded-xl p-3" style="background:#F1F3EC;">
+                                    <p class="text-[11px]" style="color:#909A8F;">Listrik</p>
+                                    <p class="text-sm font-semibold" style="color:#17231E;">{{ number_format($houseBlock->electricity) }} W</p>
                                 </div>
                             @endif
                             @if($houseBlock->water_source)
-                                <div class="rounded-xl p-3" style="background:#f7f7f7;">
-                                    <p class="text-[11px]" style="color:#a3abb0;">Sumber Air</p>
-                                    <p class="text-sm font-semibold" style="color:#161e2d;">{{ $houseBlock->water_source_label }}</p>
+                                <div class="rounded-xl p-3" style="background:#F1F3EC;">
+                                    <p class="text-[11px]" style="color:#909A8F;">Sumber Air</p>
+                                    <p class="text-sm font-semibold" style="color:#17231E;">{{ $houseBlock->water_source_label }}</p>
                                 </div>
                             @endif
                             @if($houseBlock->garage)
-                                <div class="rounded-xl p-3" style="background:#f7f7f7;">
-                                    <p class="text-[11px]" style="color:#a3abb0;">Garasi</p>
-                                    <p class="text-sm font-semibold" style="color:#161e2d;">{{ $houseBlock->garage }} Mobil</p>
+                                <div class="rounded-xl p-3" style="background:#F1F3EC;">
+                                    <p class="text-[11px]" style="color:#909A8F;">Garasi</p>
+                                    <p class="text-sm font-semibold" style="color:#17231E;">{{ $houseBlock->garage }} Mobil</p>
                                 </div>
                             @endif
                         </div>
@@ -158,20 +158,20 @@
 
                 {{-- Contact Owner --}}
                 @if($owner)
-                    <div class="rounded-2xl p-5" style="background:#ffffff;border:1px solid #e4e4e4;">
-                        <h3 class="text-sm font-semibold mb-3" style="color:#161e2d;">Kontak Pemilik</h3>
+                    <div class="rounded-2xl p-5" style="background:#ffffff;border:1px solid #E0DFD4;">
+                        <h3 class="text-sm font-semibold mb-3" style="color:#17231E;">Kontak Pemilik</h3>
                         <div class="flex items-center gap-3 mb-4">
                             @if($owner->photo)
-                                <img src="{{ Storage::disk('public')->url($owner->photo) }}" class="w-11 h-11 rounded-full object-cover" style="border:2px solid rgba(21,99,223,0.3);">
+                                <img src="{{ Storage::disk('public')->url($owner->photo) }}" class="w-11 h-11 rounded-full object-cover" style="border:2px solid rgba(22,74,64,0.3);">
                             @else
-                                <div class="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold" style="background:rgba(21,99,223,0.15);color:#1563df;">
+                                <div class="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold" style="background:rgba(22,74,64,0.15);color:#164A40;">
                                     {{ strtoupper(substr($owner->name, 0, 1)) }}
                                 </div>
                             @endif
                             <div>
-                                <p class="text-sm font-semibold" style="color:#161e2d;">{{ $owner->name }}</p>
+                                <p class="text-sm font-semibold" style="color:#17231E;">{{ $owner->name }}</p>
                                 @if($owner->phone)
-                                    <p class="text-xs" style="color:#a3abb0;">{{ $owner->phone }}</p>
+                                    <p class="text-xs" style="color:#909A8F;">{{ $owner->phone }}</p>
                                 @endif
                             </div>
                         </div>
@@ -192,8 +192,8 @@
                             @if($owner->phone)
                                 <a href="tel:{{ $owner->phone }}"
                                     class="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl text-sm font-medium transition-colors"
-                                    style="background:#ffffff;border:1px solid #e4e4e4;color:#161e2d;"
-                                    onmouseover="this.style.borderColor='#1563df'" onmouseout="this.style.borderColor='#e4e4e4'">
+                                    style="background:#ffffff;border:1px solid #E0DFD4;color:#17231E;"
+                                    onmouseover="this.style.borderColor='#164A40'" onmouseout="this.style.borderColor='#E0DFD4'">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                                     Telepon Langsung
                                 </a>
@@ -203,25 +203,25 @@
                 @endif
 
                 {{-- Info Tambahan --}}
-                <div class="rounded-2xl p-5 space-y-3" style="background:#ffffff;border:1px solid #e4e4e4;">
-                    <h3 class="text-sm font-semibold" style="color:#161e2d;">Informasi Rumah</h3>
+                <div class="rounded-2xl p-5 space-y-3" style="background:#ffffff;border:1px solid #E0DFD4;">
+                    <h3 class="text-sm font-semibold" style="color:#17231E;">Informasi Rumah</h3>
                     <div class="space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs" style="color:#a3abb0;">Kode Unit</span>
-                            <span class="text-xs font-semibold" style="color:#161e2d;">{{ $houseBlock->block_code }}</span>
+                            <span class="text-xs" style="color:#909A8F;">Kode Unit</span>
+                            <span class="text-xs font-semibold" style="color:#17231E;">{{ $houseBlock->block_code }}</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-xs" style="color:#a3abb0;">Blok</span>
-                            <span class="text-xs font-semibold" style="color:#161e2d;">{{ $houseBlock->block_letter }}</span>
+                            <span class="text-xs" style="color:#909A8F;">Blok</span>
+                            <span class="text-xs font-semibold" style="color:#17231E;">{{ $houseBlock->block_letter }}</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-xs" style="color:#a3abb0;">Nomor Unit</span>
-                            <span class="text-xs font-semibold" style="color:#161e2d;">{{ $houseBlock->unit_number }}</span>
+                            <span class="text-xs" style="color:#909A8F;">Nomor Unit</span>
+                            <span class="text-xs font-semibold" style="color:#17231E;">{{ $houseBlock->unit_number }}</span>
                         </div>
                         @if($houseBlock->notes)
-                            <div class="pt-2" style="border-top:1px solid #f7f7f7;">
-                                <p class="text-xs" style="color:#a3abb0;">Catatan:</p>
-                                <p class="text-xs mt-0.5" style="color:#5c6368;">{{ $houseBlock->notes }}</p>
+                            <div class="pt-2" style="border-top:1px solid #F1F3EC;">
+                                <p class="text-xs" style="color:#909A8F;">Catatan:</p>
+                                <p class="text-xs mt-0.5" style="color:#586359;">{{ $houseBlock->notes }}</p>
                             </div>
                         @endif
                     </div>

@@ -96,6 +96,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('can:manage-admin')->group(function () {
         Route::get('users', ManageUsers::class)->name('users.index');
         Route::get('role-access', RoleAccessSettings::class)->name('role-access.index');
+        Route::get('notices', \App\Livewire\Admin\ManageNotices::class)->name('notices.index');
+        Route::get('citizen-reports', \App\Livewire\Admin\ManageCitizenReports::class)->name('citizen-reports.index');
     });
 });
 

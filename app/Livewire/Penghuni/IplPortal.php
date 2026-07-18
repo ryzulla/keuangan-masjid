@@ -18,9 +18,16 @@ class IplPortal extends Component
 {
     use WithFileUploads;
 
+    // UI state (entangled with Alpine)
+    public bool $showMatrix    = false;
+    public bool $showMonitored = false;
+
     // Bayar satu tagihan (lunasi sisa)
     public bool $isPayModalOpen  = false;
     public ?int $payingBillingId = null;
+    public bool $singlePaySec = true;
+    public bool $singlePayGarb = true;
+    public bool $singlePayKas = true;
 
     // Bayar via checklist (banyak bulan / sebagian per komponen / di muka)
     public bool  $isChecklistOpen   = false;
@@ -56,6 +63,9 @@ class IplPortal extends Component
         }
 
         $this->payingBillingId = $billingId;
+        $this->singlePaySec    = $billing->remainingSecurity() > 0;
+        $this->singlePayGarb   = $billing->remainingGarbage() > 0;
+        $this->singlePayKas    = $billing->remainingKasRt() > 0;
         $this->amount          = (string) $billing->outstanding;
         $this->paymentMethod   = 'transfer';
         $this->bankName        = '';
@@ -93,16 +103,27 @@ class IplPortal extends Component
         $resident  = Auth::guard('resident')->user();
         $block     = $resident->currentAssignments()->with('houseBlock')->first()?->houseBlock;
 
+        $amtS = $this->singlePaySec ? $billing->remainingSecurity() : 0;
+        $amtG = $this->singlePayGarb ? $billing->remainingGarbage() : 0;
+        $amtK = $this->singlePayKas ? $billing->remainingKasRt() : 0;
+        $total = $amtS + $amtG + $amtK;
+
+        if ($total <= 0) {
+            $this->isPayModalOpen = false;
+            session()->flash('error', 'Tidak ada komponen yang dipilih untuk dibayar.');
+            return;
+        }
+
         ResidentPaymentRequest::create([
             'resident_id'      => $resident->id,
             'type'             => 'ipl',
             'ipl_billing_id'   => $billing->id,
             'period_year'      => $billing->period?->year,
             'period_month'     => $billing->period?->month,
-            'amount'           => $billing->outstanding,
-            'amount_security'  => $billing->remainingSecurity(),
-            'amount_garbage'   => $billing->remainingGarbage(),
-            'amount_kas_rt'    => $billing->remainingKasRt(),
+            'amount'           => $total,
+            'amount_security'  => $amtS,
+            'amount_garbage'   => $amtG,
+            'amount_kas_rt'    => $amtK,
             'payment_method'   => $this->paymentMethod,
             'bank_name'        => $this->bankName ?: null,
             'reference_number' => $this->referenceNum ?: null,
@@ -111,7 +132,7 @@ class IplPortal extends Component
             'status'           => 'pending',
         ]);
 
-        $this->notifyAdmins($resident, 'ipl', (float) $billing->outstanding, $block?->block_code);
+        $this->notifyAdmins($resident, 'ipl', $total, $block?->block_code);
         $this->isPayModalOpen = false;
         session()->flash('success', 'Konfirmasi pembayaran IPL berhasil dikirim! Pengurus akan memverifikasi.');
     }
@@ -389,33 +410,7 @@ class IplPortal extends Component
                     ]);
                 }
             } else {
-                // Periode lampau tanpa tagihan — entri tunggal (tidak terikat blok).
-                $p = $periods->get($periodKey) ?? $latest;
-                $remS = (float) ($p->ipl_security_amount ?? 0);
-                $remG = (float) ($p->ipl_garbage_amount ?? 0);
-                $remK = (float) ($p->ipl_kas_rt_amount ?? 0);
-
-                $key    = '0-' . $periodKey;
-                $isPending = in_array($key, $pendingKeys);
-                $remTotal  = $remS + $remG + $remK;
-                $locked    = $isPending || $remTotal <= 0;
-
-                $out->push([
-                    'key'          => $key,
-                    'year'         => $c->year,
-                    'month'        => $c->month,
-                    'block_id'     => null,
-                    'block_code'   => null,
-                    'label'        => $c->translatedFormat('F Y'),
-                    'status'       => $isPending ? 'pending' : 'unbilled',
-                    'locked'       => $locked,
-                    'is_future'    => $isFuture,
-                    'rem_security' => $remS,
-                    'rem_garbage'  => $remG,
-                    'rem_kas_rt'   => $remK,
-                    'rem_total'    => $remTotal,
-                    'billing_id'   => null,
-                ]);
+                // Periode lampau tanpa tagihan — lewati, jangan tampilkan.
             }
         }
 

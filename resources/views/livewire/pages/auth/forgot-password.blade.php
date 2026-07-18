@@ -37,7 +37,7 @@ $sendPasswordResetLink = function () {
 ?>
 
 <div>
-    <div class="mb-4 text-sm" style="color:#a3abb0;">
+    <div class="mb-4 text-sm" style="color:#909A8F;">
         {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
     </div>
 
