@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <x-pwa-meta />
 
         <title>{{ config('app.name', 'Sistem Perumahan') }}</title>
 
@@ -48,5 +49,6 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" data-navigate-once></script>
 
         @stack('scripts')
+        <x-pwa-install />
     </body>
 </html>

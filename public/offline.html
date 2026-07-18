@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Offline — Portal Warga</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: #E9ECE4;
+            color: #17231E;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .card {
+            background: #fff;
+            border: 1px solid #E0DFD4;
+            border-radius: 20px;
+            padding: 48px 32px;
+            text-align: center;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 12px 40px rgba(22,74,64,0.08);
+        }
+        .icon {
+            width: 72px; height: 72px;
+            border-radius: 18px;
+            background: #E1EDE8;
+            display: inline-flex; align-items: center; justify-content: center;
+            margin-bottom: 20px;
+        }
+        .icon svg { width: 36px; height: 36px; }
+        h1 {
+            font-family: 'Fraunces', Georgia, serif;
+            font-size: 22px; font-weight: 600;
+            margin-bottom: 8px;
+        }
+        p { font-size: 14px; color: #586359; line-height: 1.6; margin-bottom: 24px; }
+        button {
+            background: #164A40; color: #fff;
+            border: none; border-radius: 12px;
+            padding: 12px 28px; font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: background 0.15s;
+        }
+        button:hover { background: #0F3A32; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="#164A40" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 010 12.728m-2.829-2.829a5 5 0 000-7.07m-4.243 2.121a1 1 0 11-1.414 1.414m1.414-1.414L7.05 7.05M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </div>
+        <h1>Tidak Ada Koneksi</h1>
+        <p>Anda sedang offline. Periksa koneksi internet Anda dan coba lagi.</p>
+        <button onclick="window.location.reload()">Coba Lagi</button>
+    </div>
+</body>
+</html>

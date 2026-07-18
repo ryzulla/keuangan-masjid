@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#164A40"/>
+  <g transform="translate(256,240)">
+    <!-- house body -->
+    <rect x="-80" y="-10" width="160" height="120" rx="8" fill="#E1EDE8"/>
+    <!-- roof -->
+    <path d="M-110,-10 L0,-100 L110,-10 Z" fill="#F4EFE2"/>
+    <!-- door -->
+    <rect x="-20" y="40" width="40" height="70" rx="6" fill="#0B2E28"/>
+    <!-- windows -->
+    <rect x="-65" y="10" width="30" height="28" rx="4" fill="#0B2E28" opacity="0.85"/>
+    <rect x="35" y="10" width="30" height="28" rx="4" fill="#0B2E28" opacity="0.85"/>
+    <rect x="-62" y="15" width="24" height="18" rx="2" fill="#E1EDE8" opacity="0.3"/>
+    <rect x="38" y="15" width="24" height="18" rx="2" fill="#E1EDE8" opacity="0.3"/>
+    <!-- window dividers -->
+    <line x1="-50" y1="10" x2="-50" y2="38" stroke="#164A40" stroke-width="2" opacity="0.4"/>
+    <line x1="-65" y1="24" x2="-35" y2="24" stroke="#164A40" stroke-width="2" opacity="0.4"/>
+    <line x1="50" y1="10" x2="50" y2="38" stroke="#164A40" stroke-width="2" opacity="0.4"/>
+    <line x1="35" y1="24" x2="65" y2="24" stroke="#164A40" stroke-width="2" opacity="0.4"/>
+  </g>
+</svg>

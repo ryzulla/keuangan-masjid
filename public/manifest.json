@@ -1,0 +1,27 @@
+{
+    "name": "Portal Warga",
+    "short_name": "PortalWarga",
+    "description": "Sistem Manajemen Perumahan & DKM",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#E9ECE4",
+    "theme_color": "#164A40",
+    "orientation": "any",
+    "scope": "/",
+    "lang": "id",
+    "categories": ["utilities", "productivity"],
+    "icons": [
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
