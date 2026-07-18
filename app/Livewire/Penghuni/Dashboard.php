@@ -129,10 +129,20 @@ class Dashboard extends Component
             ->pluck('notice_id')
             ->all();
 
-        // ─── Listed Houses ────────────────────────────────────────────────
+        // ─── Listed Houses (milik penghuni ini) ───────────────────────────
         $listedHouses = HouseBlock::whereHas('owners', fn($q) => $q->where('residents.id', $resident->id))
             ->where('is_for_rent', true)
             ->with('photos')
+            ->get();
+
+        // ─── Pasar Warga: rumah dijual/disewa oleh penghuni LAIN ──────────
+        // Area login → kontak (HP/WA) ditampilkan penuh agar antar-warga bisa saling hubungi.
+        $marketListings = HouseBlock::active()
+            ->where('is_for_rent', true)
+            ->whereDoesntHave('owners', fn($q) => $q->where('residents.id', $resident->id))
+            ->with(['photos', 'owners'])
+            ->latest()
+            ->take(6)
             ->get();
 
         // ─── IPL Terbaru (hanya belum lunas) ──────────────────────────────
@@ -145,7 +155,7 @@ class Dashboard extends Component
         return view('livewire.penghuni.dashboard', compact(
             'resident', 'unpaidBillings', 'totalOutstanding',
             'pendingRequests', 'expiringContracts', 'notices', 'likedNoticeIds',
-            'listedHouses', 'recentBillings', 'campaigns'
+            'listedHouses', 'marketListings', 'recentBillings', 'campaigns'
         ));
     }
 

@@ -28,20 +28,38 @@ class WelcomePage extends Component
     public $dkmMonthlyIncome = 0;
     public $dkmMonthlyExpense = 0;
     public $rentalListings;
+    public $dataAsOf;
+    public $denah = [];
+    public $denahExtra = 0;
 
     public function mount()
     {
         $this->activeCampaignsPerumahan = collect();
         $this->activeCampaignsDkm = collect();
         $this->rentalListings = collect();
+        $this->dataAsOf = now()->locale('id')->isoFormat('D MMMM Y, HH:mm');
 
         try {
             $this->totalResidents = Resident::active()->count();
             $this->totalBlocks = HouseBlock::active()->count();
-            $this->occupiedBlocks = DB::table('resident_house_blocks')
+            $occupiedIds = DB::table('resident_house_blocks')
                 ->where('occupancy_status', 'dihuni')
-                ->distinct('house_block_id')
-                ->count('house_block_id');
+                ->pluck('house_block_id')
+                ->unique();
+            $this->occupiedBlocks = $occupiedIds->count();
+
+            // Denah okupansi untuk hero — tiap sel = 1 unit nyata (dihuni vs kosong).
+            $denahCap = 154; // batas visual agar grid tetap rapi
+            $blocks = HouseBlock::active()
+                ->orderBy('block_letter')
+                ->orderBy('unit_number')
+                ->take($denahCap)
+                ->get(['id', 'block_letter', 'unit_number']);
+            $this->denah = $blocks->map(fn ($b) => [
+                'code'     => $b->block_letter . '-' . $b->unit_number,
+                'occupied' => $occupiedIds->contains($b->id),
+            ])->all();
+            $this->denahExtra = max(0, $this->totalBlocks - count($this->denah));
 
             $this->activeCampaignsPerumahan = Campaign::withSum('transactions', 'amount')
                 ->where('status', 'active')
@@ -65,9 +83,17 @@ class WelcomePage extends Component
                     'belum' => IplBilling::where('ipl_period_id', $currentPeriod->id)->where('status', 'unpaid')->count(),
                     'sebagian' => IplBilling::where('ipl_period_id', $currentPeriod->id)->where('status', 'partial')->count(),
                     'total_unit' => IplBilling::where('ipl_period_id', $currentPeriod->id)->count(),
-                    'terkumpul' => IplBilling::where('ipl_period_id', $currentPeriod->id)->sum(DB::raw('paid_security + paid_garbage')),
+                    'terkumpul' => IplBilling::where('ipl_period_id', $currentPeriod->id)
+                        ->sum(DB::raw('paid_security + paid_garbage + paid_kas_rt')),
+                    'terkumpul_security' => IplBilling::where('ipl_period_id', $currentPeriod->id)->sum('paid_security'),
+                    'terkumpul_garbage'  => IplBilling::where('ipl_period_id', $currentPeriod->id)->sum('paid_garbage'),
+                    'terkumpul_kas_rt'   => IplBilling::where('ipl_period_id', $currentPeriod->id)->sum('paid_kas_rt'),
                     'tunggakan' => IplBilling::where('ipl_period_id', $currentPeriod->id)
-                        ->sum(DB::raw('(ipl_security_amount - paid_security) + (ipl_garbage_amount - paid_garbage)')),
+                        ->sum(DB::raw(
+                            '(ipl_security_amount - paid_security - waived_security)'
+                            . ' + (ipl_garbage_amount - paid_garbage - waived_garbage)'
+                            . ' + (ipl_kas_rt_amount - paid_kas_rt - waived_kas_rt)'
+                        )),
                 ];
             }
 
