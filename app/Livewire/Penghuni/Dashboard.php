@@ -11,8 +11,12 @@ use App\Models\Campaign;
 use App\Models\IplBilling;
 use App\Models\Account;
 use App\Models\CitizenReport;
+use App\Models\EmergencyAlert;
 use App\Models\ResidentHouseBlock;
 use App\Models\HouseBlock;
+use App\Models\User;
+use App\Services\FcmService;
+use App\Notifications\EmergencyAlertNotification;
 
 #[Layout('layouts.penghuni')]
 class Dashboard extends Component
@@ -152,5 +156,52 @@ class Dashboard extends Component
             return;
         }
         Notice::active()->find($noticeId)?->likers()->toggle([$resident->id]);
+    }
+
+    public function triggerEmergency(): void
+    {
+        $resident = Auth::guard('resident')->user();
+
+        $primaryBlock = $resident->primaryHouseBlock();
+        $blockCode = $primaryBlock?->block_code ?? 'Tidak diketahui';
+
+        $alert = EmergencyAlert::create([
+            'resident_id' => $resident->id,
+            'block_code'  => $blockCode,
+            'message'     => 'Darurat!',
+            'is_active'   => true,
+        ]);
+
+        // Notify all residents in same block_letter + admins
+        $blockLetter = substr($blockCode, 0, 1);
+
+        $residentIds = \App\Models\Resident::whereHas('currentAssignments.houseBlock', function ($q) use ($blockLetter) {
+            $q->where('block_letter', $blockLetter);
+        })
+        ->where('is_active', true)
+        ->where('id', '!=', $resident->id)
+        ->pluck('id')
+        ->toArray();
+
+        $adminIds = User::where('role', 'super_admin')
+            ->orWhere('role', 'admin')
+            ->pluck('id')
+            ->toArray();
+
+        $allIds = array_unique(array_merge($residentIds, $adminIds));
+
+        \App\Models\Resident::whereIn('id', $allIds)->each(function ($user) use ($alert) {
+            $user->notify(new EmergencyAlertNotification($alert));
+        });
+
+        // FCM push
+        $fcm = app(FcmService::class);
+        if ($fcm->isConfigured()) {
+            $fcm->sendEmergencyAlert($alert);
+        }
+
+        $this->dispatch('emergency-triggered');
+
+        session()->flash('success', "Tombol darurat sudah aktif. Blok {$blockCode} telah diberitahu.");
     }
 }

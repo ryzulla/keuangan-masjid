@@ -179,6 +179,23 @@
         </button>
     </div>
 
+    {{-- ═══ TOMBOL DARURAT ═══ --}}
+    <button type="button" wire:click="triggerEmergency"
+        wire:confirm="Anda yakin ingin mengaktifkan tombol darurat? Semua warga di blok Anda akan diberitahu."
+        class="w-full rounded-2xl p-5 flex items-center gap-4 transition-all hover:shadow-lg cursor-pointer"
+        style="background:linear-gradient(135deg,#B0402C,#8B2F1E);color:#ffffff;border:2px solid rgba(255,255,255,0.2);">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0" style="background:rgba(255,255,255,0.2);">
+            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+        </div>
+        <div class="text-left">
+            <p class="text-sm font-bold uppercase tracking-wider">Tombol Darurat</p>
+            <p class="text-xs mt-0.5" style="color:rgba(255,255,255,0.8);">Tekan untuk memberi tahu warga sekitar & admin</p>
+        </div>
+        <svg class="w-5 h-5 ml-auto shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+    </button>
+
     {{-- ═══ PENGUMUMAN ═══ --}}
     @if($notices->isNotEmpty())
     <div class="rounded-2xl overflow-hidden" style="background:#ffffff;border:1px solid #E0DFD4;box-shadow:0 1px 2px rgba(22,74,64,0.04),0 8px 20px -8px rgba(22,74,64,0.06);">

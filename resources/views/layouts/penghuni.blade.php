@@ -64,6 +64,8 @@
 </head>
 <body class="h-full">
 
+<livewire:penghuni.emergency-alert-banner />
+
 @php
     $resident = auth('resident')->user();
     $isPemilik = $resident?->isPemilik();

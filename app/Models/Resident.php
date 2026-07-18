@@ -84,6 +84,11 @@ class Resident extends Authenticatable
         return $this->hasMany(ResidentPaymentRequest::class);
     }
 
+    public function fcmTokens(): HasMany
+    {
+        return $this->hasMany(FcmToken::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);

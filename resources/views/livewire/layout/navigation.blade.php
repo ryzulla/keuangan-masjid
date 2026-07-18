@@ -292,6 +292,14 @@ $logout = function (Logout $logout) {
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                                 Laporan Warga
                             </a>
+                            <a href="{{ route('emergency-alerts.index') }}" wire:navigate @click="open=false"
+                                class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
+                                style="color:#586359;"
+                                onmouseover="this.style.color='#B0402C';this.style.backgroundColor='rgba(176,64,44,0.08)'"
+                                onmouseout="this.style.color='#586359';this.style.backgroundColor=''">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                Alert Darurat
+                            </a>
                         </div>
                     </div>
                     @endcan
@@ -437,6 +445,7 @@ $logout = function (Logout $logout) {
             <a href="{{ route('role-access.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Pengaturan Akses Role</a>
             <a href="{{ route('notices.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Pengumuman</a>
             <a href="{{ route('citizen-reports.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Laporan Warga</a>
+            <a href="{{ route('emergency-alerts.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#B0402C;">Alert Darurat</a>
         </div>
         @endcan
 

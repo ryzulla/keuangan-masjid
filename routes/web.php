@@ -98,6 +98,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('role-access', RoleAccessSettings::class)->name('role-access.index');
         Route::get('notices', \App\Livewire\Admin\ManageNotices::class)->name('notices.index');
         Route::get('citizen-reports', \App\Livewire\Admin\ManageCitizenReports::class)->name('citizen-reports.index');
+        Route::get('emergency-alerts', \App\Livewire\Admin\ManageEmergencyAlerts::class)->name('emergency-alerts.index');
     });
 });
 

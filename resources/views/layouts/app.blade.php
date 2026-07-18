@@ -23,6 +23,7 @@
         <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js" data-navigate-once></script>
     </head>
     <body class="font-sans antialiased" style="background-color:#E9ECE4; color:#17231E;">
+        <livewire:penghuni.emergency-alert-banner />
         <div class="min-h-screen" style="background-color:#E9ECE4;">
             <livewire:layout.navigation />
 
