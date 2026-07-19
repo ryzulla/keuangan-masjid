@@ -183,6 +183,7 @@
         </div>
         @endif
 
+        @if(\App\Models\Setting::moduleEnabled('dkm'))
         {{-- DKM Finance Section --}}
         <div>
             <div class="mb-5">
@@ -216,6 +217,7 @@
                 </div>
             </div>
         </div>
+        @endif
 
         {{-- Rental Listings Section --}}
         @if($rentalListings->count() > 0)
@@ -343,6 +345,7 @@
         {{-- Programs / Campaigns --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
+            @if(\App\Models\Setting::moduleEnabled('perumahan'))
             {{-- Perumahan Programs --}}
             <div>
                 <div class="mb-5">
@@ -384,7 +387,9 @@
                     @endforelse
                 </div>
             </div>
+            @endif
 
+            @if(\App\Models\Setting::moduleEnabled('dkm'))
             {{-- DKM Programs --}}
             <div>
                 <div class="mb-5">
@@ -426,6 +431,7 @@
                     @endforelse
                 </div>
             </div>
+            @endif
 
         </div>
 

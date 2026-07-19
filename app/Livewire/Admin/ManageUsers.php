@@ -32,6 +32,8 @@ class ManageUsers extends Component
     public $editResidentLinked = false;
     // Saat edit: target adalah akun Super Admin (role terkunci, tak bisa dihapus).
     public $editIsSuperAdmin = false;
+    // Role asli saat edit — tetap boleh dipertahankan meski role-nya dinonaktifkan.
+    public $editOriginalRole = null;
 
     /** Hanya Super Admin yang boleh menetapkan role super_admin. */
     private function canAssignSuper(): bool
@@ -66,10 +68,40 @@ class ManageUsers extends Component
         return $roleKey !== null && in_array($roleKey, $this->manageableRoleKeys(), true);
     }
 
-    /** Role yang boleh DIPILIH (dalam domain, super_admin hanya untuk Super Admin). */
+    /**
+     * Apakah user saat ini boleh mengurus (edit/hapus/nonaktifkan) $user tertentu.
+     * Manajer berdomain (mis. Ketua RT) TIDAK bisa mengurus sesama pemegang role yang sama.
+     */
+    public function canManageUser(User $user): bool
+    {
+        if (! $this->canManageRole($user->role)) {
+            return false;
+        }
+        // Proteksi sesama Ketua: role sama & bukan diri sendiri → tidak boleh.
+        if ($this->manageableGroups() !== null
+            && $user->role === auth()->user()->role
+            && $user->id !== auth()->id()) {
+            return false;
+        }
+        return true;
+    }
+
+    /** Role yang boleh DIPILIH (dalam domain, aktif, super_admin hanya untuk Super Admin). */
     private function assignableRoleKeys(): array
     {
         $keys = $this->manageableRoleKeys();
+
+        // Hanya role aktif yang bisa ditugaskan...
+        $active = Role::activeKeys();
+        $keys = array_values(array_filter($keys, fn ($k) => in_array($k, $active, true)));
+
+        // ...kecuali role asli akun yang sedang diedit (agar bisa dipertahankan).
+        if ($this->editOriginalRole
+            && ! in_array($this->editOriginalRole, $keys, true)
+            && in_array($this->editOriginalRole, $this->manageableRoleKeys(), true)) {
+            $keys[] = $this->editOriginalRole;
+        }
+
         if (! $this->canAssignSuper()) {
             $keys = array_values(array_filter($keys, fn ($k) => $k !== 'super_admin'));
         }
@@ -136,14 +168,22 @@ class ManageUsers extends Component
         if ($groups !== null) {
             $usersQuery->whereIn('role', $this->manageableRoleKeys());
         }
+        $users = $usersQuery->paginate(10);
+
+        // Peta boleh-diurus per baris (untuk proteksi sesama Ketua di UI).
+        $manageableMap = [];
+        foreach ($users as $u) {
+            $manageableMap[$u->id] = $this->canManageUser($u);
+        }
 
         return view('livewire.admin.manage-users', [
-            'users'        => $usersQuery->paginate(10),
-            'residents'    => $residents,
-            'rolesGrouped' => $rolesGrouped,
-            'roleLabels'   => Role::labels(),
-            'roleColors'   => Role::colors(),
+            'users'          => $users,
+            'residents'      => $residents,
+            'rolesGrouped'   => $rolesGrouped,
+            'roleLabels'     => Role::labels(),
+            'roleColors'     => Role::colors(),
             'canManageSuper' => $this->canAssignSuper(),
+            'manageableMap'  => $manageableMap,
         ]);
     }
 
@@ -176,8 +216,8 @@ class ManageUsers extends Component
             return;
         }
 
-        // Hanya boleh mengurus pengguna dalam domain role sendiri.
-        if (! $this->canManageRole($user->role)) {
+        // Hanya boleh mengurus pengguna dalam domain, dan bukan sesama Ketua.
+        if (! $this->canManageUser($user)) {
             session()->flash('error', 'Anda tidak berwenang mengurus pengguna ini.');
             return;
         }
@@ -186,6 +226,7 @@ class ManageUsers extends Component
         $this->selected_id = $id;
         $this->editResidentLinked = (bool) $user->resident_id;
         $this->editIsSuperAdmin = $user->role === 'super_admin';
+        $this->editOriginalRole = $user->role;
         $this->name = $user->name;
         $this->email = $user->email;
         $this->role = $user->role;
@@ -228,7 +269,7 @@ class ManageUsers extends Component
         // ── Proteksi role Super Admin & domain ──
         if ($this->selected_id) {
             $target = User::find($this->selected_id);
-            if ($target && ! $this->canManageRole($target->role)) {
+            if ($target && ! $this->canManageUser($target)) {
                 session()->flash('error', 'Anda tidak berwenang mengurus pengguna ini.');
                 return;
             }
@@ -279,7 +320,7 @@ class ManageUsers extends Component
 
         $user = User::findOrFail($id);
 
-        if (! $this->canManageRole($user->role)) {
+        if (! $this->canManageUser($user)) {
             session()->flash('error', 'Anda tidak berwenang mengurus pengguna ini.');
             return;
         }
@@ -303,7 +344,7 @@ class ManageUsers extends Component
             return;
         }
 
-        if (! $this->canManageRole($user->role)) {
+        if (! $this->canManageUser($user)) {
             session()->flash('error', 'Anda tidak berwenang mengurus pengguna ini.');
             return;
         }
@@ -346,6 +387,7 @@ class ManageUsers extends Component
         $this->createMode = 'new';
         $this->editResidentLinked = false;
         $this->editIsSuperAdmin = false;
+        $this->editOriginalRole = null;
         $this->role = $this->defaultRole();
         $this->resetErrorBag();
     }

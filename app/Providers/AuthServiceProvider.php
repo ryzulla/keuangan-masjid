@@ -18,7 +18,8 @@ class AuthServiceProvider extends ServiceProvider
             'manage-users',
             'manage-dkm',
             'manage-perumahan',
-            'manage-programs',
+            'manage-programs-dkm',
+            'manage-programs-perumahan',
             'manage-transactions',
             'view-reports',
             'manage-residents',
@@ -28,6 +29,9 @@ class AuthServiceProvider extends ServiceProvider
         foreach ($gates as $gate) {
             Gate::define($gate, function (User $user) use ($gate) {
                 if ($user->role === 'super_admin') return true;
+
+                // Role yang dinonaktifkan tidak punya akses apa pun.
+                if (! \App\Models\Role::isActive($user->role)) return false;
 
                 try {
                     $allowed = Cache::remember("gate_roles_{$gate}", 3600, function () use ($gate) {
@@ -40,6 +44,11 @@ class AuthServiceProvider extends ServiceProvider
                 }
             });
         }
+
+        // Gate gabungan Program: benar bila boleh mengurus program DKM ATAU Perumahan.
+        Gate::define('manage-programs', function (User $user) {
+            return $user->can('manage-programs-dkm') || $user->can('manage-programs-perumahan');
+        });
 
         // Akses konfirmasi pembayaran/donasi: pengurus Perumahan (IPL) maupun DKM.
         Gate::define('approve-payments', function (User $user) {

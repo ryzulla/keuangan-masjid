@@ -63,6 +63,9 @@ class CampaignDetail extends Component
 
     public function mount(Campaign $campaign): void
     {
+        // Hanya boleh membuka program sesuai wewenang org (DKM vs Perumahan).
+        abort_unless(auth()->user()->can("manage-programs-{$campaign->organization_type}"), 403);
+
         $this->campaign = $campaign;
         $this->donationDate = now()->format('Y-m-d');
         $this->expenseDate = now()->format('Y-m-d');

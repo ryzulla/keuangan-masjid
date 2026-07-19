@@ -20,12 +20,34 @@ class KeuanganPortal extends Component
     {
         $this->month = now()->month;
         $this->year = now()->year;
+
+        // Bila org aktif ternyata modulnya dimatikan, kembali ke 'semua'.
+        if ($this->activeOrg !== 'semua' && ! \App\Models\Setting::moduleEnabled($this->activeOrg)) {
+            $this->activeOrg = 'semua';
+        }
+    }
+
+    public function updatedActiveOrg($value)
+    {
+        if ($value !== 'semua' && ! \App\Models\Setting::moduleEnabled($value)) {
+            $this->activeOrg = 'semua';
+        }
+    }
+
+    /** Org yang boleh ditampilkan di keuangan (modul aktif + akun umum). */
+    private function keuanganOrgs(): array
+    {
+        return array_merge(\App\Models\Setting::enabledOrgs(), ['umum']);
     }
 
     #[Computed]
     public function accounts()
     {
-        return Account::when($this->activeOrg !== 'semua', fn($q) => $q->where('organization_type', $this->activeOrg))
+        return Account::when(
+                $this->activeOrg !== 'semua',
+                fn($q) => $q->where('organization_type', $this->activeOrg),
+                fn($q) => $q->whereIn('organization_type', $this->keuanganOrgs())
+            )
             ->orderBy('organization_type')->orderBy('name')->get();
     }
 
@@ -38,7 +60,7 @@ class KeuanganPortal extends Component
 
         $orgAccountIds = $this->activeOrg !== 'semua'
             ? Account::where('organization_type', $this->activeOrg)->pluck('id')
-            : null;
+            : Account::whereIn('organization_type', $this->keuanganOrgs())->pluck('id');
 
         $totalIncome = Transaction::where('transactions.type', 'debit')
             ->whereBetween('transaction_date', [$startDate, $endDate])
@@ -72,7 +94,7 @@ class KeuanganPortal extends Component
     {
         $orgAccountIds = $this->activeOrg !== 'semua'
             ? Account::where('organization_type', $this->activeOrg)->pluck('id')
-            : null;
+            : Account::whereIn('organization_type', $this->keuanganOrgs())->pluck('id');
 
         return Transaction::with(['category', 'account'])
             ->when($orgAccountIds, fn($q) => $q->whereIn('account_id', $orgAccountIds))
@@ -87,7 +109,7 @@ class KeuanganPortal extends Component
     {
         $orgAccountIds = $this->activeOrg !== 'semua'
             ? Account::where('organization_type', $this->activeOrg)->pluck('id')
-            : null;
+            : Account::whereIn('organization_type', $this->keuanganOrgs())->pluck('id');
 
         $labels = [];
         $incomeData = [];

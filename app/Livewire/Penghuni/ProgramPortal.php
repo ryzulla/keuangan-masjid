@@ -162,6 +162,7 @@ class ProgramPortal extends Component
     public function render()
     {
         $campaigns = Campaign::where('status', 'active')
+            ->whereIn('organization_type', \App\Models\Setting::enabledOrgs())
             ->with(['donations.transaction', 'residentPaymentRequests' => fn($q) => $q->where('status', 'confirmed')])
             ->latest()
             ->get();

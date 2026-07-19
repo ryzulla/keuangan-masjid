@@ -45,7 +45,7 @@ $logout = function (Logout $logout) {
 
                     {{-- Perumahan Dropdown --}}
                     @if($modPerumahan)
-                    @canany(['manage-residents', 'manage-ipl', 'manage-perumahan', 'manage-programs'])
+                    @canany(['manage-residents', 'manage-ipl', 'manage-perumahan', 'manage-programs-perumahan'])
                     <div x-data="{ open: false }" class="relative" @click.outside="open=false">
                         <button @click="open=!open"
                             class="flex items-center gap-1 px-3 py-2 text-sm rounded-lg transition-colors"
@@ -111,7 +111,7 @@ $logout = function (Logout $logout) {
                                 Konfirmasi Bayar Penghuni
                             </a>
                             @endcan
-                            @canany(['manage-perumahan', 'manage-programs'])
+                            @canany(['manage-perumahan', 'manage-programs-perumahan'])
                             <div style="height:1px;background:#F1F3EC;margin:2px 12px;"></div>
                             @can('manage-perumahan')
                             <a href="{{ route('perumahan.transaksi') }}" wire:navigate @click="open=false"
@@ -123,7 +123,7 @@ $logout = function (Logout $logout) {
                                 Transaksi Perumahan
                             </a>
                             @endcan
-                            @can('manage-programs')
+                            @can('manage-programs-perumahan')
                             <a href="{{ route('campaigns.index') . '?org=perumahan' }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
                                 style="color:#586359;"
@@ -141,7 +141,7 @@ $logout = function (Logout $logout) {
 
                     {{-- DKM Dropdown --}}
                     @if($modDkm)
-                    @canany(['manage-dkm', 'manage-programs'])
+                    @canany(['manage-dkm', 'manage-programs-dkm'])
                     <div x-data="{ open: false }" class="relative" @click.outside="open=false">
                         <button @click="open=!open"
                             class="flex items-center gap-1 px-3 py-2 text-sm rounded-lg transition-colors"
@@ -172,7 +172,7 @@ $logout = function (Logout $logout) {
                                 Konfirmasi Donasi
                             </a>
                             @endcan
-                            @can('manage-programs')
+                            @can('manage-programs-dkm')
                             <a href="{{ route('campaigns.index') . '?org=dkm' }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
                                 style="color:#586359;"
@@ -413,7 +413,7 @@ $logout = function (Logout $logout) {
         </div>
 
         @if($modPerumahan)
-        @canany(['manage-residents', 'manage-ipl', 'manage-perumahan', 'manage-programs'])
+        @canany(['manage-residents', 'manage-ipl', 'manage-perumahan', 'manage-programs-perumahan'])
         <div class="px-4 py-3 border-t" style="border-color:#F1F3EC;">
             <p class="text-xs font-semibold px-3 mb-2" style="color:#17231E;">Perumahan</p>
             @can('manage-residents')
@@ -428,7 +428,7 @@ $logout = function (Logout $logout) {
             @can('manage-perumahan')
             <a href="{{ route('perumahan.transaksi') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Transaksi Perumahan</a>
             @endcan
-            @can('manage-programs')
+            @can('manage-programs-perumahan')
             <a href="{{ route('campaigns.index') . '?org=perumahan' }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Program Perumahan</a>
             @endcan
         </div>
@@ -436,14 +436,14 @@ $logout = function (Logout $logout) {
         @endif
 
         @if($modDkm)
-        @canany(['manage-dkm', 'manage-programs'])
+        @canany(['manage-dkm', 'manage-programs-dkm'])
         <div class="px-4 py-3 border-t" style="border-color:#F1F3EC;">
             <p class="text-xs font-semibold px-3 mb-2" style="color:#17231E;">DKM Masjid</p>
             @can('manage-dkm')
             <a href="{{ route('transactions.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Transaksi DKM</a>
             <a href="{{ route('payment-requests.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Konfirmasi Donasi</a>
             @endcan
-            @can('manage-programs')
+            @can('manage-programs-dkm')
             <a href="{{ route('campaigns.index') . '?org=dkm' }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Program DKM</a>
             @endcan
         </div>

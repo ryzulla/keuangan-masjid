@@ -33,11 +33,12 @@ class RoleAccessSettings extends Component
         'manage-admin'        => ['label' => 'Pengaturan Admin (Role, Pengumuman, dll)', 'group' => 'Administrasi', 'icon' => 'shield'],
         'manage-transactions' => ['label' => 'Master Data (Akun & Kategori)', 'group' => 'Administrasi',   'icon' => 'cog'],
         'view-reports'        => ['label' => 'Laporan Keuangan',              'group' => 'Administrasi',   'icon' => 'chart'],
-        'manage-dkm'          => ['label' => 'Transaksi DKM',                 'group' => 'DKM Masjid',     'icon' => 'book'],
-        'manage-programs'     => ['label' => 'Program (DKM & Perumahan)',     'group' => 'DKM Masjid',     'icon' => 'star'],
-        'manage-residents'    => ['label' => 'Data Penghuni & Blok Rumah',    'group' => 'Perumahan',      'icon' => 'home'],
-        'manage-ipl'          => ['label' => 'IPL & Pengaturan Tarif',        'group' => 'Perumahan',      'icon' => 'receipt'],
-        'manage-perumahan'    => ['label' => 'Transaksi Perumahan',           'group' => 'Perumahan',      'icon' => 'cash'],
+        'manage-dkm'                => ['label' => 'Transaksi DKM',              'group' => 'DKM Masjid',  'icon' => 'book'],
+        'manage-programs-dkm'       => ['label' => 'Program DKM',               'group' => 'DKM Masjid',  'icon' => 'star'],
+        'manage-residents'          => ['label' => 'Data Penghuni & Blok Rumah','group' => 'Perumahan',   'icon' => 'home'],
+        'manage-ipl'                => ['label' => 'IPL & Pengaturan Tarif',    'group' => 'Perumahan',   'icon' => 'receipt'],
+        'manage-perumahan'          => ['label' => 'Transaksi Perumahan',       'group' => 'Perumahan',   'icon' => 'cash'],
+        'manage-programs-perumahan' => ['label' => 'Program Perumahan',         'group' => 'Perumahan',   'icon' => 'star'],
     ];
 
     /** Role yang bisa diatur di matrix (semua kecuali super_admin yang selalu penuh). */
@@ -65,12 +66,13 @@ class RoleAccessSettings extends Component
     }
 
     private const DEFAULTS = [
-        'admin'       => ['manage-users', 'manage-admin', 'manage-dkm', 'manage-perumahan', 'manage-programs', 'manage-transactions', 'view-reports', 'manage-residents', 'manage-ipl'],
-        'bendahara'   => ['manage-dkm', 'manage-programs', 'manage-transactions', 'view-reports', 'manage-ipl'],
-        'ketua_dkm'   => ['manage-users', 'view-reports'],
-        'dkm'         => ['manage-dkm', 'manage-programs'],
-        'perumahan'   => ['manage-users', 'manage-perumahan', 'manage-programs', 'manage-residents', 'manage-ipl'],
-        'pengurus_rt' => ['manage-users', 'manage-perumahan', 'manage-programs', 'manage-transactions', 'view-reports', 'manage-residents', 'manage-ipl'],
+        'admin'         => ['manage-users', 'manage-admin', 'manage-dkm', 'manage-perumahan', 'manage-programs-dkm', 'manage-programs-perumahan', 'manage-transactions', 'view-reports', 'manage-residents', 'manage-ipl'],
+        'bendahara'     => ['manage-dkm', 'manage-programs-dkm', 'manage-transactions', 'view-reports'],
+        'bendahara_rt'  => ['manage-perumahan', 'manage-programs-perumahan', 'manage-transactions', 'view-reports', 'manage-ipl'],
+        'ketua_dkm'     => ['manage-users', 'view-reports'],
+        'dkm'           => ['manage-dkm', 'manage-programs-dkm'],
+        'perumahan'     => ['manage-users', 'manage-perumahan', 'manage-programs-perumahan', 'manage-residents', 'manage-ipl'],
+        'pengurus_rt'   => ['manage-perumahan', 'manage-programs-perumahan', 'manage-transactions', 'view-reports', 'manage-residents', 'manage-ipl'],
     ];
 
     // ─── Atur Akses per role ───────────────────────────────────────────────
@@ -184,6 +186,23 @@ class RoleAccessSettings extends Component
 
         session()->flash('success', 'Role berhasil disimpan.');
         $this->closeRoleModal();
+    }
+
+    public function toggleRoleActive($id): void
+    {
+        $role = Role::findOrFail($id);
+
+        if ($role->key === 'super_admin') {
+            session()->flash('error', 'Role Super Admin tidak bisa dinonaktifkan.');
+            return;
+        }
+
+        $role->update(['is_active' => ! $role->is_active]);
+        $this->flushGateCache();
+
+        session()->flash('success', $role->is_active
+            ? "Role \"{$role->label}\" diaktifkan."
+            : "Role \"{$role->label}\" dinonaktifkan — pemegangnya kehilangan akses.");
     }
 
     public function deleteRole($id): void

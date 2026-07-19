@@ -99,12 +99,16 @@ class Dashboard extends Component
         $resident = Auth::guard('resident')->user()
             ->load(['currentAssignments.houseBlock', 'familyMembers']);
 
+        $perumahanOn = \App\Models\Setting::moduleEnabled('perumahan');
+
         // ─── Alerts ───────────────────────────────────────────────────────
-        $unpaidBillings = IplBilling::with('period', 'houseBlock')
-            ->where('responsible_resident_id', $resident->id)
-            ->where('status', '!=', 'paid')
-            ->orderBy('due_date')
-            ->get();
+        $unpaidBillings = $perumahanOn
+            ? IplBilling::with('period', 'houseBlock')
+                ->where('responsible_resident_id', $resident->id)
+                ->where('status', '!=', 'paid')
+                ->orderBy('due_date')
+                ->get()
+            : collect();
 
         $totalOutstanding = $unpaidBillings->sum('outstanding');
 
@@ -148,8 +152,9 @@ class Dashboard extends Component
         // ─── IPL Terbaru (hanya belum lunas) ──────────────────────────────
         $recentBillings = $unpaidBillings->take(3);
 
-        // ─── Program Aktif ───────────────────────────────────────────────
+        // ─── Program Aktif (hanya modul aktif) ────────────────────────────
         $campaigns = Campaign::where('status', 'active')
+            ->whereIn('organization_type', \App\Models\Setting::enabledOrgs())
             ->latest()->take(3)->get();
 
         return view('livewire.penghuni.dashboard', compact(

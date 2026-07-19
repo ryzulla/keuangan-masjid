@@ -135,13 +135,13 @@ Route::prefix('penghuni')->name('penghuni.')->group(function () {
     Route::middleware('resident.auth')->group(function () {
         Route::get('dashboard', PenghuniDashboard::class)->name('dashboard');
         Route::get('program', ProgramPortal::class)->name('program');
-        Route::get('ipl', IplPortal::class)->name('ipl');
+        Route::get('ipl', IplPortal::class)->middleware('module:perumahan')->name('ipl');
         Route::get('keluarga', KeluargaPortal::class)->name('keluarga');
         Route::get('keluarga/tambah', CreateEditFamilyMember::class)->name('keluarga.create');
         Route::get('keluarga/{member}/edit', CreateEditFamilyMember::class)->name('keluarga.edit');
         Route::get('program/{campaign}', PenghuniCampaignDetail::class)->name('program.detail');
-        Route::get('rumah-saya', RumahSaya::class)->name('rumah-saya');
-        Route::get('rumah-saya/{houseBlock}', DetailRumah::class)->name('detail-rumah');
+        Route::get('rumah-saya', RumahSaya::class)->middleware('module:perumahan')->name('rumah-saya');
+        Route::get('rumah-saya/{houseBlock}', DetailRumah::class)->middleware('module:perumahan')->name('detail-rumah');
         Route::get('keuangan', KeuanganPortal::class)->name('keuangan');
         Route::get('settings', PenghuniSettings::class)->name('settings');
 

@@ -33,7 +33,8 @@
             </div>
         </div>
 
-        {{-- Org Tabs --}}
+        {{-- Org Tabs (hanya bila boleh mengurus lebih dari satu org) --}}
+        @if(count($allowedOrgs) > 1)
         <div class="flex gap-1 p-1 rounded-xl w-fit" style="background:#ffffff;border:1px solid #E0DFD4;">
             <button wire:click="switchTab('dkm')"
                 class="px-5 py-2 rounded-lg text-sm font-medium transition-all"
@@ -48,6 +49,7 @@
                 Program Perumahan
             </button>
         </div>
+        @endif
 
         {{-- Card Grid --}}
         @if($campaigns->isEmpty())

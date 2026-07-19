@@ -9,12 +9,13 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         $defaults = [
-            'admin'       => ['manage-admin', 'manage-dkm', 'manage-perumahan', 'manage-programs', 'manage-transactions', 'view-reports', 'manage-residents', 'manage-ipl'],
-            'bendahara'   => ['manage-dkm', 'manage-programs', 'manage-transactions', 'view-reports', 'manage-ipl'],
-            'ketua_dkm'   => ['view-reports'],
-            'dkm'         => ['manage-dkm', 'manage-programs'],
-            'perumahan'   => ['manage-perumahan', 'manage-programs', 'manage-residents', 'manage-ipl'],
-            'pengurus_rt' => ['manage-perumahan', 'manage-programs', 'manage-transactions', 'view-reports', 'manage-residents', 'manage-ipl'],
+            'admin'        => ['manage-users', 'manage-admin', 'manage-dkm', 'manage-perumahan', 'manage-programs-dkm', 'manage-programs-perumahan', 'manage-transactions', 'view-reports', 'manage-residents', 'manage-ipl'],
+            'bendahara'    => ['manage-dkm', 'manage-programs-dkm', 'manage-transactions', 'view-reports'],
+            'bendahara_rt' => ['manage-perumahan', 'manage-programs-perumahan', 'manage-transactions', 'view-reports', 'manage-ipl'],
+            'ketua_dkm'    => ['manage-users', 'view-reports'],
+            'dkm'          => ['manage-dkm', 'manage-programs-dkm'],
+            'perumahan'    => ['manage-users', 'manage-perumahan', 'manage-programs-perumahan', 'manage-residents', 'manage-ipl'],
+            'pengurus_rt'  => ['manage-perumahan', 'manage-programs-perumahan', 'manage-transactions', 'view-reports', 'manage-residents', 'manage-ipl'],
         ];
 
         foreach ($defaults as $role => $gates) {

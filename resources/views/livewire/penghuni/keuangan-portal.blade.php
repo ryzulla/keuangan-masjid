@@ -17,12 +17,19 @@
     {{-- ═══ FILTERS ═══ --}}
     <div class="flex flex-wrap items-center gap-3">
         <div class="flex gap-1.5">
+            @php $kpPerumahan = \App\Models\Setting::moduleEnabled('perumahan'); $kpDkm = \App\Models\Setting::moduleEnabled('dkm'); @endphp
+            @if($kpPerumahan && $kpDkm)
             <button wire:click="$set('activeOrg', 'semua')" class="text-xs px-3 py-1.5 rounded-lg font-medium transition-colors"
                 style="{{ $activeOrg === 'semua' ? 'background:#164A40;color:#ffffff;' : 'background:rgba(22,74,64,0.08);color:#586359;border:1px solid rgba(22,74,64,0.15);' }}">Semua</button>
+            @endif
+            @if($kpPerumahan)
             <button wire:click="$set('activeOrg', 'perumahan')" class="text-xs px-3 py-1.5 rounded-lg font-medium transition-colors"
                 style="{{ $activeOrg === 'perumahan' ? 'background:#164A40;color:#ffffff;' : 'background:rgba(22,74,64,0.08);color:#586359;border:1px solid rgba(22,74,64,0.15);' }}">Perumahan</button>
+            @endif
+            @if($kpDkm)
             <button wire:click="$set('activeOrg', 'dkm')" class="text-xs px-3 py-1.5 rounded-lg font-medium transition-colors"
                 style="{{ $activeOrg === 'dkm' ? 'background:#164A40;color:#ffffff;' : 'background:rgba(22,74,64,0.08);color:#586359;border:1px solid rgba(22,74,64,0.15);' }}">DKM</button>
+            @endif
         </div>
         <select wire:model.live="month" class="text-xs rounded-lg px-3 py-1.5" style="background:#ffffff;border:1px solid #E0DFD4;color:#17231E;">
             @foreach($months as $val => $label)

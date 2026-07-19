@@ -41,6 +41,8 @@ class CampaignDetail extends Component
     public function mount(Campaign $campaign): void
     {
         abort_if($campaign->status !== 'active', 404);
+        // Sembunyikan bila modul org program ini dinonaktifkan.
+        abort_unless(\App\Models\Setting::moduleEnabled($campaign->organization_type), 404);
 
         $this->campaign = $campaign->load([
             'donations.transaction',

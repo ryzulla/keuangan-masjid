@@ -53,7 +53,22 @@ class CreateEditCampaign extends Component
         ];
     }
 
-public function mount($campaign = null): void
+    /** Org yang boleh diurus user (dkm/perumahan) sesuai gate program-nya. */
+    private function allowedOrgs(): array
+    {
+        $u = auth()->user();
+        $orgs = [];
+        if ($u->can('manage-programs-dkm')) $orgs[] = 'dkm';
+        if ($u->can('manage-programs-perumahan')) $orgs[] = 'perumahan';
+        return $orgs;
+    }
+
+    private function canOrg(string $org): bool
+    {
+        return in_array($org, $this->allowedOrgs(), true);
+    }
+
+    public function mount($campaign = null): void
     {
         $this->dkmAccounts       = Account::byOrg('dkm')->orderBy('name')->get();
         $this->perumahanAccounts = Account::byOrg('perumahan')->orderBy('name')->get();
@@ -85,9 +100,15 @@ public function mount($campaign = null): void
             }
         } else {
             // Jika $campaign kosong (berarti ini halaman 'Create')
-            // Ambil parameter org dari query string
-            $this->organization_type = request()->query('org', 'dkm');
+            // Ambil org dari query, jatuh ke org yang boleh diurus bila tidak sesuai.
+            $allowed = $this->allowedOrgs();
+            abort_if(empty($allowed), 403);
+            $requested = request()->query('org', 'dkm');
+            $this->organization_type = in_array($requested, $allowed, true) ? $requested : $allowed[0];
         }
+
+        // Pastikan user berwenang atas org program ini (DKM vs Perumahan).
+        abort_unless($this->canOrg($this->organization_type), 403);
     }
 
     public function render()
@@ -129,6 +150,10 @@ public function mount($campaign = null): void
     public function store(): void
     {
         $validated = $this->validate();
+
+        // Tolak menyimpan program di luar wewenang org user.
+        abort_unless($this->canOrg($validated['organization_type']), 403);
+
         try {
             DB::beginTransaction();
 

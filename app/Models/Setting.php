@@ -54,4 +54,16 @@ class Setting extends Model
     {
         return static::get("module_{$module}_enabled", '1') !== '0';
     }
+
+    /**
+     * Daftar organization_type yang modulnya aktif — dipakai memfilter
+     * program, keuangan, dll baik di admin, portal penghuni, maupun publik.
+     */
+    public static function enabledOrgs(): array
+    {
+        $orgs = [];
+        if (static::moduleEnabled('perumahan')) $orgs[] = 'perumahan';
+        if (static::moduleEnabled('dkm')) $orgs[] = 'dkm';
+        return $orgs;
+    }
 }

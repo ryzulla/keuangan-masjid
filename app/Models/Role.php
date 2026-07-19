@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Cache;
 
 class Role extends Model
 {
-    protected $fillable = ['key', 'label', 'color', 'group', 'is_system', 'sort'];
+    protected $fillable = ['key', 'label', 'color', 'group', 'is_system', 'is_active', 'sort'];
 
-    protected $casts = ['is_system' => 'boolean'];
+    protected $casts = ['is_system' => 'boolean', 'is_active' => 'boolean'];
 
     protected static function booted(): void
     {
@@ -45,6 +45,19 @@ class Role extends Model
     public static function keys(): array
     {
         return static::allCached()->pluck('key')->all();
+    }
+
+    /** Key role yang berstatus aktif (super_admin selalu dianggap aktif). */
+    public static function activeKeys(): array
+    {
+        return static::allCached()
+            ->filter(fn ($r) => $r->is_active || $r->key === 'super_admin')
+            ->pluck('key')->all();
+    }
+
+    public static function isActive(string $key): bool
+    {
+        return in_array($key, static::activeKeys(), true);
     }
 
     public static function labelFor(string $key): string

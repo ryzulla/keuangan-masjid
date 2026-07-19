@@ -78,8 +78,15 @@
                                     </span>
                                 </td>
                                 <td class="px-5 py-3 text-center">
+                                    @php
+                                        $isSuper   = $user->role === 'super_admin';
+                                        $canManage = $manageableMap[$user->id] ?? false;
+                                        $canEdit   = $canManage && (!$isSuper || $canManageSuper);
+                                        $canDelete = $canManage && !$isSuper && $user->id != auth()->id();
+                                        $canToggle = $canManage && $user->resident_id && $user->id != auth()->id();
+                                    @endphp
                                     <div class="flex items-center justify-center gap-1">
-                                        @if($user->resident_id && $user->id != auth()->id())
+                                        @if($canToggle)
                                             <button wire:click="toggleActive({{ $user->id }})"
                                                 wire:confirm="{{ $user->is_active ? 'Cabut akses admin penghuni ini?' : 'Aktifkan kembali akses admin penghuni ini?' }}"
                                                 class="p-1.5 rounded-lg transition-colors" style="color:{{ $user->is_active ? '#A9741A' : '#12805c' }};"
@@ -88,20 +95,24 @@
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9"/></svg>
                                             </button>
                                         @endif
-                                        @php $isSuper = $user->role === 'super_admin'; @endphp
-                                        @if(!$isSuper || $canManageSuper)
+                                        @if($canEdit)
                                         <button wire:click="edit({{ $user->id }})"
                                             class="p-1.5 rounded-lg transition-colors" style="color:#17231E;"
                                             onmouseover="this.style.background='rgba(22,74,64,0.1)'" onmouseout="this.style.background=''">
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                         </button>
                                         @endif
-                                        @if($user->id != auth()->id() && !$isSuper)
+                                        @if($canDelete)
                                             <button wire:click="delete({{ $user->id }})" wire:confirm="Anda yakin ingin menghapus pengguna ini?"
                                                 class="p-1.5 rounded-lg transition-colors" style="color:#B0402C;"
                                                 onmouseover="this.style.background='rgba(176,64,44,0.1)'" onmouseout="this.style.background=''">
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                             </button>
+                                        @endif
+                                        @if(!$canEdit && !$canDelete && !$canToggle)
+                                            <span class="inline-flex items-center gap-1 text-xs" style="color:#909A8F;" title="Tidak dapat diubah">
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                            </span>
                                         @endif
                                     </div>
                                 </td>
@@ -142,8 +153,15 @@
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" style="background:rgba(176,64,44,0.1);color:#B0402C;">Nonaktif</span>
                                 @endunless
                             </div>
+                            @php
+                                $isSuper   = $user->role === 'super_admin';
+                                $canManage = $manageableMap[$user->id] ?? false;
+                                $canEdit   = $canManage && (!$isSuper || $canManageSuper);
+                                $canDelete = $canManage && !$isSuper && $user->id != auth()->id();
+                                $canToggle = $canManage && $user->resident_id && $user->id != auth()->id();
+                            @endphp
                             <div class="flex items-center gap-1">
-                                @if($user->resident_id && $user->id != auth()->id())
+                                @if($canToggle)
                                     <button wire:click="toggleActive({{ $user->id }})"
                                         wire:confirm="{{ $user->is_active ? 'Cabut akses admin penghuni ini?' : 'Aktifkan kembali akses admin penghuni ini?' }}"
                                         class="px-3 py-2 rounded-lg transition-colors" style="color:{{ $user->is_active ? '#A9741A' : '#12805c' }};"
@@ -151,20 +169,24 @@
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9"/></svg>
                                     </button>
                                 @endif
-                                @php $isSuper = $user->role === 'super_admin'; @endphp
-                                @if(!$isSuper || $canManageSuper)
+                                @if($canEdit)
                                 <button wire:click="edit({{ $user->id }})"
                                     class="px-3 py-2 rounded-lg transition-colors" style="color:#17231E;"
                                     onmouseover="this.style.background='rgba(22,74,64,0.1)'" onmouseout="this.style.background=''">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                 </button>
                                 @endif
-                                @if($user->id != auth()->id() && !$isSuper)
+                                @if($canDelete)
                                     <button wire:click="delete({{ $user->id }})" wire:confirm="Anda yakin ingin menghapus pengguna ini?"
                                         class="px-3 py-2 rounded-lg transition-colors" style="color:#B0402C;"
                                         onmouseover="this.style.background='rgba(176,64,44,0.1)'" onmouseout="this.style.background=''">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
+                                @endif
+                                @if(!$canEdit && !$canDelete && !$canToggle)
+                                    <span class="inline-flex items-center text-xs px-2" style="color:#909A8F;">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                    </span>
                                 @endif
                             </div>
                         </div>

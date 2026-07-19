@@ -61,21 +61,28 @@ class WelcomePage extends Component
             ])->all();
             $this->denahExtra = max(0, $this->totalBlocks - count($this->denah));
 
-            $this->activeCampaignsPerumahan = Campaign::withSum('transactions', 'amount')
-                ->where('status', 'active')
-                ->where('organization_type', 'perumahan')
-                ->orderBy('start_date', 'desc')
-                ->take(3)
-                ->get();
+            $perumahanOn = \App\Models\Setting::moduleEnabled('perumahan');
+            $dkmOn = \App\Models\Setting::moduleEnabled('dkm');
 
-            $this->activeCampaignsDkm = Campaign::withSum('transactions', 'amount')
-                ->where('status', 'active')
-                ->where('organization_type', 'dkm')
-                ->orderBy('start_date', 'desc')
-                ->take(3)
-                ->get();
+            if ($perumahanOn) {
+                $this->activeCampaignsPerumahan = Campaign::withSum('transactions', 'amount')
+                    ->where('status', 'active')
+                    ->where('organization_type', 'perumahan')
+                    ->orderBy('start_date', 'desc')
+                    ->take(3)
+                    ->get();
+            }
 
-            $currentPeriod = IplPeriod::where('year', now()->year)->where('month', now()->month)->first();
+            if ($dkmOn) {
+                $this->activeCampaignsDkm = Campaign::withSum('transactions', 'amount')
+                    ->where('status', 'active')
+                    ->where('organization_type', 'dkm')
+                    ->orderBy('start_date', 'desc')
+                    ->take(3)
+                    ->get();
+            }
+
+            $currentPeriod = $perumahanOn ? IplPeriod::where('year', now()->year)->where('month', now()->month)->first() : null;
             if ($currentPeriod) {
                 $this->currentIplPeriod = $currentPeriod;
                 $this->iplSummary = [
@@ -97,18 +104,20 @@ class WelcomePage extends Component
                 ];
             }
 
-            $dkmAccountIds = Account::byOrg('dkm')->pluck('id');
-            $this->dkmBalance = Account::byOrg('dkm')->sum('balance');
-            $this->dkmMonthlyIncome = Transaction::where('type', 'debit')
-                ->whereIn('account_id', $dkmAccountIds)
-                ->whereMonth('transaction_date', now()->month)
-                ->whereYear('transaction_date', now()->year)
-                ->sum('amount');
-            $this->dkmMonthlyExpense = Transaction::where('type', 'credit')
-                ->whereIn('account_id', $dkmAccountIds)
-                ->whereMonth('transaction_date', now()->month)
-                ->whereYear('transaction_date', now()->year)
-                ->sum('amount');
+            if ($dkmOn) {
+                $dkmAccountIds = Account::byOrg('dkm')->pluck('id');
+                $this->dkmBalance = Account::byOrg('dkm')->sum('balance');
+                $this->dkmMonthlyIncome = Transaction::where('type', 'debit')
+                    ->whereIn('account_id', $dkmAccountIds)
+                    ->whereMonth('transaction_date', now()->month)
+                    ->whereYear('transaction_date', now()->year)
+                    ->sum('amount');
+                $this->dkmMonthlyExpense = Transaction::where('type', 'credit')
+                    ->whereIn('account_id', $dkmAccountIds)
+                    ->whereMonth('transaction_date', now()->month)
+                    ->whereYear('transaction_date', now()->year)
+                    ->sum('amount');
+            }
 
             $this->rentalListings = HouseBlock::active()
                 ->where('is_for_rent', true)

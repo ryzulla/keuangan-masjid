@@ -73,14 +73,20 @@
     $ppIsAdmin = $resident?->isAdmin() ?? false;
     $ppUnread = $resident?->unreadNotifications()->count() ?? 0;
     $ppBlocks = $resident?->currentAssignments?->map(fn($a)=>$a->houseBlock?->block_code)->filter()->join(', ');
+    $ppPerumahanOn = \App\Models\Setting::moduleEnabled('perumahan');
+    $ppAnyModule = count(\App\Models\Setting::enabledOrgs()) > 0;
     $ppLinks = [
         ['penghuni.dashboard', 'penghuni.dashboard', 'Beranda', 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
-        ['penghuni.program', 'penghuni.program*', 'Program', 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z'],
-        ['penghuni.ipl', 'penghuni.ipl', 'IPL', 'M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z'],
-        ['penghuni.keluarga', 'penghuni.keluarga', 'Keluarga', 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
-        ['penghuni.keuangan', 'penghuni.keuangan', 'Keuangan', 'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z'],
     ];
-    if ($isPemilik) {
+    if ($ppAnyModule) {
+        $ppLinks[] = ['penghuni.program', 'penghuni.program*', 'Program', 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z'];
+    }
+    if ($ppPerumahanOn) {
+        $ppLinks[] = ['penghuni.ipl', 'penghuni.ipl', 'IPL', 'M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z'];
+    }
+    $ppLinks[] = ['penghuni.keluarga', 'penghuni.keluarga', 'Keluarga', 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'];
+    $ppLinks[] = ['penghuni.keuangan', 'penghuni.keuangan', 'Keuangan', 'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z'];
+    if ($isPemilik && $ppPerumahanOn) {
         $ppLinks[] = ['penghuni.rumah-saya', 'penghuni.rumah-saya*', 'Rumah Saya', 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'];
     }
     // 4 tab utama di bar bawah mobile (sisanya di sheet Menu)
@@ -110,11 +116,15 @@
             {{-- Desktop nav --}}
             <div class="hidden sm:flex items-center gap-1 pp-nav">
                 <a href="{{ route('penghuni.dashboard') }}" wire:navigate class="{{ request()->routeIs('penghuni.dashboard') ? 'pp-on' : '' }}">Beranda</a>
+                @if($ppAnyModule)
                 <a href="{{ route('penghuni.program') }}" wire:navigate class="{{ request()->routeIs('penghuni.program*') ? 'pp-on' : '' }}">Program</a>
+                @endif
+                @if($ppPerumahanOn)
                 <a href="{{ route('penghuni.ipl') }}" wire:navigate class="{{ request()->routeIs('penghuni.ipl') ? 'pp-on' : '' }}">IPL</a>
+                @endif
                 <a href="{{ route('penghuni.keluarga') }}" wire:navigate class="{{ request()->routeIs('penghuni.keluarga') ? 'pp-on' : '' }}">Keluarga</a>
                 <a href="{{ route('penghuni.keuangan') }}" wire:navigate class="{{ request()->routeIs('penghuni.keuangan') ? 'pp-on' : '' }}">Keuangan</a>
-                @if(auth('resident')->user()?->isPemilik())
+                @if(auth('resident')->user()?->isPemilik() && $ppPerumahanOn)
                 <a href="{{ route('penghuni.rumah-saya') }}" wire:navigate class="{{ request()->routeIs('penghuni.rumah-saya*') || request()->routeIs('penghuni.detail-rumah*') ? 'pp-on' : '' }}">Rumah Saya</a>
                 @endif
             </div>
