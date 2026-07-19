@@ -15,6 +15,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $gates = [
             'manage-admin',
+            'manage-users',
             'manage-dkm',
             'manage-perumahan',
             'manage-programs',

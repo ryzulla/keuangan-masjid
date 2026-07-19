@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <x-pwa-meta />
 
-        <title>{{ config('app.name', 'Sistem Perumahan') }}</title>
+        <title>{{ \App\Models\Setting::appName() }}</title>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

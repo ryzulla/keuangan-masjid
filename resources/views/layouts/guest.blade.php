@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <x-pwa-meta />
 
-        <title>{{ config('app.name', 'Sistem Perumahan') }}</title>
+        <title>{{ \App\Models\Setting::appName() }}</title>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,9 +38,9 @@
                         </svg>
                     </div>
                     <h1 class="text-2xl font-semibold" style="color:#17231E;font-family:'Fraunces',Georgia,serif;">
-                        {{ config('app.name', 'Sistem Perumahan') }}
+                        {{ \App\Models\Setting::appName() }}
                     </h1>
-                    <p class="text-xs mt-1" style="color:#909A8F;">Sistem Manajemen Perumahan &amp; DKM</p>
+                    <p class="text-xs mt-1" style="color:#909A8F;">{{ \App\Models\Setting::appSubtitle() }}</p>
                 </div>
 
                 {{-- Card --}}
@@ -49,7 +49,7 @@
                     {{ $slot }}
                 </div>
 
-                <p class="mt-6 text-xs" style="color:#909A8F;">&copy; {{ date('Y') }} Sistem Perumahan. All rights reserved.</p>
+                <p class="mt-6 text-xs" style="color:#909A8F;">&copy; {{ date('Y') }} {{ \App\Models\Setting::appName() }}. All rights reserved.</p>
             </div>
         @endif
 

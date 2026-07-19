@@ -5,6 +5,11 @@ $logout = function (Logout $logout) {
     $this->redirect('/', navigate: true);
 };
 ?>
+@php
+    $modPerumahan = \App\Models\Setting::moduleEnabled('perumahan');
+    $modDkm       = \App\Models\Setting::moduleEnabled('dkm');
+    $appName      = \App\Models\Setting::appName();
+@endphp
 <nav x-data="{ open: false }" style="background-color:#ffffff;border-bottom:1px solid #E0DFD4;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -20,7 +25,7 @@ $logout = function (Logout $logout) {
                         <span style="background:#F4EFE2;border-radius:1.5px;opacity:.9;"></span>
                     </span>
                     <span class="hidden sm:block leading-none">
-                        <span class="block text-sm font-semibold" style="color:#17231E;font-family:'Fraunces',Georgia,serif;">Sistem Perumahan</span>
+                        <span class="block text-sm font-semibold" style="color:#17231E;font-family:'Fraunces',Georgia,serif;">{{ $appName }}</span>
                         <span class="block" style="font-size:10px;color:#909A8F;letter-spacing:.04em;margin-top:2px;">Panel Pengurus</span>
                     </span>
                 </a>
@@ -39,6 +44,7 @@ $logout = function (Logout $logout) {
                     </a>
 
                     {{-- Perumahan Dropdown --}}
+                    @if($modPerumahan)
                     @canany(['manage-residents', 'manage-ipl', 'manage-perumahan', 'manage-programs'])
                     <div x-data="{ open: false }" class="relative" @click.outside="open=false">
                         <button @click="open=!open"
@@ -131,8 +137,10 @@ $logout = function (Logout $logout) {
                         </div>
                     </div>
                     @endcanany
+                    @endif
 
                     {{-- DKM Dropdown --}}
+                    @if($modDkm)
                     @canany(['manage-dkm', 'manage-programs'])
                     <div x-data="{ open: false }" class="relative" @click.outside="open=false">
                         <button @click="open=!open"
@@ -177,6 +185,7 @@ $logout = function (Logout $logout) {
                         </div>
                     </div>
                     @endcanany
+                    @endif
 
                     {{-- Laporan Dropdown --}}
                     @can('view-reports')
@@ -247,7 +256,7 @@ $logout = function (Logout $logout) {
                     @endcan
 
                     {{-- Admin Dropdown --}}
-                    @can('manage-admin')
+                    @canany(['manage-admin', 'manage-users'])
                     <div x-data="{ open: false }" class="relative" @click.outside="open=false">
                         <button @click="open=!open"
                             class="flex items-center gap-1 px-3 py-2 text-sm rounded-lg transition-colors"
@@ -260,6 +269,7 @@ $logout = function (Logout $logout) {
                         <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                             class="absolute left-0 top-full mt-1 w-52 rounded-xl py-1 z-50 shadow-2xl"
                             style="background-color:#F1F3EC;border:1px solid #E0DFD4;">
+                            @can('manage-users')
                             <a href="{{ route('users.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
                                 style="color:#586359;"
@@ -268,6 +278,18 @@ $logout = function (Logout $logout) {
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                                 Manajemen Pengguna
                             </a>
+                            @endcan
+                            @can('manage-admin')
+                            @if(auth()->user()->role === 'super_admin')
+                            <a href="{{ route('settings.app') }}" wire:navigate @click="open=false"
+                                class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
+                                style="color:#586359;"
+                                onmouseover="this.style.color='#164A40';this.style.backgroundColor='rgba(22,74,64,0.08)'"
+                                onmouseout="this.style.color='#586359';this.style.backgroundColor=''">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                Pengaturan Aplikasi
+                            </a>
+                            @endif
                             <a href="{{ route('role-access.index') }}" wire:navigate @click="open=false"
                                 class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
                                 style="color:#586359;"
@@ -300,9 +322,10 @@ $logout = function (Logout $logout) {
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                                 Alert Darurat
                             </a>
+                            @endcan
                         </div>
                     </div>
-                    @endcan
+                    @endcanany
                 </div>
             </div>
 
@@ -331,15 +354,7 @@ $logout = function (Logout $logout) {
                         class="absolute right-0 top-full mt-1 w-48 rounded-xl py-1 z-50 shadow-2xl"
                         style="background-color:#F1F3EC;border:1px solid #E0DFD4;">
                         <div class="px-4 py-2.5 border-b" style="border-color:#F1F3EC;">
-                            @php
-                                $roleLabels = [
-                                    'super_admin' => 'Super Admin', 'admin' => 'Admin',
-                                    'bendahara' => 'Bendahara', 'ketua_dkm' => 'Ketua DKM',
-                                    'dkm' => 'DKM', 'perumahan' => 'Perumahan',
-                                    'pengurus_rt' => 'Pengurus RT',
-                                ];
-                            @endphp
-                            <p class="text-xs font-semibold" style="color:#17231E;">{{ $roleLabels[auth()->user()->role] ?? ucfirst(auth()->user()->role) }}</p>
+                            <p class="text-xs font-semibold" style="color:#17231E;">{{ \App\Models\Role::labelFor(auth()->user()->role) }}</p>
                             <p class="text-xs truncate" style="color:#909A8F;">{{ auth()->user()->email }}</p>
                         </div>
                         <a href="{{ route('profile.edit') }}" wire:navigate @click="open=false"
@@ -350,6 +365,15 @@ $logout = function (Logout $logout) {
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             Profil Saya
                         </a>
+                        @if(auth('resident')->check())
+                        <a href="{{ route('penghuni.dashboard') }}" @click="open=false"
+                            class="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
+                            style="color:#164A40;"
+                            onmouseover="this.style.backgroundColor='rgba(22,74,64,0.08)'" onmouseout="this.style.backgroundColor=''">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                            Kembali ke Portal Warga
+                        </a>
+                        @endif
                         <div style="height:1px;background:#F1F3EC;margin:2px 0;"></div>
                         <button wire:click="logout" @click="open=false"
                             class="w-full flex items-center gap-2 px-4 py-2.5 text-sm transition-colors"
@@ -388,6 +412,7 @@ $logout = function (Logout $logout) {
                 class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Dashboard</a>
         </div>
 
+        @if($modPerumahan)
         @canany(['manage-residents', 'manage-ipl', 'manage-perumahan', 'manage-programs'])
         <div class="px-4 py-3 border-t" style="border-color:#F1F3EC;">
             <p class="text-xs font-semibold px-3 mb-2" style="color:#17231E;">Perumahan</p>
@@ -408,7 +433,9 @@ $logout = function (Logout $logout) {
             @endcan
         </div>
         @endcanany
+        @endif
 
+        @if($modDkm)
         @canany(['manage-dkm', 'manage-programs'])
         <div class="px-4 py-3 border-t" style="border-color:#F1F3EC;">
             <p class="text-xs font-semibold px-3 mb-2" style="color:#17231E;">DKM Masjid</p>
@@ -421,6 +448,7 @@ $logout = function (Logout $logout) {
             @endcan
         </div>
         @endcanany
+        @endif
 
         @can('view-reports')
         <div class="px-4 py-3 border-t" style="border-color:#F1F3EC;">
@@ -438,16 +466,23 @@ $logout = function (Logout $logout) {
         </div>
         @endcan
 
-        @can('manage-admin')
+        @canany(['manage-admin', 'manage-users'])
         <div class="px-4 py-3 border-t" style="border-color:#F1F3EC;">
             <p class="text-xs font-semibold px-3 mb-2" style="color:#B0402C;">Admin</p>
+            @can('manage-users')
             <a href="{{ route('users.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Manajemen Pengguna</a>
+            @endcan
+            @can('manage-admin')
+            @if(auth()->user()->role === 'super_admin')
+            <a href="{{ route('settings.app') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Pengaturan Aplikasi</a>
+            @endif
             <a href="{{ route('role-access.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Pengaturan Akses Role</a>
             <a href="{{ route('notices.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Pengumuman</a>
             <a href="{{ route('citizen-reports.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#586359;">Laporan Warga</a>
             <a href="{{ route('emergency-alerts.index') }}" wire:navigate @click="open=false" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm" style="color:#B0402C;">Alert Darurat</a>
+            @endcan
         </div>
-        @endcan
+        @endcanany
 
     </div>
 
@@ -459,6 +494,7 @@ $logout = function (Logout $logout) {
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
             Home
         </a>
+        @if($modPerumahan)
         @can('manage-ipl')
         <a href="{{ route('ipl.index') }}" wire:navigate class="flex-1 flex flex-col items-center py-2 text-xs gap-0.5"
             style="{{ request()->routeIs('ipl.*') ? 'color:#17231E;' : 'color:#909A8F;' }}">
@@ -466,19 +502,20 @@ $logout = function (Logout $logout) {
             IPL
         </a>
         @endcan
-        @can('manage-perumahan')
+        @endif
+        @if($modPerumahan && auth()->user()->can('manage-perumahan'))
         <a href="{{ route('perumahan.transaksi') }}" wire:navigate class="flex-1 flex flex-col items-center py-2 text-xs gap-0.5"
             style="{{ request()->routeIs('perumahan.*') ? 'color:#17231E;' : 'color:#909A8F;' }}">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
             Transaksi
         </a>
-        @elsecan('manage-dkm')
+        @elseif($modDkm && auth()->user()->can('manage-dkm'))
         <a href="{{ route('transactions.index') }}" wire:navigate class="flex-1 flex flex-col items-center py-2 text-xs gap-0.5"
             style="{{ request()->routeIs('transactions.*') ? 'color:#17231E;' : 'color:#909A8F;' }}">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
             Transaksi
         </a>
-        @endcan
+        @endif
         @can('manage-programs')
         <a href="{{ route('campaigns.index') }}" wire:navigate class="flex-1 flex flex-col items-center py-2 text-xs gap-0.5"
             style="{{ request()->routeIs('campaigns.*') ? 'color:#17231E;' : 'color:#909A8F;' }}">

@@ -21,6 +21,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role', // <-- TAMBAHKAN 'role' DI SINI
+        'resident_id',
+        'is_active',
     ];
 
     /**
@@ -41,7 +43,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_active' => 'boolean',
     ];
+
+    /**
+     * Penghuni asal, bila akun ini dibuat dari promosi penghuni menjadi admin.
+     */
+    public function resident()
+    {
+        return $this->belongsTo(Resident::class);
+    }
 
     /**
      * TAMBAHKAN FUNGSI RELASI DI BAWAH INI

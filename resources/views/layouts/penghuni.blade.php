@@ -70,6 +70,7 @@
 @php
     $resident = auth('resident')->user();
     $isPemilik = $resident?->isPemilik();
+    $ppIsAdmin = $resident?->isAdmin() ?? false;
     $ppUnread = $resident?->unreadNotifications()->count() ?? 0;
     $ppBlocks = $resident?->currentAssignments?->map(fn($a)=>$a->houseBlock?->block_code)->filter()->join(', ');
     $ppLinks = [
@@ -102,7 +103,7 @@
                 </span>
                 <span class="leading-none">
                     <span class="block pp-display" style="font-weight:600;font-size:16.5px;color:var(--pp-ink);">Portal Warga</span>
-                    <span class="block" style="font-size:10.5px;color:var(--pp-faint);letter-spacing:.04em;margin-top:2px;">Sistem Perumahan</span>
+                    <span class="block" style="font-size:10.5px;color:var(--pp-faint);letter-spacing:.04em;margin-top:2px;">{{ \App\Models\Setting::appName() }}</span>
                 </span>
             </a>
 
@@ -143,6 +144,14 @@
                             <p class="text-xs mt-0.5" style="color:var(--pp-faint);">Blok {{ $resident->currentAssignments->map(fn($a)=>$a->houseBlock?->block_code)->filter()->join(', ') }}</p>
                             @endif
                         </div>
+                        @if($ppIsAdmin)
+                        <a href="{{ route('penghuni.admin-bridge') }}" class="w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors text-left" style="color:var(--pp-brand);"
+                            onmouseover="this.style.backgroundColor='var(--pp-brand-tint)'" onmouseout="this.style.backgroundColor=''">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            Masuk Panel Admin
+                        </a>
+                        <div style="height:1px;background:var(--pp-line-soft);margin:2px 0;"></div>
+                        @endif
                         <a href="{{ route('penghuni.settings') }}" wire:navigate class="w-full flex items-center gap-2 px-4 py-2.5 text-sm transition-colors text-left" style="color:var(--pp-muted);"
                             onmouseover="this.style.backgroundColor='var(--pp-surface-2)';this.style.color='var(--pp-brand)'" onmouseout="this.style.backgroundColor='';this.style.color='var(--pp-muted)'">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -229,6 +238,13 @@
 
         {{-- akun --}}
         <div class="px-4 pt-4 pb-2 flex flex-col gap-2">
+            @if($ppIsAdmin)
+            <a href="{{ route('penghuni.admin-bridge') }}"
+                class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold" style="border:1px solid rgba(22,74,64,0.3);color:var(--pp-brand);background:var(--pp-brand-tint);">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                Masuk Panel Admin
+            </a>
+            @endif
             <a href="{{ route('penghuni.settings') }}" wire:navigate @click="menuOpen=false"
                 class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium" style="border:1px solid var(--pp-line);color:var(--pp-muted);background:var(--pp-surface);">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>

@@ -13,6 +13,7 @@ use App\Livewire\Reports\CashFlowReport;
 use App\Livewire\Reports\BalanceSheetReport;
 use App\Livewire\Admin\ManageUsers;
 use App\Livewire\Admin\RoleAccessSettings;
+use App\Livewire\Admin\AppSettings;
 use App\Livewire\Residents\ManageResidents;
 use App\Livewire\Residents\CreateEditResident;
 use App\Livewire\Residents\ResidentDetail;
@@ -46,7 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('profile', 'profile')->name('profile.edit');
 
     // --- Perumahan: Data Penghuni & Blok ---
-    Route::middleware('can:manage-residents')->group(function () {
+    Route::middleware(['module:perumahan', 'can:manage-residents'])->group(function () {
         Route::get('residents', ManageResidents::class)->name('residents.index');
         Route::get('residents/create', CreateEditResident::class)->name('residents.create');
         Route::get('residents/{resident}/edit', CreateEditResident::class)->name('residents.edit');
@@ -56,19 +57,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // --- Perumahan: IPL ---
-    Route::middleware('can:manage-ipl')->group(function () {
+    Route::middleware(['module:perumahan', 'can:manage-ipl'])->group(function () {
         Route::get('ipl', ManageIPL::class)->name('ipl.index');
         Route::get('ipl/report', IPLReport::class)->name('ipl.report');
         Route::get('ipl/tariffs', TariffSettings::class)->name('ipl.tariffs');
     });
 
     // --- Perumahan: Transaksi Perumahan ---
-    Route::middleware('can:manage-perumahan')->group(function () {
+    Route::middleware(['module:perumahan', 'can:manage-perumahan'])->group(function () {
         Route::get('perumahan/transaksi', TransaksiPerumahan::class)->name('perumahan.transaksi');
     });
 
     // --- DKM: Buku Besar / Transaksi DKM ---
-    Route::middleware('can:manage-dkm')->group(function () {
+    Route::middleware(['module:dkm', 'can:manage-dkm'])->group(function () {
         Route::get('transactions', BukuBesar::class)->name('transactions.index');
     });
 
@@ -92,9 +93,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('reports/balance-sheet', BalanceSheetReport::class)->name('reports.balancesheet');
     });
 
-    // --- Admin ---
-    Route::middleware('can:manage-admin')->group(function () {
+    // --- Manajemen Pengguna (gate terpisah agar bisa diberikan tanpa akses admin penuh) ---
+    Route::middleware('can:manage-users')->group(function () {
         Route::get('users', ManageUsers::class)->name('users.index');
+    });
+
+    // --- Admin (role, pengaturan, pengumuman, dll) ---
+    Route::middleware('can:manage-admin')->group(function () {
+        Route::get('settings/aplikasi', AppSettings::class)->name('settings.app');
         Route::get('role-access', RoleAccessSettings::class)->name('role-access.index');
         Route::get('notices', \App\Livewire\Admin\ManageNotices::class)->name('notices.index');
         Route::get('citizen-reports', \App\Livewire\Admin\ManageCitizenReports::class)->name('citizen-reports.index');
@@ -138,6 +144,15 @@ Route::prefix('penghuni')->name('penghuni.')->group(function () {
         Route::get('rumah-saya/{houseBlock}', DetailRumah::class)->name('detail-rumah');
         Route::get('keuangan', KeuanganPortal::class)->name('keuangan');
         Route::get('settings', PenghuniSettings::class)->name('settings');
+
+        // Jembatan ke area admin untuk penghuni yang dipromosikan menjadi admin/pengurus.
+        Route::get('masuk-admin', function () {
+            $resident  = \Illuminate\Support\Facades\Auth::guard('resident')->user();
+            $adminUser = $resident?->adminUser;
+            abort_unless($adminUser && $adminUser->is_active, 403);
+            \Illuminate\Support\Facades\Auth::guard('web')->login($adminUser);
+            return redirect()->route('dashboard');
+        })->name('admin-bridge');
     });
 });
 

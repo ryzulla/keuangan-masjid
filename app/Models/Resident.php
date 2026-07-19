@@ -94,6 +94,22 @@ class Resident extends Authenticatable
         return $query->where('is_active', true);
     }
 
+    /**
+     * Akun admin/pengurus yang tertaut ke penghuni ini (bila dipromosikan jadi admin).
+     */
+    public function adminUser()
+    {
+        return $this->hasOne(User::class, 'resident_id');
+    }
+
+    /**
+     * Apakah penghuni ini punya akses admin yang aktif.
+     */
+    public function isAdmin(): bool
+    {
+        return (bool) $this->adminUser()->where('is_active', true)->exists();
+    }
+
     public function isPemilik(): bool
     {
         return $this->currentAssignments()->where('ownership_type', 'pemilik')->exists();

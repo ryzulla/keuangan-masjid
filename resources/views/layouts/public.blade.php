@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <x-pwa-meta />
 
-        <title>{{ config('app.name', 'Sistem Perumahan') }} - Portal Informasi</title>
+        <title>{{ \App\Models\Setting::appName() }} - Portal Informasi</title>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +30,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                                 </svg>
                             </div>
-                            <span class="font-bold text-lg hidden sm:block" style="color:#17231E;font-family:'Fraunces',Georgia,serif;">{{ config('app.name', 'Sistem Perumahan') }}</span>
+                            <span class="font-bold text-lg hidden sm:block" style="color:#17231E;font-family:'Fraunces',Georgia,serif;">{{ \App\Models\Setting::appName() }}</span>
                         </a>
                         <div class="flex items-center gap-2">
                             @auth
@@ -61,7 +61,7 @@
             </main>
 
             <footer class="py-5 text-center text-sm" style="border-top:1px solid #F1F3EC;color:#909A8F;">
-                &copy; {{ date('Y') }} {{ config('app.name', 'Sistem Perumahan') }}. Semua hak dilindungi.
+                &copy; {{ date('Y') }} {{ \App\Models\Setting::appName() }}. Semua hak dilindungi.
             </footer>
 
         </div>

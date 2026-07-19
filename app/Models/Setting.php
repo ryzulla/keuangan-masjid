@@ -26,4 +26,32 @@ class Setting extends Model
             ['value' => $value === null ? null : (string) $value]
         );
     }
+
+    /**
+     * Nama perumahan/aplikasi yang dapat diatur superadmin.
+     * Jatuh ke config('app.name') bila belum pernah diisi.
+     */
+    public static function appName(): string
+    {
+        $name = static::get('app_name');
+        return ($name === null || $name === '') ? config('app.name', 'Sistem Perumahan') : $name;
+    }
+
+    /**
+     * Subtitle/tagline aplikasi (dipakai di brand navbar & footer).
+     */
+    public static function appSubtitle(): string
+    {
+        $sub = static::get('app_subtitle');
+        return ($sub === null || $sub === '') ? 'Sistem Manajemen Perumahan & DKM' : $sub;
+    }
+
+    /**
+     * Apakah sebuah modul aktif. Default AKTIF bila belum pernah diatur.
+     * $module: 'perumahan' | 'dkm'
+     */
+    public static function moduleEnabled(string $module): bool
+    {
+        return static::get("module_{$module}_enabled", '1') !== '0';
+    }
 }

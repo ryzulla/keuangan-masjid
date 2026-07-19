@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'resident.auth' => \App\Http\Middleware\ResidentAuthenticated::class,
+            'module'        => \App\Http\Middleware\ModuleEnabled::class,
         ]);
 
         $middleware->redirectUsersTo(function ($request) {
