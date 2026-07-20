@@ -41,10 +41,10 @@
                     </div>
 
                     <h1 class="font-semibold mb-5" style="color:#ffffff;font-family:'Fraunces',Georgia,serif;font-size:clamp(2.3rem,5vw,3.6rem);line-height:1.05;letter-spacing:-.01em;">
-                        {{ config('app.name', 'Denah Warga') }}
+                        {{ \App\Models\Setting::homeTitle() }}
                     </h1>
                     <p class="text-base sm:text-lg max-w-xl" style="color:rgba(233,236,228,.82);line-height:1.6;">
-                        Papan transparansi keuangan &amp; program perumahan dan DKM Masjid — terbuka untuk seluruh warga.
+                        {{ \App\Models\Setting::homeTagline() }}
                     </p>
 
                     {{-- Rail statistik (angka mono, bukan kartu besar) --}}

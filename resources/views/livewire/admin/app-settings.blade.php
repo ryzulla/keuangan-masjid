@@ -39,6 +39,30 @@
                 </div>
             </div>
 
+            {{-- Halaman Utama (Publik) --}}
+            <div class="rounded-2xl p-6" style="background:#ffffff;border:1px solid #E0DFD4;box-shadow:0 1px 2px rgba(22,74,64,0.04);">
+                <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#909A8F;">Halaman Utama (Publik)</p>
+                <p class="text-xs mb-4" style="color:#909A8F;">Judul besar &amp; deskripsi yang tampil di halaman depan untuk warga. Kosongkan untuk memakai bawaan.</p>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1" style="color:#586359;">Judul Halaman Utama</label>
+                        <input type="text" wire:model="homeTitle" placeholder="{{ \App\Models\Setting::appName() }}"
+                            style="background:#ffffff;border:1px solid #E0DFD4;color:#17231E;border-radius:0.75rem;padding:0.5rem 0.75rem;width:100%;font-size:0.875rem;outline:none;"
+                            onfocus="this.style.borderColor='#164A40'" onblur="this.style.borderColor='#E0DFD4'">
+                        <p class="text-xs mt-1" style="color:#909A8F;">Jika kosong, memakai nama aplikasi.</p>
+                        @error('homeTitle') <p class="text-xs mt-1" style="color:#B0402C;">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1" style="color:#586359;">Deskripsi / Tagline Halaman Utama</label>
+                        <textarea wire:model="homeTagline" rows="2" placeholder="Papan transparansi keuangan & program perumahan dan DKM Masjid — terbuka untuk seluruh warga."
+                            style="background:#ffffff;border:1px solid #E0DFD4;color:#17231E;border-radius:0.75rem;padding:0.5rem 0.75rem;width:100%;font-size:0.875rem;outline:none;resize:vertical;"
+                            onfocus="this.style.borderColor='#164A40'" onblur="this.style.borderColor='#E0DFD4'"></textarea>
+                        @error('homeTagline') <p class="text-xs mt-1" style="color:#B0402C;">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
             {{-- Modul --}}
             <div class="rounded-2xl p-6" style="background:#ffffff;border:1px solid #E0DFD4;box-shadow:0 1px 2px rgba(22,74,64,0.04);">
                 <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#909A8F;">Modul Aktif</p>

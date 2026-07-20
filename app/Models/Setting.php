@@ -47,6 +47,27 @@ class Setting extends Model
     }
 
     /**
+     * Judul besar (hero) di halaman utama publik.
+     * Default mengikuti nama aplikasi bila belum diisi.
+     */
+    public static function homeTitle(): string
+    {
+        $title = static::get('home_title');
+        return ($title === null || $title === '') ? static::appName() : $title;
+    }
+
+    /**
+     * Tagline/deskripsi di bawah judul hero halaman utama publik.
+     */
+    public static function homeTagline(): string
+    {
+        $tag = static::get('home_tagline');
+        return ($tag === null || $tag === '')
+            ? 'Papan transparansi keuangan & program perumahan dan DKM Masjid — terbuka untuk seluruh warga.'
+            : $tag;
+    }
+
+    /**
      * Apakah sebuah modul aktif. Default AKTIF bila belum pernah diatur.
      * $module: 'perumahan' | 'dkm'
      */
