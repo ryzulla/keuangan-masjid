@@ -15,7 +15,9 @@ class FcmService
 
     public function __construct()
     {
-        $this->projectId = config('services.firebase.project_id', '');
+        // config() mengembalikan null bila FIREBASE_PROJECT_ID belum diisi di .env
+        // (key-nya ada tapi bernilai null), jadi cast ke string agar tak melempar TypeError.
+        $this->projectId = (string) config('services.firebase.project_id', '');
         $this->serviceAccountPath = storage_path('app/firebase-service-account.json');
     }
 

@@ -147,15 +147,17 @@ class KeuanganPortal extends Component
         $summary = $this->monthlySummary;
 
         $pdf = Pdf::loadView('exports.keuangan-portal-pdf', [
-            'accounts' => $accounts,
+            'accounts'   => $accounts,
             'reportData' => (object) $summary,
-            'month' => $this->month,
-            'year' => $this->year,
-            'activeOrg' => $this->activeOrg,
+            'month'      => $this->month,
+            'year'       => $this->year,
+            'activeOrg'  => $this->activeOrg,
+            'appName'    => \App\Models\Setting::appName(),
         ])->setPaper('a4', 'portrait');
 
-        $orgLabel = $this->activeOrg === 'semua' ? 'semua' : $this->activeOrg;
-        $filename = "laporan_keuangan_{$orgLabel}_{$this->year}_{$this->month}.pdf";
+        $orgLabel   = $this->activeOrg === 'semua' ? 'semua' : $this->activeOrg;
+        $monthPad   = str_pad((string) $this->month, 2, '0', STR_PAD_LEFT);
+        $filename   = "laporan-keuangan-{$orgLabel}-{$this->year}-{$monthPad}.pdf";
 
         return response()->streamDownload(fn() => print($pdf->output()), $filename);
     }
