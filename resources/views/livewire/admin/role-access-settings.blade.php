@@ -73,7 +73,7 @@
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                 <span class="hidden sm:inline">Atur Akses</span>
                             </button>
-                            @if($role->key !== 'super_admin')
+                            @unless($role->is_system && $role->is_active)
                             <button wire:click="toggleRoleActive({{ $role->id }})"
                                 wire:confirm="{{ $role->is_active ? 'Nonaktifkan role '.$role->label.'? Pemegangnya kehilangan akses.' : 'Aktifkan kembali role '.$role->label.'?' }}"
                                 title="{{ $role->is_active ? 'Nonaktifkan role' : 'Aktifkan role' }}"
@@ -81,7 +81,7 @@
                                 onmouseover="this.style.background='rgba(22,74,64,0.08)'" onmouseout="this.style.background=''">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9"/></svg>
                             </button>
-                            @endif
+                            @endunless
                             <button wire:click="editRole({{ $role->id }})" title="Edit role" class="p-2 rounded-lg transition-colors" style="color:#909A8F;"
                                 onmouseover="this.style.background='rgba(22,74,64,0.08)';this.style.color='#164A40'" onmouseout="this.style.background='';this.style.color='#909A8F'">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>

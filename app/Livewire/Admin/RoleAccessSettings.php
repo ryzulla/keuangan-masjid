@@ -192,8 +192,10 @@ class RoleAccessSettings extends Component
     {
         $role = Role::findOrFail($id);
 
-        if ($role->key === 'super_admin') {
-            session()->flash('error', 'Role Super Admin tidak bisa dinonaktifkan.');
+        // Role bawaan sistem yang sedang aktif tidak boleh dinonaktifkan —
+        // menonaktifkannya akan mengunci akses pemegangnya (mis. admin/super_admin).
+        if ($role->is_system && $role->is_active) {
+            session()->flash('error', "Role bawaan \"{$role->label}\" tidak bisa dinonaktifkan.");
             return;
         }
 
