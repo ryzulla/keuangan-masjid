@@ -28,6 +28,7 @@ use App\Livewire\Penghuni\ProgramPortal;
 use App\Livewire\Penghuni\IplPortal;
 use App\Livewire\Penghuni\KeluargaPortal;
 use App\Livewire\Penghuni\CreateEditFamilyMember;
+use App\Livewire\Penghuni\EditDataDiri;
 use App\Livewire\Penghuni\RumahSaya;
 use App\Livewire\Penghuni\DetailRumah;
 use App\Livewire\Penghuni\CampaignDetail as PenghuniCampaignDetail;
@@ -137,6 +138,7 @@ Route::prefix('penghuni')->name('penghuni.')->group(function () {
         Route::get('program', ProgramPortal::class)->name('program');
         Route::get('ipl', IplPortal::class)->middleware('module:perumahan')->name('ipl');
         Route::get('keluarga', KeluargaPortal::class)->name('keluarga');
+        Route::get('keluarga/data-diri', EditDataDiri::class)->name('keluarga.diri');
         Route::get('keluarga/tambah', CreateEditFamilyMember::class)->name('keluarga.create');
         Route::get('keluarga/{member}/edit', CreateEditFamilyMember::class)->name('keluarga.edit');
         Route::get('program/{campaign}', PenghuniCampaignDetail::class)->name('program.detail');

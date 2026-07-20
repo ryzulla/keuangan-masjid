@@ -19,10 +19,9 @@ class KeluargaPortal extends Component
 
     public function render()
     {
-        $members = Auth::guard('resident')->user()
-            ->familyMembers()
-            ->get();
+        $resident = Auth::guard('resident')->user();
+        $members = $resident->familyMembers()->get();
 
-        return view('livewire.penghuni.keluarga-portal', compact('members'));
+        return view('livewire.penghuni.keluarga-portal', compact('resident', 'members'));
     }
 }

@@ -12,7 +12,7 @@ class Resident extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'photo', 'nik', 'phone', 'whatsapp', 'email', 'notes', 'is_active',
+        'name', 'photo', 'nik', 'gender', 'birth_date', 'phone', 'whatsapp', 'email', 'notes', 'is_active',
         'password', 'notification_preferences', 'last_health_report_at',
     ];
 
@@ -20,6 +20,7 @@ class Resident extends Authenticatable
 
     protected $casts = [
         'nik'                      => 'encrypted',
+        'birth_date'               => 'date',
         'is_active'                => 'boolean',
         'notification_preferences' => 'array',
         'last_health_report_at'    => 'datetime',

@@ -1,5 +1,12 @@
 <div>
 
+    @if(session('family_login_name'))
+        <div class="mb-5 rounded-xl p-4 text-sm flex items-center gap-2" style="background:rgba(107,91,149,0.08);border:1px solid rgba(107,91,149,0.25);color:#6B5B95;">
+            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            Anda masuk sebagai <strong>{{ session('family_login_name') }}</strong> — berbagi akun rumah tangga {{ $resident->name }}.
+        </div>
+    @endif
+
     @if(session('success'))
         <div class="mb-5 rounded-xl p-4 text-sm flex items-center gap-2" style="background:rgba(18,128,92,0.1);border:1px solid rgba(18,128,92,0.3);color:#12805c;">
             <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -42,6 +49,58 @@
         ];
     @endphp
 
+    {{-- Kepala Keluarga (penghuni yang sedang login) --}}
+    <div class="rounded-2xl p-5 flex items-start gap-4 mb-4" style="background:#ffffff;border:1px solid #164A40;box-shadow:0 1px 2px rgba(22,74,64,0.04),0 8px 20px -8px rgba(22,74,64,0.1);">
+
+        {{-- Avatar / Photo --}}
+        @if($resident->photo)
+            <img src="{{ Storage::disk('public')->url($resident->photo) }}" alt="{{ $resident->name }}"
+                 class="w-12 h-12 rounded-xl object-cover shrink-0"
+                 style="border:1px solid rgba(22,74,64,0.3);">
+        @else
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-sm font-bold shrink-0"
+                style="background:#164A40;color:#ffffff;">
+                {{ strtoupper(substr($resident->name, 0, 1)) }}
+            </div>
+        @endif
+
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-semibold text-sm" style="color:#17231E;">{{ $resident->name }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                    style="background:#164A40;color:#ffffff;">
+                    Kepala Keluarga
+                </span>
+            </div>
+            <div class="flex items-center gap-3 mt-1.5 text-xs flex-wrap" style="color:#909A8F;">
+                @if($resident->gender)
+                    <span style="color:{{ $resident->gender === 'laki-laki' ? '#2563eb' : '#db2777' }};">
+                        {{ $resident->gender === 'laki-laki' ? 'Laki-laki' : 'Perempuan' }}
+                    </span>
+                @endif
+                @if($resident->birth_date)
+                    <span style="color:#909A8F;">@if($resident->gender)&middot; @endif{{ $resident->birth_date->format('d M Y') }}</span>
+                @endif
+                @if($resident->phone)
+                    <span style="color:#909A8F;">&middot; {{ $resident->phone }}</span>
+                @endif
+                @if($resident->nik)
+                    <span style="color:#909A8F;">&middot; NIK: {{ $resident->nik }}</span>
+                @endif
+            </div>
+            @if($resident->notes)
+                <p class="text-xs mt-1.5 italic" style="color:#909A8F;">{{ $resident->notes }}</p>
+            @endif
+            <p class="text-xs mt-1.5 italic" style="color:#909A8F;">Ini adalah data akun Anda</p>
+        </div>
+
+        <a href="{{ route('penghuni.keluarga.diri') }}" wire:navigate
+            class="p-1.5 rounded-lg transition-colors shrink-0" style="color:#17231E;"
+            title="Edit data diri">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        </a>
+    </div>
+
     {{-- Member List --}}
     @if($members->isEmpty())
         <div class="rounded-2xl p-6 sm:p-12 text-center" style="background:#ffffff;border:1px dashed #E0DFD4;">
@@ -74,6 +133,14 @@
                             style="{{ $relColors[$member->relationship] ?? 'background:#F1F3EC;color:#586359;border:1px solid #E0DFD4;' }}">
                             {{ $relLabels[$member->relationship] ?? ucfirst($member->relationship) }}
                         </span>
+                        @if($member->canLogin())
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                            style="background:rgba(18,128,92,0.1);color:#12805c;border:1px solid rgba(18,128,92,0.25);"
+                            title="Anggota ini punya akses login sendiri">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                            Bisa Login
+                        </span>
+                        @endif
                     </div>
                     <div class="flex items-center gap-3 mt-1.5 text-xs flex-wrap" style="color:#909A8F;">
                         <span style="color:{{ $member->gender === 'laki-laki' ? '#2563eb' : '#db2777' }};">

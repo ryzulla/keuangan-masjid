@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FamilyMember extends Model
 {
-    protected $fillable = ['resident_id', 'name', 'photo', 'relationship', 'gender', 'nik', 'birth_date', 'notes', 'sort_order'];
+    protected $fillable = ['resident_id', 'name', 'photo', 'relationship', 'gender', 'nik', 'email', 'password', 'birth_date', 'notes', 'sort_order'];
+
+    protected $hidden = ['password'];
 
     protected $casts = [
         'nik'        => 'encrypted',
@@ -16,6 +18,12 @@ class FamilyMember extends Model
     public function resident(): BelongsTo
     {
         return $this->belongsTo(Resident::class);
+    }
+
+    /** Anggota keluarga bisa login bila punya email + password sendiri. */
+    public function canLogin(): bool
+    {
+        return !empty($this->email) && !empty($this->password);
     }
 
     public function getRelationshipLabelAttribute(): string

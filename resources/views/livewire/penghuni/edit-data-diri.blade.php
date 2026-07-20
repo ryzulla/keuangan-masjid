@@ -11,10 +11,8 @@
                 </svg>
             </a>
             <div>
-                <h1 class="text-xl font-bold" style="color:#17231E;">
-                    {{ $memberId ? 'Edit Anggota Keluarga' : 'Tambah Anggota Keluarga' }}
-                </h1>
-                <p class="text-sm" style="color:#909A8F;">Lengkapi data anggota keluarga Anda</p>
+                <h1 class="text-xl font-bold" style="color:#17231E;">Edit Data Diri</h1>
+                <p class="text-sm" style="color:#909A8F;">Perbarui data diri Anda sebagai kepala keluarga</p>
             </div>
         </div>
 
@@ -28,10 +26,9 @@
 
             {{-- Foto --}}
             <div class="rounded-2xl p-6" style="background-color:#F1F3EC; border:1px solid #F1F3EC;">
-                <h2 class="text-base font-semibold mb-4" style="color:#17231E;">Foto Anggota</h2>
+                <h2 class="text-base font-semibold mb-4" style="color:#17231E;">Foto</h2>
 
                 <div class="flex flex-col items-center gap-4">
-                    {{-- Preview --}}
                     @if ($photo)
                         <img src="{{ $photo->temporaryUrl() }}" alt="Preview"
                              class="w-32 h-32 rounded-full object-cover"
@@ -87,34 +84,16 @@
                     @error('name') <p class="mt-1 text-xs" style="color:#B0402C;">{{ $message }}</p> @enderror
                 </div>
 
-                {{-- Hubungan & Jenis Kelamin --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1.5" style="color:#586359;">Hubungan <span style="color:#17231E;">*</span></label>
-                        <select wire:model="relationship"
-                                class="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                                style="background-color:#F1F3EC; color:#17231E; border:1px solid #F1F3EC;">
-                            <option value="istri">Istri</option>
-                            <option value="suami">Suami</option>
-                            <option value="anak">Anak</option>
-                            <option value="orang_tua">Orang Tua</option>
-                            <option value="mertua">Mertua</option>
-                            <option value="saudara">Saudara</option>
-                            <option value="lainnya">Lainnya</option>
-                        </select>
-                        @error('relationship') <p class="mt-1 text-xs" style="color:#B0402C;">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium mb-1.5" style="color:#586359;">Jenis Kelamin <span style="color:#17231E;">*</span></label>
-                        <select wire:model="gender"
-                                class="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                                style="background-color:#F1F3EC; color:#17231E; border:1px solid #F1F3EC;">
-                            <option value="laki-laki">Laki-laki</option>
-                            <option value="perempuan">Perempuan</option>
-                        </select>
-                        @error('gender') <p class="mt-1 text-xs" style="color:#B0402C;">{{ $message }}</p> @enderror
-                    </div>
+                {{-- Jenis Kelamin --}}
+                <div>
+                    <label class="block text-sm font-medium mb-1.5" style="color:#586359;">Jenis Kelamin <span style="color:#17231E;">*</span></label>
+                    <select wire:model="gender"
+                            class="w-full px-4 py-3 rounded-xl text-sm outline-none"
+                            style="background-color:#F1F3EC; color:#17231E; border:1px solid #F1F3EC;">
+                        <option value="laki-laki">Laki-laki</option>
+                        <option value="perempuan">Perempuan</option>
+                    </select>
+                    @error('gender') <p class="mt-1 text-xs" style="color:#B0402C;">{{ $message }}</p> @enderror
                 </div>
 
                 {{-- NIK --}}
@@ -145,56 +124,11 @@
                               style="background-color:#F1F3EC; color:#17231E; border:1px solid #F1F3EC;"></textarea>
                     @error('memberNotes') <p class="mt-1 text-xs" style="color:#B0402C;">{{ $message }}</p> @enderror
                 </div>
-            </div>
 
-            {{-- Akses Login (Opsional) --}}
-            <div class="rounded-2xl p-6 space-y-5" style="background-color:#F1F3EC; border:1px solid #F1F3EC;">
-                <div>
-                    <h2 class="text-base font-semibold" style="color:#17231E;">Akses Login (Opsional)</h2>
-                    <p class="text-xs mt-1" style="color:#909A8F;">
-                        Beri anggota keluarga ini (mis. istri) email &amp; password sendiri untuk login.
-                        Mereka akan berbagi akun rumah tangga yang sama dengan Anda.
-                    </p>
-                </div>
-
-                @if($hasLogin)
-                    <div class="flex items-center justify-between gap-3 flex-wrap rounded-xl p-3"
-                         style="background:rgba(18,128,92,0.08); border:1px solid rgba(18,128,92,0.25);">
-                        <p class="text-xs" style="color:#12805c;">
-                            <span class="font-semibold">Login aktif</span> — anggota ini dapat masuk portal dengan emailnya.
-                        </p>
-                        <button type="button" wire:click="revokeLogin"
-                                wire:confirm="Cabut akses login {{ $name }}?"
-                                class="text-xs px-3 py-1.5 rounded-lg font-medium transition-colors"
-                                style="background:#f7e7e4; color:#B0402C; border:1px solid #a23a30;">
-                            Cabut Akses
-                        </button>
-                    </div>
-                @endif
-
-                {{-- Email --}}
-                <div>
-                    <label class="block text-sm font-medium mb-1.5" style="color:#586359;">Email Login</label>
-                    <input type="email" wire:model="loginEmail" placeholder="email@contoh.com"
-                           class="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                           style="background-color:#F1F3EC; color:#17231E; border:1px solid #F1F3EC;">
-                    @error('loginEmail') <p class="mt-1 text-xs" style="color:#B0402C;">{{ $message }}</p> @enderror
-                </div>
-
-                {{-- Password --}}
-                <div>
-                    <label class="block text-sm font-medium mb-1.5" style="color:#586359;">
-                        {{ $hasLogin ? 'Ganti Password' : 'Password' }}
-                    </label>
-                    <input type="password" wire:model="loginPassword"
-                           placeholder="{{ $hasLogin ? 'Kosongkan bila tidak diubah' : 'Min. 6 karakter' }}"
-                           class="w-full px-4 py-3 rounded-xl text-sm outline-none"
-                           style="background-color:#F1F3EC; color:#17231E; border:1px solid #F1F3EC;">
-                    @error('loginPassword') <p class="mt-1 text-xs" style="color:#B0402C;">{{ $message }}</p> @enderror
-                    <p class="mt-1.5 text-xs" style="color:#909A8F;">
-                        Sampaikan email &amp; password ini langsung ke anggota keluarga Anda.
-                    </p>
-                </div>
+                <p class="text-xs" style="color:#909A8F;">
+                    Nomor telepon, WhatsApp, email, dan password diatur di menu
+                    <a href="{{ route('penghuni.settings') }}" wire:navigate class="font-medium underline" style="color:#164A40;">Pengaturan</a>.
+                </p>
             </div>
 
             {{-- Tombol --}}

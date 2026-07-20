@@ -214,7 +214,12 @@
                             {{ strtoupper(substr($fm->name, 0, 1)) }}
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium truncate" style="color:#17231E;">{{ $fm->name }}</p>
+                            <p class="text-sm font-medium truncate" style="color:#17231E;">
+                                {{ $fm->name }}
+                                @if($fm->canLogin())
+                                    <span class="ml-1 text-xs px-1.5 py-0.5 rounded-full align-middle" style="background:rgba(18,128,92,0.1);color:#12805c;border:1px solid rgba(18,128,92,0.25);" title="Bisa login: {{ $fm->email }}">login</span>
+                                @endif
+                            </p>
                             <p class="text-xs" style="color:#909A8F;">
                                 {{ $fm->relationship_label }}
                                 @if($fm->birth_date)
@@ -222,10 +227,22 @@
                                 @endif
                             </p>
                         </div>
-                        <span class="text-xs px-2 py-0.5 rounded-full shrink-0"
-                            style="{{ $fm->gender === 'laki-laki' ? 'background:rgba(22,74,64,0.1);color:#164A40;' : 'background:rgba(107,91,149,0.1);color:#db2777;' }}">
-                            {{ $fm->gender === 'laki-laki' ? 'L' : 'P' }}
-                        </span>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button wire:click="openFamilyModal({{ $fm->id }})"
+                                class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs transition-colors"
+                                style="background:rgba(107,91,149,0.1);color:#6B5B95;border:1px solid rgba(107,91,149,0.25);"
+                                title="{{ $fm->canLogin() ? 'Reset password login' : 'Buat akses login' }}">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                                {{ $fm->canLogin() ? 'Reset' : 'Akses' }}
+                            </button>
+                            @if($fm->canLogin())
+                            <button wire:click="revokeFamilyLogin({{ $fm->id }})" wire:confirm="Cabut akses login {{ $fm->name }}?"
+                                class="p-1 rounded-lg transition-colors" style="background:rgba(176,64,44,0.08);color:#B0402C;border:1px solid rgba(176,64,44,0.2);"
+                                title="Cabut akses login">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                            </button>
+                            @endif
+                        </div>
                     </div>
                     @empty
                     <p class="text-sm text-center py-6 italic" style="color:#909A8F;">Belum ada anggota keluarga terdaftar.</p>
@@ -399,6 +416,51 @@
                     class="px-5 py-2 text-sm rounded-xl font-semibold"
                     style="background:#164A40;color:#ffffff;"
                     wire:loading.attr="disabled">Simpan Password</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+{{-- Modal Login Anggota Keluarga --}}
+@if($isFamilyModalOpen)
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0" style="background:rgba(0,0,0,0.1);backdrop-filter:blur(4px);" wire:click="$set('isFamilyModalOpen',false)"></div>
+    <div class="relative rounded-2xl shadow-2xl w-full max-w-sm" style="background:#ffffff;border:1px solid #D8D6C9;">
+        <div class="px-6 py-4 rounded-t-2xl" style="background:#F1F3EC;border-bottom:1px solid rgba(22,74,64,0.35);">
+            <h3 class="font-bold" style="color:#17231E;font-family:'Fraunces',Georgia,serif;">Akses Login Anggota Keluarga</h3>
+            <p class="text-xs mt-1" style="color:#17231E;">{{ $familyMemberName }} — berbagi akun rumah {{ $resident->name }}</p>
+        </div>
+        <div class="px-6 py-5 space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1.5" style="color:#586359;">Email Login <span style="color:#B0402C;">*</span></label>
+                <input type="email" wire:model="familyEmail" placeholder="email@contoh.com"
+                    style="background:#ffffff;border:1px solid #E0DFD4;color:#17231E;border-radius:0.75rem;padding:0.5rem 0.75rem;width:100%;font-size:0.875rem;outline:none;"
+                    onfocus="this.style.borderColor='#164A40'" onblur="this.style.borderColor='#E0DFD4'">
+                @error('familyEmail') <p class="text-xs mt-1" style="color:#B0402C;">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1.5" style="color:#586359;">Password Baru <span style="color:#B0402C;">*</span></label>
+                <input type="password" wire:model="familyPassword" placeholder="Min. 6 karakter"
+                    style="background:#ffffff;border:1px solid #E0DFD4;color:#17231E;border-radius:0.75rem;padding:0.5rem 0.75rem;width:100%;font-size:0.875rem;outline:none;"
+                    onfocus="this.style.borderColor='#164A40'" onblur="this.style.borderColor='#E0DFD4'">
+                @error('familyPassword') <p class="text-xs mt-1" style="color:#B0402C;">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1.5" style="color:#586359;">Konfirmasi Password <span style="color:#B0402C;">*</span></label>
+                <input type="password" wire:model="familyConfirm" placeholder="Ulangi password"
+                    style="background:#ffffff;border:1px solid #E0DFD4;color:#17231E;border-radius:0.75rem;padding:0.5rem 0.75rem;width:100%;font-size:0.875rem;outline:none;"
+                    onfocus="this.style.borderColor='#164A40'" onblur="this.style.borderColor='#E0DFD4'">
+                @error('familyConfirm') <p class="text-xs mt-1" style="color:#B0402C;">{{ $message }}</p> @enderror
+            </div>
+            <div class="flex justify-end gap-3 pt-2" style="border-top:1px solid #E0DFD4;">
+                <button type="button" wire:click="$set('isFamilyModalOpen',false)"
+                    class="px-4 py-2 text-sm rounded-xl font-medium"
+                    style="background:#F1F3EC;color:#17231E;border:1px solid #D8D6C9;">Batal</button>
+                <button wire:click="setFamilyPassword"
+                    class="px-5 py-2 text-sm rounded-xl font-semibold"
+                    style="background:#164A40;color:#ffffff;"
+                    wire:loading.attr="disabled">Simpan</button>
             </div>
         </div>
     </div>
